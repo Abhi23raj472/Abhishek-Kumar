@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abhishek Kumar — Quality Engineer · Test Automation</title>
+<script>
+  // Prevent theme flash — apply saved preferences before first paint
+  try {
+    var _t = localStorage.getItem('ak-theme');
+    var _a = localStorage.getItem('ak-accent');
+    if (_t) document.documentElement.setAttribute('data-theme', _t);
+    if (_a) document.documentElement.setAttribute('data-accent', _a);
+  } catch (e) {}
+</script>
+<style>
+  /*__FONTS__*/
+
+  :root{
+    /* Accent — Aurora (indigo → violet → pink) */
+    --c1:#6366f1; --c2:#a855f7; --c3:#ec4899;
+    --accent:#6366f1; --accent-2:#7c3aed; --accent-deep:#6d28d9; --accent-ink:#5b21b6;
+    --accent-soft:#f3f0ff; --accent-line:#e7e2fb; --accent-ring:#ede7ff;
+    --accent-glow:rgba(168,85,247,.55); --accent-glow2:rgba(236,72,153,.6); --shadow-accent:rgba(99,102,241,.3);
+    --grad:linear-gradient(135deg,var(--c1) 0%,var(--c2) 50%,var(--c3) 100%);
+
+    /* Surfaces — light */
+    --bg:#ffffff; --bg-soft:#faf9ff; --card:#ffffff;
+    --ink:#0f172a; --body:#475569; --muted:#8b96a8; --line:#e8eaf2;
+    --nav-bg:rgba(255,255,255,.82); --card-hover:#e4e0f7;
+    --radius:20px;
+    --shadow:0 1px 2px rgba(15,23,42,.04),0 14px 34px -18px rgba(15,23,42,.14);
+    --font-display:'Space Grotesk','Inter',sans-serif;
+    --font-body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+
+  /* Accent palettes */
+  [data-accent="ocean"]{
+    --c1:#2563eb; --c2:#06b6d4; --c3:#38bdf8;
+    --accent:#2563eb; --accent-2:#0284c7; --accent-deep:#1d4ed8; --accent-ink:#1e40af;
+    --accent-soft:#eff6ff; --accent-line:#dbeafe; --accent-ring:#dbeafe;
+    --accent-glow:rgba(6,182,212,.55); --accent-glow2:rgba(59,130,246,.6); --shadow-accent:rgba(37,99,235,.28);
+    --card-hover:#dbeafe;
+  }
+  [data-accent="emerald"]{
+    --c1:#059669; --c2:#14b8a6; --c3:#22c55e;
+    --accent:#059669; --accent-2:#0d9488; --accent-deep:#047857; --accent-ink:#065f46;
+    --accent-soft:#ecfdf5; --accent-line:#d1fae5; --accent-ring:#d1fae5;
+    --accent-glow:rgba(16,185,129,.5); --accent-glow2:rgba(34,197,94,.55); --shadow-accent:rgba(5,150,105,.28);
+    --card-hover:#d1fae5;
+  }
+  [data-accent="sunset"]{
+    --c1:#f97316; --c2:#ef4444; --c3:#ec4899;
+    --accent:#f97316; --accent-2:#dc2626; --accent-deep:#c2410c; --accent-ink:#9a3412;
+    --accent-soft:#fff7ed; --accent-line:#fed7aa; --accent-ring:#fed7aa;
+    --accent-glow:rgba(249,115,22,.5); --accent-glow2:rgba(236,72,153,.55); --shadow-accent:rgba(239,68,68,.28);
+    --card-hover:#fed7aa;
+  }
+  [data-accent="slate"]{
+    --c1:#475569; --c2:#64748b; --c3:#94a3b8;
+    --accent:#475569; --accent-2:#334155; --accent-deep:#1e293b; --accent-ink:#334155;
+    --accent-soft:#f1f5f9; --accent-line:#e2e8f0; --accent-ring:#e2e8f0;
+    --accent-glow:rgba(100,116,139,.45); --accent-glow2:rgba(148,163,184,.5); --shadow-accent:rgba(71,85,105,.25);
+    --card-hover:#e2e8f0;
+  }
+
+  /* Dark theme — overrides surfaces + adapts accent tints */
+  [data-theme="dark"]{
+    --bg:#0b0d14; --bg-soft:#10131d; --card:#151823;
+    --ink:#eef1f8; --body:#b7bfcf; --muted:#8b96a8; --line:#232838;
+    --nav-bg:rgba(11,13,20,.8); --card-hover:#2a2f42;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 16px 40px -20px rgba(0,0,0,.7);
+    --accent-soft:color-mix(in srgb, var(--accent) 16%, transparent);
+    --accent-line:color-mix(in srgb, var(--accent) 34%, transparent);
+    --accent-ring:color-mix(in srgb, var(--accent) 40%, transparent);
+    --accent-ink:color-mix(in srgb, var(--accent) 45%, #ffffff);
+    --accent-deep:color-mix(in srgb, var(--accent) 35%, #ffffff);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--font-body);color:var(--body);background:var(--bg);
+    line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+    transition:background .3s ease,color .3s ease;
+  }
+  h1,h2,h3{font-family:var(--font-display);color:var(--ink)}
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .grad-anim{
+    background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c1));
+    background-size:300% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:gradShift 7s linear infinite;
+  }
+  @keyframes gradShift{to{background-position:300% 0}}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:15px;
+    border-radius:999px;padding:13px 26px;transition:transform .18s ease,box-shadow .18s ease,background .18s ease,border-color .18s ease;
+    border:1px solid transparent;cursor:pointer;font-family:var(--font-body);
+  }
+  .btn svg{width:18px;height:18px}
+  .btn-grad{background:var(--grad);color:#fff;box-shadow:0 10px 28px -8px var(--accent-glow)}
+  .btn-grad:hover{transform:translateY(-2px);box-shadow:0 18px 40px -12px var(--accent-glow2)}
+  .btn-ghost{background:rgba(255,255,255,.07);color:#fff;border-color:rgba(255,255,255,.22);backdrop-filter:blur(6px)}
+  .btn-ghost:hover{background:rgba(255,255,255,.16);transform:translateY(-2px)}
+  .btn-outline{
+    color:var(--accent-deep);
+    background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
+    border:1.5px solid transparent;
+  }
+  .btn-outline:hover{transform:translateY(-2px);box-shadow:0 12px 28px -12px var(--accent-glow)}
+
+  /* ---------- Nav ---------- */
+  nav{
+    position:sticky;top:0;z-index:60;
+    background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);
+    transition:background .3s ease;
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--ink);font-size:17px;font-family:var(--font-display)}
+  .brand .mono{
+    width:36px;height:36px;border-radius:11px;display:grid;place-items:center;
+    background:var(--grad);color:#fff;font-weight:700;font-size:15px;font-family:var(--font-body);
+    box-shadow:0 6px 16px -6px var(--accent-glow);
+  }
+  .nav-links{display:flex;align-items:center;gap:2px;list-style:none}
+  .nav-links a{color:var(--muted);font-weight:500;font-size:14.5px;padding:8px 13px;border-radius:9px;transition:.15s}
+  .nav-links a:hover{color:var(--ink);background:var(--bg-soft)}
+  .nav-links a.active{color:var(--accent)}
+  .nav-cta{margin-left:8px;padding:10px 20px !important;color:#fff !important;background:var(--grad);border-radius:999px;box-shadow:0 8px 20px -8px var(--accent-glow)}
+  .nav-cta:hover{color:#fff !important;background:var(--grad);transform:translateY(-1px);box-shadow:0 12px 26px -8px var(--accent-glow2)}
+  .hamburger{display:none;background:none;border:0;cursor:pointer;padding:8px}
+  .hamburger span{display:block;width:22px;height:2px;background:var(--ink);margin:5px 0;border-radius:2px;transition:.2s}
+
+  /* ---------- Theme tools ---------- */
+  .nav-tools{display:flex;align-items:center;gap:8px;margin-left:12px;position:relative}
+  .tool{
+    width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:transparent;
+    color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:.15s;
+  }
+  .tool:hover{border-color:var(--accent);background:var(--bg-soft)}
+  .tool svg{width:19px;height:19px}
+  .icon-moon{display:none}
+  [data-theme="dark"] .icon-moon{display:block}
+  [data-theme="dark"] .icon-sun{display:none}
+  .pop{
+    position:absolute;top:calc(100% + 10px);right:0;width:236px;background:var(--card);
+    border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px;
+    opacity:0;transform:translateY(8px) scale(.98);pointer-events:none;transition:.18s;z-index:80;
+  }
+  .pop.open{opacity:1;transform:none;pointer-events:auto}
+  .pop h4{font-size:11.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);margin:2px 2px 12px;font-family:var(--font-body)}
+  .swatch{
+    display:flex;align-items:center;gap:11px;width:100%;padding:8px 10px;border-radius:10px;border:0;
+    background:transparent;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--ink);
+    font-family:var(--font-body);transition:.12s;
+  }
+  .swatch:hover{background:var(--bg-soft)}
+  .swatch .sw{width:24px;height:24px;border-radius:50%;box-shadow:inset 0 0 0 2px rgba(255,255,255,.7)}
+  .swatch.active .sw{box-shadow:inset 0 0 0 2.5px var(--ink)}
+  .sw.aurora{background:linear-gradient(135deg,#6366f1,#a855f7,#ec4899)}
+  .sw.ocean{background:linear-gradient(135deg,#2563eb,#06b6d4,#38bdf8)}
+  .sw.emerald{background:linear-gradient(135deg,#059669,#14b8a6,#22c55e)}
+  .sw.sunset{background:linear-gradient(135deg,#f97316,#ef4444,#ec4899)}
+  .sw.slate{background:linear-gradient(135deg,#475569,#64748b,#94a3b8)}
+
+  /* ---------- Hero ---------- */
+  header.hero{background:#0a0a17;color:#e2e8f0;padding:104px 0 0;position:relative;overflow:hidden}
+  .hero::before{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+    background-size:52px 52px;
+    -webkit-mask-image:radial-gradient(ellipse 75% 65% at 50% 38%,#000 20%,transparent 72%);
+            mask-image:radial-gradient(ellipse 75% 65% at 50% 38%,#000 20%,transparent 72%);
+  }
+  .blob{position:absolute;border-radius:50%;filter:blur(95px);opacity:.5;animation:float 16s ease-in-out infinite;pointer-events:none}
+  .blob.b1{width:560px;height:560px;background:var(--c1);top:-180px;left:-140px}
+  .blob.b2{width:500px;height:500px;background:var(--c2);top:-120px;right:-160px;animation-delay:-5s}
+  .blob.b3{width:520px;height:520px;background:var(--c3);bottom:-220px;left:32%;animation-delay:-10s}
+  @keyframes float{
+    0%,100%{transform:translate(0,0) scale(1)}
+    33%{transform:translate(46px,-34px) scale(1.08)}
+    66%{transform:translate(-34px,26px) scale(.94)}
+  }
+  .hero .wrap{position:relative;z-index:2}
+  .badge{
+    display:inline-flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;
+    color:color-mix(in srgb,var(--c2) 65%,#ffffff);
+    background:color-mix(in srgb,var(--c2) 16%,transparent);
+    border:1px solid color-mix(in srgb,var(--c2) 55%,transparent);
+    padding:7px 17px;border-radius:999px;margin-bottom:24px;backdrop-filter:blur(4px);
+  }
+  .badge .dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 0 rgba(74,222,128,.7);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.55)}70%{box-shadow:0 0 0 9px rgba(74,222,128,0)}100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}}
+  .hero h1{font-size:clamp(44px,7vw,84px);line-height:1.02;font-weight:700;color:#fff;letter-spacing:-2.5px;font-family:var(--font-display)}
+  .hero .role{margin-top:16px;font-size:clamp(18px,2.6vw,24px);font-weight:500;color:color-mix(in srgb,var(--c2) 60%,#ffffff);font-family:var(--font-display)}
+  .hero .tag{margin-top:18px;max-width:640px;font-size:16.5px;color:#b9c2d8}
+  .hero-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+  .hero-chip{
+    display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:500;color:#e2e8f0;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);padding:8px 16px;border-radius:999px;
+    backdrop-filter:blur(4px);transition:.18s;
+  }
+  .hero-chip:hover{border-color:color-mix(in srgb,var(--c2) 60%,transparent);background:rgba(255,255,255,.1)}
+  .hero-chip svg{width:16px;height:16px;color:color-mix(in srgb,var(--c2) 60%,#ffffff)}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+  .hero-stats{display:flex;flex-wrap:wrap;gap:40px;margin-top:56px;padding-top:28px;border-top:1px solid rgba(255,255,255,.1)}
+  .stat .n{font-size:30px;font-weight:700;color:#fff;font-family:var(--font-display)}
+  .stat .l{font-size:13.5px;color:#8b96a8;margin-top:2px}
+  .scroll-hint{display:flex;justify-content:center;margin-top:56px;padding-bottom:8px}
+  .scroll-hint a{color:#8b96a8;animation:bounce 2s infinite}
+  .scroll-hint svg{width:22px;height:22px}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+
+  /* ---------- Marquee ---------- */
+  .marquee{overflow:hidden;border-top:1px solid rgba(255,255,255,.09);margin-top:56px;padding:16px 0;background:rgba(255,255,255,.02)}
+  .marquee-track{display:flex;width:max-content;animation:marquee 34s linear infinite}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  .mq-group{display:flex;align-items:center;gap:44px;padding-right:44px;white-space:nowrap}
+  .mq-group span{font-family:var(--font-display);font-size:15px;font-weight:500;letter-spacing:.4px;color:rgba(226,232,240,.55)}
+  .mq-group span em{font-style:normal;color:color-mix(in srgb,var(--c2) 60%,#ffffff);margin-left:44px}
+  @keyframes marquee{to{transform:translateX(-50%)}}
+
+  /* ---------- Sections ---------- */
+  section{padding:92px 0;transition:background .3s ease}
+  section.alt{background:var(--bg-soft)}
+  .sec-head{margin-bottom:46px;max-width:660px}
+  .eyebrow{
+    font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+    display:inline-block;
+  }
+  .sec-head h2{font-size:clamp(28px,4vw,38px);font-weight:700;letter-spacing:-1px;margin-top:10px}
+  .sec-head .bar{width:56px;height:4px;border-radius:4px;background:var(--grad);margin-top:16px}
+  .sec-head p{color:var(--muted);margin-top:14px}
+
+  .grid{display:grid;gap:22px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+
+  /* ---------- Cards ---------- */
+  .card{
+    position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:28px;box-shadow:var(--shadow);transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease,background .3s ease;overflow:hidden;
+  }
+  .card::before{
+    content:'';position:absolute;top:0;left:22px;right:22px;height:3px;border-radius:0 0 5px 5px;
+    background:var(--grad);opacity:0;transition:opacity .25s ease;
+  }
+  .card:hover{transform:translateY(-6px);border-color:var(--card-hover);box-shadow:0 2px 4px rgba(15,23,42,.05),0 26px 52px -22px var(--shadow-accent)}
+  .card:hover::before{opacity:1}
+  .card h3{font-size:18.5px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:11px}
+  .card .ico{
+    width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex-shrink:0;
+    background:var(--accent-soft);border:1px solid var(--accent-line);
+  }
+  .card .ico svg{width:21px;height:21px;color:var(--accent-2)}
+  .card .ico.standalone{margin-bottom:16px}
+  .card p{font-size:15px}
+
+  /* chips */
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{
+    font-size:13.5px;font-weight:600;color:var(--accent-ink);background:var(--accent-soft);
+    border:1px solid var(--accent-line);padding:8px 15px;border-radius:999px;transition:.18s;
+  }
+  .chip:hover{background:var(--grad);color:#fff;border-color:transparent;transform:translateY(-2px);box-shadow:0 8px 18px -8px var(--accent-glow)}
+
+  /* skills */
+  .skill{display:flex;gap:12px;padding:11px 0;border-bottom:1px dashed var(--line)}
+  .skill:last-child{border-bottom:0}
+  .skill .k{font-weight:700;color:var(--ink);min-width:180px;font-size:14.5px}
+  .skill .v{color:var(--body);font-size:14.5px}
+
+  /* timeline */
+  .timeline{position:relative;padding-left:32px}
+  .timeline::before{content:'';position:absolute;left:10px;top:6px;bottom:6px;width:2.5px;border-radius:3px;background:var(--grad)}
+  .tl-item{position:relative;padding-bottom:38px}
+  .tl-item:last-child{padding-bottom:0}
+  .tl-item::before{
+    content:'';position:absolute;left:-32px;top:6px;width:22px;height:22px;border-radius:50%;
+    background:var(--grad);border:4px solid var(--accent-ring);box-shadow:0 4px 10px -3px var(--accent-glow);
+  }
+  .tl-role{font-size:20px;font-weight:700;color:var(--ink);font-family:var(--font-display)}
+  .tl-co{font-weight:600;font-size:15px;margin-top:3px}
+  .tl-date{display:inline-block;margin-top:10px;font-size:12.5px;font-weight:700;color:var(--accent-deep);background:var(--accent-soft);border:1px solid var(--accent-line);padding:5px 14px;border-radius:999px}
+  .tl-list{list-style:none;margin-top:15px}
+  .tl-list li{position:relative;padding-left:22px;margin-bottom:8px;font-size:14.5px}
+  .tl-list li::before{content:'';position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:2px;background:var(--grad);opacity:.8}
+
+  /* achievements */
+  .ach{padding:26px}
+  .ach h3{font-size:16px;line-height:1.4;margin-bottom:6px}
+  .ach p{font-size:14px;color:var(--muted);line-height:1.55}
+
+  /* awards */
+  .award{padding:22px;display:flex;gap:16px;align-items:flex-start}
+  .award .ico{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:rgba(245,158,11,.3)}
+  .award .ico svg{color:#b45309}
+  .award h3{font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.35}
+  .award .when{font-size:12.5px;font-weight:700;color:var(--c3)}
+  .award p{font-size:14px;color:var(--muted);margin-top:5px}
+
+  .cert-list{list-style:none}
+  .cert-list li{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed var(--line);font-size:14.5px}
+  .cert-list li:last-child{border-bottom:0}
+  .cert-list svg{width:19px;height:19px;color:#10b981;flex-shrink:0;margin-top:2px}
+  .cert-list .k{font-weight:700;color:var(--ink)}
+
+  /* contact */
+  .contact-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:stretch}
+  .contact-hero{position:relative;overflow:hidden;color:#e2e8f0;border-radius:var(--radius);padding:46px;background:#0a0a17}
+  .contact-hero .blob{opacity:.4}
+  .contact-hero h2{color:#fff;font-size:30px;font-weight:700;letter-spacing:-.5px;position:relative;z-index:2}
+  .contact-hero p{margin-top:12px;color:#cbd5e1;font-size:15.5px;position:relative;z-index:2}
+  .contact-hero .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px;position:relative;z-index:2}
+  .contact-links{display:flex;flex-direction:column;gap:14px}
+  .clink{display:flex;align-items:center;gap:14px;padding:16px 18px;background:var(--card);border:1px solid var(--line);border-radius:16px;transition:.18s}
+  .clink:hover{border-color:var(--accent-2);transform:translateY(-3px);box-shadow:var(--shadow)}
+  .clink .ic{width:44px;height:44px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--accent-line);display:grid;place-items:center;flex-shrink:0}
+  .clink .ic svg{width:19px;height:19px;color:var(--accent-2)}
+  .clink .t{font-size:12.5px;color:var(--muted);font-weight:600}
+  .clink .d{font-size:14.5px;font-weight:600;color:var(--ink)}
+
+  footer{
+    padding:30px 0;text-align:center;color:var(--muted);font-size:13.5px;
+    background:#0a0a17;border-top:3px solid transparent;
+    border-image:linear-gradient(90deg,var(--c1),var(--c2),var(--c3)) 1;
+  }
+  footer .brand{margin:0 auto 8px;justify-content:center;color:#fff}
+
+  /* back to top */
+  .totop{
+    position:fixed;right:22px;bottom:22px;width:46px;height:46px;border-radius:14px;border:0;cursor:pointer;
+    background:var(--grad);color:#fff;display:grid;place-items:center;z-index:70;
+    opacity:0;transform:translateY(14px);pointer-events:none;transition:.25s;box-shadow:0 12px 26px -8px var(--accent-glow);
+  }
+  .totop.show{opacity:1;transform:none;pointer-events:auto}
+  .totop:hover{transform:translateY(-3px)}
+  .totop svg{width:20px;height:20px}
+
+  /* toast */
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(16px);
+    background:#0f172a;color:#fff;padding:13px 22px;border-radius:12px;font-size:14px;font-weight:600;
+    opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:100;
+    box-shadow:0 10px 30px -10px rgba(0,0,0,.55);max-width:90vw;border:1px solid rgba(255,255,255,.08);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  /* responsive */
+  @media (max-width:880px){
+    .g2,.g3,.contact-grid{grid-template-columns:1fr}
+    .nav-links{
+      position:absolute;top:68px;left:0;right:0;flex-direction:column;align-items:flex-start;
+      background:var(--card);border-bottom:1px solid var(--line);padding:12px 24px 20px;gap:2px;display:none;
+    }
+    .nav-links.open{display:flex}
+    .hamburger{display:block}
+    .nav-cta{margin-left:0}
+    .skill{flex-direction:column;gap:2px}
+    .skill .k{min-width:0}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<nav>
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top"><span class="mono">AK</span>Abhishek Kumar</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about" class="active">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#achievements">Achievements</a></li>
+      <li><a href="#credentials">Credentials</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a class="nav-cta" href="Abhishek_Kumar_Resume.pdf" download="Abhishek_Kumar_Resume.pdf" target="_blank" rel="noopener">Resume ↓</a></li>
+    </ul>
+    <div class="nav-tools">
+      <button class="tool" id="accentBtn" aria-label="Choose accent color" title="Accent color">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5" fill="currentColor"/><circle cx="17.5" cy="10.5" r="2.5" fill="currentColor"/><circle cx="8.5" cy="7.5" r="2.5" fill="currentColor"/><circle cx="6.5" cy="12.5" r="2.5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+      </button>
+      <button class="tool" id="themeToggle" aria-label="Toggle dark mode" title="Light / dark">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="pop" id="accentPop">
+        <h4>Accent color</h4>
+        <button class="swatch active" data-accent="aurora"><span class="sw aurora"></span>Aurora</button>
+        <button class="swatch" data-accent="ocean"><span class="sw ocean"></span>Ocean</button>
+        <button class="swatch" data-accent="emerald"><span class="sw emerald"></span>Emerald</button>
+        <button class="swatch" data-accent="sunset"><span class="sw sunset"></span>Sunset</button>
+        <button class="swatch" data-accent="slate"><span class="sw slate"></span>Slate</button>
+      </div>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="wrap">
+    <span class="badge"><span class="dot"></span>Open to Quality Engineering &amp; Test Automation roles</span>
+    <h1>Abhishek<br><span class="grad-anim">Kumar</span></h1>
+    <p class="role">Quality Engineer · Test Automation <span class="grad-text">(Tricentis Tosca)</span></p>
+    <p class="tag">5 years of experience building scalable automation suites, validating APIs, and driving CI/CD-integrated testing — with a track record of awards for cutting regression cycle time.</p>
+
+    <div class="hero-chips">
+      <span class="hero-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        +91 84486 36006
+      </span>
+      <span class="hero-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+        rajputabhishek677@gmail.com
+      </span>
+      <span class="hero-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        linkedin.com/in/abhishek-kumar2301
+      </span>
+    </div>
+
+    <div class="hero-cta">
+      <a class="btn btn-grad" href="Abhishek_Kumar_Resume.pdf" download="Abhishek_Kumar_Resume.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Resume
+      </a>
+      <a class="btn btn-ghost" href="#contact">Get in touch</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat"><div class="n">5+</div><div class="l">Years in Quality Engineering</div></div>
+      <div class="stat"><div class="n">12</div><div class="l">Certifications</div></div>
+      <div class="stat"><div class="n">4</div><div class="l">Awards &amp; Recognitions</div></div>
+      <div class="stat"><div class="n">2</div><div class="l">Global Enterprises Served</div></div>
+    </div>
+
+    <div class="scroll-hint"><a href="#about" aria-label="Scroll down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></a></div>
+  </div>
+
+  <div class="marquee">
+    <div class="marquee-track">
+      <div class="mq-group">
+        <span>Tricentis Tosca</span><span><em>✦</em> Tosca DEX</span><span><em>✦</em> Tosca TCD</span><span><em>✦</em> Tosca XScan</span><span><em>✦</em> API Testing</span><span><em>✦</em> Postman</span><span><em>✦</em> SOAP UI</span><span><em>✦</em> JIRA</span><span><em>✦</em> Confluence</span><span><em>✦</em> CI/CD</span><span><em>✦</em> Agile</span><span><em>✦</em> MySQL</span><span><em>✦</em> SQL</span><span><em>✦</em> ISTQB Certified</span>
+      </div>
+      <div class="mq-group">
+        <span>Tricentis Tosca</span><span><em>✦</em> Tosca DEX</span><span><em>✦</em> Tosca TCD</span><span><em>✦</em> Tosca XScan</span><span><em>✦</em> API Testing</span><span><em>✦</em> Postman</span><span><em>✦</em> SOAP UI</span><span><em>✦</em> JIRA</span><span><em>✦</em> Confluence</span><span><em>✦</em> CI/CD</span><span><em>✦</em> Agile</span><span><em>✦</em> MySQL</span><span><em>✦</em> SQL</span><span><em>✦</em> ISTQB Certified</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= ABOUT ================= -->
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">About</span>
+      <h2>A quality engineer who treats automation as a product</h2>
+      <div class="bar"></div>
+      <p>Designing test frameworks that are reusable, reliable, and ready for continuous delivery.</p>
+    </div>
+    <div class="grid g2 reveal">
+      <div class="card">
+        <div class="ico standalone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </div>
+        <h3>Who I am</h3>
+        <p>
+          I'm a Quality Engineer with 5 years of experience in test automation, API validation, and Agile quality assurance.
+          I specialize in Tricentis Tosca — building reusable modules, data-driven test design (TCD), and distributed execution
+          through Tosca DEX. I care about automation that's maintainable: shared libraries, clean recovery scenarios, and CI/CD
+          integration so every build ships with confidence.
+        </p>
+      </div>
+      <div class="card">
+        <div class="ico standalone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <h3>What I deliver</h3>
+        <ul class="tl-list" style="margin-top:6px">
+          <li>Scalable automation suites for web &amp; desktop apps in Tricentis Tosca</li>
+          <li>REST &amp; SOAP API coverage with real-time payload and status validation</li>
+          <li>Distributed, parallel execution via Tosca DEX with smart load balancing</li>
+          <li>Defect lifecycle management in JIRA with fast triage and resolution</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SKILLS ================= -->
+<section id="skills" class="alt">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Skills</span>
+      <h2>Toolkit &amp; competencies</h2>
+      <div class="bar"></div>
+      <p>The technologies and practices I use every day to ship quality at speed.</p>
+    </div>
+    <div class="grid g2 reveal">
+      <div class="card">
+        <h3>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.6-6.2 4.6 2.4-7.4L2 9.4h7.6z"/></svg></span>
+          Core Competencies
+        </h3>
+        <div class="chips">
+          <span class="chip">Test Case Design</span><span class="chip">Test Data Management</span><span class="chip">Risk-Based Testing</span><span class="chip">Requirement Analysis</span><span class="chip">Regression Planning</span><span class="chip">Agile Test Strategy</span><span class="chip">Functional Coverage Mapping</span><span class="chip">Release Cycle Alignment</span><span class="chip">Sprint-Level Testing</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></span>
+          Technical Skills
+        </h3>
+        <div class="skill"><span class="k">Test Automation</span><span class="v">Tricentis Tosca (XScan, TCD, DEX, TQL), Postman, SOAP UI</span></div>
+        <div class="skill"><span class="k">Testing Types</span><span class="v">Functional, Regression, Smoke, API, UI, Database</span></div>
+        <div class="skill"><span class="k">Defect &amp; Collab</span><span class="v">JIRA, Confluence, ALM, Rally</span></div>
+        <div class="skill"><span class="k">Methodologies</span><span class="v">Agile (Scrum, Kanban), SDLC, STLC</span></div>
+        <div class="skill"><span class="k">CI/CD</span><span class="v">Tosca DEX — distributed, parallel execution</span></div>
+        <div class="skill"><span class="k">Databases</span><span class="v">MySQL</span></div>
+        <div class="skill"><span class="k">Documentation</span><span class="v">Microsoft Word, Excel, PowerPoint</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXPERIENCE ================= -->
+<section id="experience">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Experience</span>
+      <h2>Where I've made an impact</h2>
+      <div class="bar"></div>
+      <p>A track record of owning automation delivery end-to-end across two global enterprises.</p>
+    </div>
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <div class="tl-role">Quality Engineer</div>
+        <div class="tl-co grad-text">Optum Global Solutions</div>
+        <span class="tl-date">Nov 2025 — Present</span>
+        <ul class="tl-list">
+          <li>Develop and maintain automation suites for web and desktop applications in Tricentis Tosca.</li>
+          <li>Build reusable UI modules via Tosca XScan to broaden automation coverage across interfaces.</li>
+          <li>Design parameterized, data-driven test cases in Tosca TCD for new feature validation.</li>
+          <li>Engineer recovery and cleanup scenarios so test runs stay reliable in unstable environments.</li>
+          <li>Triage, log, and track defects in JIRA — closing issues quickly and limiting re-testing.</li>
+          <li>Integrate Tosca automation into the CI/CD pipeline and publish daily regression reports.</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <div class="tl-role">Senior Software Engineer</div>
+        <div class="tl-co grad-text">Expleo Group, Pune, India</div>
+        <span class="tl-date">Sep 2021 — Nov 2025</span>
+        <ul class="tl-list">
+          <li>Owned end-to-end Tosca automation suite design and delivery — from architecture through rollout.</li>
+          <li>Established reusable UI module standards via XScan, extending feasibility to new interfaces.</li>
+          <li>Architected data-driven, parameterized frameworks in TCD to scale testing across product lines.</li>
+          <li>Led REST &amp; SOAP API coverage, validating response codes, payloads, and headers in real time.</li>
+          <li>Ran distributed parallel execution via Tosca DEX with event-driven and scheduled runs.</li>
+          <li>Drove CI/CD integration and defined release-level test strategy; mentored teammates in reviews.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ACHIEVEMENTS ================= -->
+<section id="achievements" class="alt">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Achievements</span>
+      <h2>Results that moved the needle</h2>
+      <div class="bar"></div>
+      <p>Highlights from enterprise automation delivery and QA transformation.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card ach reveal">
+        <div class="ico standalone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <h3>Faster regression cycles</h3>
+        <p>Reduced regression cycle duration by modularizing test cases and enabling distributed execution.</p>
+      </div>
+      <div class="card ach reveal">
+        <div class="ico standalone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <h3>Broader API coverage</h3>
+        <p>Increased API test coverage through automated validation of payloads, status codes, and authentication.</p>
+      </div>
+      <div class="card ach reveal">
+        <div class="ico standalone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+        <h3>Lower maintenance effort</h3>
+        <p>Minimized maintenance by building reusable templates and centralizing test data in TCD.</p>
+      </div>
+      <div class="card ach reveal">
+        <div class="ico standalone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <h3>Optimized DEX throughput</h3>
+        <p>Improved Tosca DEX throughput through agent load balancing and parallel run configuration.</p>
+      </div>
+      <div class="card ach reveal">
+        <div class="ico standalone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h3>Zero UAT escalations</h3>
+        <p>Delivered defect-free releases across multiple sprints — client recognized, zero UAT escalations.</p>
+      </div>
+      <div class="card ach reveal">
+        <div class="ico standalone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
+        <h3>Ahead of schedule</h3>
+        <p>Delivered critical automation ahead of schedule, improving QA timelines and early feedback cycles.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CREDENTIALS ================= -->
+<section id="credentials">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Credentials</span>
+      <h2>Certifications &amp; recognition</h2>
+      <div class="bar"></div>
+    </div>
+    <div class="grid g2">
+      <div class="card reveal">
+        <h3>
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></span>
+          Certifications
+        </h3>
+        <ul class="cert-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><span class="k">Tricentis Academy</span> — AS1, AS2, TDS1, TDS2, AE1, API, TQL</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><span class="k">ISTQB</span> — Certified Tester, Foundation Level</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><span class="k">Allianz</span> — ABS (L1)</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><span class="k">SQL</span> — Certification</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><span class="k">Atlassian</span> — Agile with Jira</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><span class="k">Generative AI</span> — Optum.ai AI Dojo (Mar 2026)</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="grid" style="gap:18px">
+          <div class="card award reveal">
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+            <div>
+              <h3>Bravo! Diamond Award — UnitedHealth Group</h3>
+              <span class="when">Jun 2026</span>
+              <p>Proactively identified and escalated a critical production-impacting defect in the TOSCA Automation team.</p>
+            </div>
+          </div>
+          <div class="card award reveal">
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+            <div>
+              <h3>Bold Mind Award</h3>
+              <span class="when">Dec 2024</span>
+              <p>Innovative solutions and test strategy enhancement in Tosca.</p>
+            </div>
+          </div>
+          <div class="card award reveal">
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+            <div>
+              <h3>Applause Award</h3>
+              <span class="when">Apr 2024</span>
+              <p>Reduced regression cycle time through automation optimization.</p>
+            </div>
+          </div>
+          <div class="card award reveal">
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+            <div>
+              <h3>WoW Award</h3>
+              <span class="when">Sep 2023</span>
+              <p>Exceptional contribution to enterprise automation delivery.</p>
+            </div>
+          </div>
+          <div class="card reveal" style="padding:22px">
+            <h3 style="margin-bottom:8px">
+              <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+              Education
+            </h3>
+            <p style="font-weight:700;color:var(--ink)">B.Tech — Computer Science &amp; Engineering</p>
+            <p style="font-size:14px;color:var(--muted)">Galgotias University, Greater Noida, UP · 2021</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section id="contact" class="alt">
+  <div class="wrap">
+    <div class="contact-grid reveal">
+      <div class="contact-hero">
+        <div class="blob b1"></div><div class="blob b2"></div>
+        <span class="eyebrow" style="color:#a5b4fc;background:none;-webkit-text-fill-color:#a5b4fc">Contact</span>
+        <h2>Let's build quality into your next release.</h2>
+        <p>I'm open to Quality Engineering and Test Automation opportunities. Reach out and let's talk about how I can help your team ship faster with confidence.</p>
+        <div class="cta-row">
+          <a class="btn btn-grad" href="mailto:rajputabhishek677@gmail.com" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+            Email me
+          </a>
+          <button type="button" class="btn btn-ghost" id="copyEmailBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy email
+          </button>
+          <a class="btn btn-ghost" href="Abhishek_Kumar_Resume.pdf" download="Abhishek_Kumar_Resume.pdf" target="_blank" rel="noopener">Download Resume</a>
+        </div>
+      </div>
+      <div class="contact-links">
+        <a class="clink" href="tel:+918448636006">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <span><span class="t">Phone</span><br><span class="d">+91 84486 36006</span></span>
+        </a>
+        <a class="clink" href="mailto:rajputabhishek677@gmail.com" target="_blank" rel="noopener">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>
+          <span><span class="t">Email</span><br><span class="d">rajputabhishek677@gmail.com</span></span>
+        </a>
+        <a class="clink" href="https://www.linkedin.com/in/abhishek-kumar2301" target="_blank" rel="noopener">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></span>
+          <span><span class="t">LinkedIn</span><br><span class="d">in/abhishek-kumar2301</span></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><span class="mono">AK</span>Abhishek Kumar</div>
+    © 2026 · Quality Engineer · Test Automation (Tricentis Tosca)
+  </div>
+</footer>
+
+<button class="totop" id="toTop" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // ---- Theme & accent ----
+  function setTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    try { localStorage.setItem('ak-theme', t); } catch(e){}
+  }
+  function setAccent(a){
+    document.documentElement.setAttribute('data-accent', a);
+    try { localStorage.setItem('ak-accent', a); } catch(e){}
+    document.querySelectorAll('.swatch').forEach(function(s){
+      s.classList.toggle('active', s.getAttribute('data-accent') === a);
+    });
+  }
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    var cur = document.documentElement.getAttribute('data-theme');
+    setTheme(cur === 'dark' ? 'light' : 'dark');
+  });
+  var accentBtn = document.getElementById('accentBtn');
+  var accentPop = document.getElementById('accentPop');
+  accentBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    accentPop.classList.toggle('open');
+  });
+  document.addEventListener('click', function(e){
+    if (!accentPop.contains(e.target) && !accentBtn.contains(e.target)) accentPop.classList.remove('open');
+  });
+  document.querySelectorAll('.swatch').forEach(function(s){
+    s.addEventListener('click', function(){
+      setAccent(s.getAttribute('data-accent'));
+      accentPop.classList.remove('open');
+    });
+  });
+  // Init accent active state (theme already applied in <head>)
+  setAccent(document.documentElement.getAttribute('data-accent') || 'aurora');
+
+  // ---- Toast ----
+  function toast(msg){
+    var t = document.getElementById('toast');
+    if(!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function(){ t.classList.remove('show'); }, 2600);
+  }
+
+  // ---- Copy email (with fallbacks) ----
+  function fallbackCopy(text, cb){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly','');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, 99999);
+    var done = false;
+    try { done = document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+    done ? cb() : toast('Copy blocked — use: ' + text);
+  }
+  function copyEmail(){
+    var email = 'rajputabhishek677@gmail.com';
+    var done = function(){ toast('Copied: ' + email); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(email).then(done).catch(function(){ fallbackCopy(email, done); });
+    } else {
+      fallbackCopy(email, done);
+    }
+  }
+  var copyBtn = document.getElementById('copyEmailBtn');
+  if (copyBtn) copyBtn.addEventListener('click', copyEmail);
+
+  // ---- Mobile menu ----
+  var burger = document.getElementById('hamburger');
+  var links = document.getElementById('navLinks');
+  burger.addEventListener('click', function(){ links.classList.toggle('open'); });
+  links.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ links.classList.remove('open'); });
+  });
+
+  // ---- Back to top ----
+  var toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', function(){
+    if (window.scrollY > 600) toTop.classList.add('show');
+    else toTop.classList.remove('show');
+  }, { passive: true });
+  toTop.addEventListener('click', function(){ window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+  // ---- Scroll reveal ----
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // ---- Active nav highlight ----
+  var sections = ['about','skills','experience','achievements','credentials','contact'];
+  var navAnchors = {};
+  sections.forEach(function(id){ navAnchors[id] = links.querySelector('a[href="#'+id+'"]'); });
+  function onScroll(){
+    var pos = window.scrollY + 130;
+    var current = 'about';
+    sections.forEach(function(id){
+      var el = document.getElementById(id);
+      if (el && el.offsetTop <= pos) current = id;
+    });
+    sections.forEach(function(id){
+      var a = navAnchors[id];
+      if (a) a.classList.toggle('active', id === current);
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+</body>
+</html>
