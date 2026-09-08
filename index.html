@@ -347,6 +347,49 @@ section{padding:110px 0;position:relative}
 .ach h4{font-family:var(--f-display);font-size:16.5px;color:var(--ink);margin:16px 0 9px;letter-spacing:-.01em}
 .ach p{font-size:14px}
 
+/* ---- github ---- */
+.gh-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+@media(max-width:900px){.gh-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:420px){.gh-grid{grid-template-columns:1fr}}
+.gh-stat{padding:22px}
+.gh-stat .n{font-family:var(--f-display);font-size:34px;font-weight:700;letter-spacing:-.03em;color:var(--ink);line-height:1}
+.gh-stat .l{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-top:8px}
+.gh-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.gh-head .t{font-family:var(--f-display);font-size:17px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:11px}
+.gh-yrs{display:flex;gap:6px;flex-wrap:wrap}
+.gh-yr{font-size:12.5px;font-weight:600;padding:6px 13px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--line);color:var(--body);cursor:pointer;transition:.25s var(--ease)}
+.gh-yr:hover{border-color:var(--accent);color:var(--ink)}
+.gh-yr.on{background:color-mix(in srgb,var(--accent) 16%,transparent);border-color:var(--accent);color:var(--ink)}
+.hm-wrap{overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.hm{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px;min-width:660px}
+.hm i{width:11px;height:11px;border-radius:3px;background:var(--surface-2);border:1px solid var(--line);
+  display:block;transition:transform .18s var(--ease)}
+.hm i:hover{transform:scale(1.35)}
+.hm i[data-lv="1"]{background:color-mix(in srgb,var(--accent) 26%,transparent);border-color:transparent}
+.hm i[data-lv="2"]{background:color-mix(in srgb,var(--accent) 48%,transparent);border-color:transparent}
+.hm i[data-lv="3"]{background:color-mix(in srgb,var(--accent) 72%,transparent);border-color:transparent}
+.hm i[data-lv="4"]{background:var(--accent);border-color:transparent;box-shadow:0 0 10px -2px var(--glow)}
+.hm-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px;font-size:12.5px;color:var(--dim);flex-wrap:wrap}
+.hm-key{display:flex;align-items:center;gap:5px}
+.hm-key i{width:11px;height:11px;border-radius:3px;display:block;background:var(--surface-2);border:1px solid var(--line)}
+.hm-key i[data-lv="1"]{background:color-mix(in srgb,var(--accent) 26%,transparent);border-color:transparent}
+.hm-key i[data-lv="2"]{background:color-mix(in srgb,var(--accent) 48%,transparent);border-color:transparent}
+.hm-key i[data-lv="3"]{background:color-mix(in srgb,var(--accent) 72%,transparent);border-color:transparent}
+.hm-key i[data-lv="4"]{background:var(--accent);border-color:transparent}
+.repos{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+@media(max-width:900px){.repos{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.repos{grid-template-columns:1fr}}
+.repo{padding:22px;display:block}
+.repo .rn{font-family:var(--f-display);font-size:16px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px;word-break:break-word}
+.repo .rd{font-size:13.5px;color:var(--body);margin-top:9px;min-height:20px}
+.repo .rm{display:flex;gap:16px;align-items:center;font-size:12.5px;color:var(--dim);margin-top:16px;flex-wrap:wrap}
+.repo .rm span{display:inline-flex;align-items:center;gap:6px}
+.repo .rm svg{width:13px;height:13px}
+.dotlang{width:9px;height:9px;border-radius:50%;background:var(--accent);display:inline-block}
+.gh-note{font-size:13px;color:var(--dim);margin-top:14px}
+.gh-skel{opacity:.45}
+
 /* ---- awards ---- */
 .aw{display:flex;gap:15px;padding:17px 0;border-bottom:1px solid var(--line)}
 .aw:last-child{border:0;padding-bottom:0}
@@ -813,6 +856,7 @@ html,body{max-width:100%;overflow-x:clip}
     <li><a href="#skills">Skills</a></li>
     <li><a href="#work">Experience</a></li>
     <li><a href="#impact">Impact</a></li>
+    <li><a href="#github">GitHub</a></li>
     <li><a href="#credentials">Credentials</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -834,7 +878,7 @@ html,body{max-width:100%;overflow-x:clip}
 
 <div id="drawer">
   <a href="#about">About</a><a href="#skills">Skills</a><a href="#work">Experience</a>
-  <a href="#impact">Impact</a><a href="#credentials">Credentials</a><a href="#contact">Contact</a>
+  <a href="#impact">Impact</a><a href="#github">GitHub</a><a href="#credentials">Credentials</a><a href="#contact">Contact</a>
 </div>
 
 <main>
@@ -1014,6 +1058,36 @@ html,body{max-width:100%;overflow-x:clip}
     <div class="cell rv"><span class="ic-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
       <h4>Ahead of schedule</h4><p>Delivered critical automation ahead of schedule, improving QA timelines and early feedback cycles.</p></div>
   </div>
+</div></section>
+
+<section id="github"><div class="wrap">
+  <div class="sh rv">
+    <span class="eyebrow">Open Source</span>
+    <h2>GitHub contributions</h2>
+    <p>Live activity from <a href="https://github.com/Abhi23raj472" target="_blank" rel="noopener noreferrer" style="color:var(--accent);font-weight:600">@Abhi23raj472</a> — public repositories, contribution graph and recent work.</p>
+  </div>
+
+  <div class="gh-grid">
+    <div class="cell gh-stat rv"><div class="n ghn" id="ghRepos">—</div><div class="l">Public repos</div></div>
+    <div class="cell gh-stat rv"><div class="n ghn" id="ghContrib">—</div><div class="l">Contributions (1y)</div></div>
+    <div class="cell gh-stat rv"><div class="n ghn" id="ghStars">—</div><div class="l">Total stars</div></div>
+    <div class="cell gh-stat rv"><div class="n ghn" id="ghFollowers">—</div><div class="l">Followers</div></div>
+  </div>
+
+  <div class="cell c6 rv">
+    <div class="gh-head">
+      <div class="t"><span class="ic-box"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.42c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.35-1.29-1.71-1.29-1.71-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></span>Contribution graph</div>
+      <div class="gh-yrs" id="ghYears"></div>
+    </div>
+    <div class="hm-wrap"><div class="hm" id="ghHeat"></div></div>
+    <div class="hm-foot">
+      <span id="ghHeatLabel">Loading contribution activity…</span>
+      <span class="hm-key">Less <i></i><i data-lv="1"></i><i data-lv="2"></i><i data-lv="3"></i><i data-lv="4"></i> More</span>
+    </div>
+  </div>
+
+  <div class="repos" id="ghRepoList"></div>
+  <p class="gh-note" id="ghNote"></p>
 </div></section>
 
 <section id="credentials"><div class="wrap">
@@ -1315,6 +1389,128 @@ $('#copyBtn').onclick=function(){ copy(MAIL,function(){toast('Copied '+MAIL)}); 
 $('#top').onclick=function(){scrollTo({top:0,behavior:'smooth'})};
 $('#yr').textContent=new Date().getFullYear();
 
+/* ---------- GitHub contributions ---------- */
+(function(){
+  var USER='Abhi23raj472';
+  var API='https://api.github.com';
+  var CONTRIB='https://github-contributions-api.jogruber.de/v4/';
+  var heat=$('#ghHeat'), yrs=$('#ghYears'), label=$('#ghHeatLabel'),
+      list=$('#ghRepoList'), note=$('#ghNote');
+  if(!heat) return;
+
+  function num(el,v){
+    el=$(el); if(!el)return;
+    if(RM||v>999){el.textContent=v;return}
+    var s=null,d=1100;
+    requestAnimationFrame(function step(ts){
+      if(!s)s=ts; var p=Math.min((ts-s)/d,1);
+      el.textContent=Math.round((1-Math.pow(1-p,3))*v);
+      if(p<1)requestAnimationFrame(step);
+    });
+  }
+  function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function fmt(d){
+    return new Date(d+'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+  }
+  function skeleton(){
+    var f=document.createDocumentFragment();
+    for(var i=0;i<371;i++){var c=document.createElement('i');c.className='gh-skel';f.appendChild(c)}
+    heat.appendChild(f);
+  }
+  skeleton();
+
+  function paint(days){
+    heat.innerHTML='';
+    if(!days.length){label.textContent='No contribution data for this period.';return}
+    var max=0;
+    days.forEach(function(d){if(d.count>max)max=d.count});
+    // pad so the first column starts on Sunday
+    var pad=new Date(days[0].date+'T00:00:00').getDay();
+    var f=document.createDocumentFragment();
+    for(var i=0;i<pad;i++){var b=document.createElement('i');b.style.visibility='hidden';f.appendChild(b)}
+    var total=0;
+    days.forEach(function(d){
+      total+=d.count;
+      var lv=d.count===0?0:(typeof d.level==='number'?d.level:Math.min(4,Math.ceil(d.count/Math.max(1,max)*4)));
+      var i2=document.createElement('i');
+      if(lv)i2.setAttribute('data-lv',lv);
+      i2.title=d.count+(d.count===1?' contribution':' contributions')+' on '+fmt(d.date);
+      f.appendChild(i2);
+    });
+    heat.appendChild(f);
+    label.textContent=total.toLocaleString()+' contributions · '+fmt(days[0].date)+' → '+fmt(days[days.length-1].date);
+    return total;
+  }
+
+  function renderRepos(repos){
+    if(!repos.length){list.innerHTML='';return}
+    list.innerHTML=repos.map(function(r){
+      return '<a class="cell repo rv in" href="'+esc(r.html_url)+'" target="_blank" rel="noopener noreferrer">'+
+        '<div class="rn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--accent)"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'+esc(r.name)+'</div>'+
+        '<div class="rd">'+esc(r.description||'No description provided.')+'</div>'+
+        '<div class="rm">'+
+          (r.language?'<span><i class="dotlang"></i>'+esc(r.language)+'</span>':'')+
+          '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.7 5.8 21.3l2.4-7.4L2 9.4h7.6z"/></svg>'+r.stargazers_count+'</span>'+
+          '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="12" cy="19" r="3"/><path d="M6 9v3a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V9"/></svg>'+r.forks_count+'</span>'+
+          '<span>Updated '+fmt(r.pushed_at.slice(0,10))+'</span>'+
+        '</div></a>';
+    }).join('');
+  }
+
+  function fail(msg){
+    note.textContent=msg+' View the full profile on '+'github.com/'+USER+'.';
+  }
+
+  /* --- profile + repos --- */
+  fetch(API+'/users/'+USER).then(function(r){return r.ok?r.json():Promise.reject()}).then(function(u){
+    num('#ghRepos',u.public_repos); num('#ghFollowers',u.followers);
+  }).catch(function(){ $('#ghRepos').textContent='—'; $('#ghFollowers').textContent='—'; });
+
+  fetch(API+'/users/'+USER+'/repos?per_page=100&sort=pushed')
+    .then(function(r){return r.ok?r.json():Promise.reject()})
+    .then(function(rs){
+      rs=rs.filter(function(r){return !r.fork});
+      var stars=rs.reduce(function(a,r){return a+r.stargazers_count},0);
+      num('#ghStars',stars);
+      renderRepos(rs.slice().sort(function(a,b){
+        return (b.stargazers_count-a.stargazers_count)||(new Date(b.pushed_at)-new Date(a.pushed_at));
+      }).slice(0,6));
+    })
+    .catch(function(){ $('#ghStars').textContent='—'; fail('Live GitHub data is rate limited right now.'); });
+
+  /* --- contributions --- */
+  var cache=null, thisYear=new Date().getFullYear();
+  function showYear(y){
+    $$('.gh-yr',yrs).forEach(function(b){b.classList.toggle('on',b.dataset.y===String(y))});
+    var days=cache.contributions.filter(function(d){
+      if(y==='last') return new Date(d.date)>=new Date(Date.now()-364*864e5);
+      return d.date.slice(0,4)===String(y);
+    });
+    var t=paint(days);
+    if(y==='last'&&t!=null) num('#ghContrib',t);
+  }
+  fetch(CONTRIB+USER+'?y=all')
+    .then(function(r){return r.ok?r.json():Promise.reject()})
+    .then(function(d){
+      cache=d;
+      var years=Object.keys(d.total||{}).filter(function(k){return /^\d{4}$/.test(k)})
+        .sort(function(a,b){return b-a}).slice(0,5);
+      var btns=[{y:'last',t:'Last 12 months'}].concat(years.map(function(y){return {y:y,t:y}}));
+      yrs.innerHTML=btns.map(function(b){return '<button class="gh-yr" data-y="'+b.y+'">'+b.t+'</button>'}).join('');
+      $$('.gh-yr',yrs).forEach(function(b){b.onclick=function(){showYear(b.dataset.y)}});
+      showYear('last');
+      if(d.total&&d.total[thisYear]!=null) note.textContent=d.total[thisYear].toLocaleString()+' contributions in '+thisYear+'. Data refreshes on every page load.';
+    })
+    .catch(function(){
+      heat.innerHTML=''; yrs.innerHTML='';
+      $('#ghContrib').textContent='—';
+      label.textContent='Contribution graph unavailable right now.';
+      heat.innerHTML='<img alt="GitHub contribution graph" style="min-width:0;max-width:100%;border-radius:10px" src="https://ghchart.rshah.org/'+USER+'">';
+      heat.style.display='block';
+    });
+})();
+
 /* ---------- Command palette ---------- */
 (function(){
   var box=$('#cmdk'), inp=$('#cmdInput'), list=$('#cmdList'), sel=0;
@@ -1326,6 +1522,7 @@ $('#yr').textContent=new Date().getFullYear();
     {t:'Skills',g:'Section',i:ico.go,a:function(){loc('#skills')}},
     {t:'Experience',g:'Section',i:ico.go,a:function(){loc('#work')}},
     {t:'Impact',g:'Section',i:ico.go,a:function(){loc('#impact')}},
+    {t:'GitHub contributions',g:'Section',i:ico.go,a:function(){loc('#github')}},
     {t:'Credentials',g:'Section',i:ico.go,a:function(){loc('#credentials')}},
     {t:'Contact',g:'Section',i:ico.go,a:function(){loc('#contact')}},
     {t:'Copy email address',g:'Action',i:ico.cp,a:function(){copy(MAIL,function(){toast('Copied '+MAIL)})}},
