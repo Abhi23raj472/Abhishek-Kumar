@@ -377,16 +377,6 @@ section{padding:110px 0;position:relative}
 .hm-key i[data-lv="2"]{background:color-mix(in srgb,var(--accent) 48%,transparent);border-color:transparent}
 .hm-key i[data-lv="3"]{background:color-mix(in srgb,var(--accent) 72%,transparent);border-color:transparent}
 .hm-key i[data-lv="4"]{background:var(--accent);border-color:transparent}
-.repos{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
-@media(max-width:900px){.repos{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.repos{grid-template-columns:1fr}}
-.repo{padding:22px;display:block}
-.repo .rn{font-family:var(--f-display);font-size:16px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px;word-break:break-word}
-.repo .rd{font-size:13.5px;color:var(--body);margin-top:9px;min-height:20px}
-.repo .rm{display:flex;gap:16px;align-items:center;font-size:12.5px;color:var(--dim);margin-top:16px;flex-wrap:wrap}
-.repo .rm span{display:inline-flex;align-items:center;gap:6px}
-.repo .rm svg{width:13px;height:13px}
-.dotlang{width:9px;height:9px;border-radius:50%;background:var(--accent);display:inline-block}
 .gh-note{font-size:13px;color:var(--dim);margin-top:14px}
 .gh-skel{opacity:.45}
 
@@ -1064,7 +1054,7 @@ html,body{max-width:100%;overflow-x:clip}
   <div class="sh rv">
     <span class="eyebrow">Open Source</span>
     <h2>GitHub contributions</h2>
-    <p>Live activity from <a href="https://github.com/Abhi23raj472" target="_blank" rel="noopener noreferrer" style="color:var(--accent);font-weight:600">@Abhi23raj472</a> — public repositories, contribution graph and recent work.</p>
+    <p>Live activity from <a href="https://github.com/Abhi23raj472" target="_blank" rel="noopener noreferrer" style="color:var(--accent);font-weight:600">@Abhi23raj472</a> — public repositories and contribution graph.</p>
   </div>
 
   <div class="gh-grid">
@@ -1086,7 +1076,6 @@ html,body{max-width:100%;overflow-x:clip}
     </div>
   </div>
 
-  <div class="repos" id="ghRepoList"></div>
   <p class="gh-note" id="ghNote"></p>
 </div></section>
 
@@ -1395,7 +1384,7 @@ $('#yr').textContent=new Date().getFullYear();
   var API='https://api.github.com';
   var CONTRIB='https://github-contributions-api.jogruber.de/v4/';
   var heat=$('#ghHeat'), yrs=$('#ghYears'), label=$('#ghHeatLabel'),
-      list=$('#ghRepoList'), note=$('#ghNote');
+      note=$('#ghNote');
   if(!heat) return;
 
   function num(el,v){
@@ -1408,8 +1397,6 @@ $('#yr').textContent=new Date().getFullYear();
       if(p<1)requestAnimationFrame(step);
     });
   }
-  function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function fmt(d){
     return new Date(d+'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
   }
@@ -1443,21 +1430,6 @@ $('#yr').textContent=new Date().getFullYear();
     return total;
   }
 
-  function renderRepos(repos){
-    if(!repos.length){list.innerHTML='';return}
-    list.innerHTML=repos.map(function(r){
-      return '<a class="cell repo rv in" href="'+esc(r.html_url)+'" target="_blank" rel="noopener noreferrer">'+
-        '<div class="rn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--accent)"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'+esc(r.name)+'</div>'+
-        '<div class="rd">'+esc(r.description||'No description provided.')+'</div>'+
-        '<div class="rm">'+
-          (r.language?'<span><i class="dotlang"></i>'+esc(r.language)+'</span>':'')+
-          '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.7 5.8 21.3l2.4-7.4L2 9.4h7.6z"/></svg>'+r.stargazers_count+'</span>'+
-          '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="12" cy="19" r="3"/><path d="M6 9v3a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V9"/></svg>'+r.forks_count+'</span>'+
-          '<span>Updated '+fmt(r.pushed_at.slice(0,10))+'</span>'+
-        '</div></a>';
-    }).join('');
-  }
-
   function fail(msg){
     note.textContent=msg+' View the full profile on '+'github.com/'+USER+'.';
   }
@@ -1473,9 +1445,6 @@ $('#yr').textContent=new Date().getFullYear();
       rs=rs.filter(function(r){return !r.fork});
       var stars=rs.reduce(function(a,r){return a+r.stargazers_count},0);
       num('#ghStars',stars);
-      renderRepos(rs.slice().sort(function(a,b){
-        return (b.stargazers_count-a.stargazers_count)||(new Date(b.pushed_at)-new Date(a.pushed_at));
-      }).slice(0,6));
     })
     .catch(function(){ $('#ghStars').textContent='—'; fail('Live GitHub data is rate limited right now.'); });
 
