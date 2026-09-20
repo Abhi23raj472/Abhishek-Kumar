@@ -36,7 +36,7 @@
   --grad:linear-gradient(135deg,var(--c1),var(--c2) 50%,var(--c3));
 
   --bg:#07070c; --bg-2:#0b0b13; --surface:#101019; --surface-2:#15151f;
-  --ink:#f4f5fb; --body:#a8adc0; --dim:#6b7080;
+  --ink:#f4f5fb; --body:#aeb3c6; --dim:#7d8395;
   --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
 
   --r-sm:12px; --r:18px; --r-lg:26px; --r-xl:34px;
@@ -126,13 +126,19 @@ main,header,footer,nav{position:relative;z-index:1}
    PROGRESS + NAV
    ============================================================ */
 #prog{position:fixed;top:0;left:0;height:2px;width:0;background:var(--grad);z-index:200;transition:width .1s linear}
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:150;
-  transition:background .4s var(--ease),border-color .4s,backdrop-filter .4s;
-  border-bottom:1px solid transparent;
+nav{position:fixed;top:0;left:0;right:0;z-index:150;padding-top:var(--nav-top);pointer-events:none}
+/* The island. Its frost lives on ::before so the element itself never becomes a
+   containing block for the fixed-position accent sheet on phones. */
+.nav-in{
+  pointer-events:auto;position:relative;display:flex;align-items:center;justify-content:space-between;
+  height:var(--nav-h);gap:14px;padding:0 10px 0 12px;border-radius:22px;
 }
-nav.stuck{background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(20px) saturate(1.6);border-bottom-color:var(--line)}
-.nav-in{display:flex;align-items:center;justify-content:space-between;height:74px;gap:18px}
+.nav-in::before{
+  content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;
+  background:var(--glass-sheen),var(--glass);border:1px solid var(--glass-line);box-shadow:var(--sh-glass);
+  transition:background .4s var(--ease),border-color .4s,box-shadow .4s
+}
+nav.stuck .nav-in::before{background:var(--glass-sheen),var(--glass-3);border-color:var(--glass-line-2)}
 .logo{display:flex;align-items:center;gap:11px;font-family:var(--f-display);font-weight:700;font-size:16px;color:var(--ink);letter-spacing:-.01em}
 .logo .mk{
   width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
@@ -171,12 +177,13 @@ nav.stuck{background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filte
 .burger.x span:nth-child(3){transform:translateY(-5.6px) rotate(-45deg)}
 @media(max-width:1080px){.burger{display:grid}}
 #drawer{
-  position:fixed;inset:74px 0 auto;z-index:140;background:color-mix(in srgb,var(--bg) 96%,transparent);
-  backdrop-filter:blur(24px);border-bottom:1px solid var(--line);
-  transform:translateY(-120%);transition:transform .5s var(--ease);padding:20px 0 30px
+  position:fixed;inset:calc(var(--nav-top) + var(--nav-h) + 8px) 16px auto;z-index:140;
+  background:var(--glass-sheen),var(--glass-solid);border:1px solid var(--glass-line-2);border-radius:22px;box-shadow:var(--sh-glass);
+  transform:translateY(-130%);transition:transform .5s var(--ease);padding:10px 8px 12px
 }
 #drawer.open{transform:none}
-#drawer a{display:block;padding:14px 28px;font-family:var(--f-display);font-size:22px;color:var(--ink);border-bottom:1px solid var(--line)}
+#drawer a{display:block;padding:14px 18px;font-family:var(--f-display);font-size:22px;color:var(--ink);border-bottom:1px solid var(--line);border-radius:12px}
+#drawer a:last-child{border-bottom:0}
 
 /* popover */
 .pop{
@@ -243,11 +250,13 @@ nav.stuck{background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filte
 .g-dot:nth-child(2){background:#febc2e}.g-dot:nth-child(3){background:#28c840}
 
 /* ---- stats ---- */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:80px;
-  background:var(--line);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:80px;position:relative;
+  background:var(--glass-sheen),var(--glass);border:1px solid var(--glass-line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-glass)}
 @media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}}
-.st{background:var(--bg);padding:28px 24px;transition:background .35s}
-.st:hover{background:var(--surface)}
+.st{background:transparent;padding:28px 24px;transition:background .35s;border-left:1px solid var(--glass-line)}
+.st:first-child{border-left:0}
+.st:hover{background:var(--hover)}
+@media(max-width:720px){.st:nth-child(3){border-left:0}.st:nth-child(n+3){border-top:1px solid var(--glass-line)}}
 .st .n{font-family:var(--f-display);font-size:clamp(32px,4vw,44px);font-weight:700;color:var(--ink);letter-spacing:-.03em;line-height:1}
 .st .n em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .st .l{font-size:12.5px;color:var(--dim);margin-top:8px;letter-spacing:.02em}
@@ -255,8 +264,9 @@ nav.stuck{background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filte
 /* ============================================================
    MARQUEE
    ============================================================ */
-.mq{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 0;margin-top:90px;
-  background:color-mix(in srgb,var(--surface) 40%,transparent);
+.mq{overflow:hidden;border-top:1px solid var(--glass-line);border-bottom:1px solid var(--glass-line);padding:20px 0;margin-top:90px;
+  background:var(--glass-2);box-shadow:var(--edge)}
+.mq-mask{overflow:hidden;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
           mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .mq-t{display:flex;width:max-content;animation:mq 42s linear infinite}
@@ -479,8 +489,11 @@ footer{border-top:1px solid var(--line);padding:44px 0;margin-top:40px}
 /* ---- Breathing gradient auras ---- */
 .aura.a1{animation:drift1 26s ease-in-out infinite}
 .aura.a2{animation:drift2 32s ease-in-out infinite}
-@keyframes drift1{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(60px,40px,0) scale(1.14)}}
-@keyframes drift2{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-50px,60px,0) scale(1.1)}}
+@keyframes drift1{0%,100%{transform:translate3d(0,var(--py,0px),0) scale(1)}50%{transform:translate3d(60px,calc(var(--py,0px) + 40px),0) scale(1.14)}}
+@keyframes drift2{0%,100%{transform:translate3d(0,var(--py,0px),0) scale(1)}50%{transform:translate3d(-50px,calc(var(--py,0px) + 60px),0) scale(1.1)}}
+@keyframes drift3{0%,100%{transform:translate3d(0,var(--py,0px),0) scale(1)}50%{transform:translate3d(70px,calc(var(--py,0px) - 50px),0) scale(1.12)}}
+.aura.a3{animation:drift3 30s ease-in-out infinite}
+.aura.a4{animation:drift2 36s ease-in-out infinite reverse}
 
 /* ---- Section headings: word-by-word rise ---- */
 .sh h2 .w{display:inline-block;opacity:0;transform:translateY(24px) rotate(2deg)}
@@ -632,7 +645,7 @@ html,body{max-width:100%;overflow-x:clip}
 /* ---------- Tablet ---------- */
 @media(max-width:1080px){
   .hero{padding:132px 0 64px}
-  .obj,.cue{display:none}
+  .obj,.cue,.shards{display:none}
   .stats{margin-top:56px}
   .mq{margin-top:64px}
 }
@@ -661,13 +674,14 @@ html,body{max-width:100%;overflow-x:clip}
   :root{--r:15px;--r-lg:20px;--r-xl:24px}
 
   /* Nav: give the bar and its controls real touch targets */
-  .nav-in{height:64px;gap:10px}
+  :root{--nav-top:10px;--nav-h:60px;--blur:14px}
+  .nav-in{height:var(--nav-h);gap:8px;padding:0 8px 0 10px}
   .logo{font-size:15px;gap:9px}
   .logo .mk{width:40px;height:40px;font-size:13px}
   .ic-btn{width:44px;height:44px;border-radius:12px}
   .ic-btn svg{width:20px;height:20px}
   .burger{width:44px;height:44px;border-radius:12px}
-  #drawer{inset:64px 0 auto}
+  #drawer{inset:calc(var(--nav-top) + var(--nav-h) + 8px) 12px auto}
   #drawer a{padding:16px 20px;font-size:20px}
 
   /* Accent popover: anchor to the screen, not the button */
@@ -822,6 +836,195 @@ html,body{max-width:100%;overflow-x:clip}
   .rv{opacity:1;transform:none}
   .hero h1 .ln>span{transform:none}
 }
+
+
+/* ============================================================
+   GLASS LAYER — frosted, translucent surfaces floating over a
+   living colour field.
+   · Blur is reserved for panel-level elements (cards, nav
+     island, stats slab, CTA, sheets). Chips, rows and buttons
+     inside a panel reuse the parent's frost — cheaper, and it
+     reads as one sheet of glass instead of many.
+   · Every panel = translucent fill + diagonal sheen + hairline
+     border + light-catching rim (::before) + 1px specular edge.
+   ============================================================ */
+:root{
+  --nav-top:14px; --nav-h:66px;
+  --blur:22px; --sat:1.6;
+  --glass:rgba(255,255,255,.055);
+  --glass-2:rgba(255,255,255,.035);
+  --glass-3:rgba(255,255,255,.095);
+  --glass-solid:color-mix(in srgb,var(--bg) 74%,transparent);
+  --glass-line:rgba(255,255,255,.13);
+  --glass-line-2:rgba(255,255,255,.25);
+  --glass-hi:rgba(255,255,255,.42);
+  --glass-sheen:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,0) 42%,rgba(255,255,255,0) 72%,rgba(255,255,255,.03));
+  --shard:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.03) 55%,rgba(255,255,255,.08));
+  --hover:rgba(255,255,255,.06);
+  --groove:rgba(255,255,255,.06);
+  --groove-line:rgba(255,255,255,.08);
+  --line:rgba(255,255,255,.1); --line-2:rgba(255,255,255,.18);
+  --edge:inset 0 1px 0 rgba(255,255,255,.12);
+  --sh-glass:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 0 rgba(255,255,255,.03),0 2px 6px rgba(0,0,0,.22),0 26px 60px -30px rgba(0,0,0,.75);
+  --sh-glass-2:inset 0 1px 0 rgba(255,255,255,.16),0 4px 10px rgba(0,0,0,.25),0 40px 90px -34px rgba(0,0,0,.85),0 24px 60px -30px var(--glow);
+}
+[data-theme="light"]{
+  --bg:#eef0f8; --bg-2:#e6e9f4;
+  --glass:rgba(255,255,255,.5);
+  --glass-2:rgba(255,255,255,.4);
+  --glass-3:rgba(255,255,255,.72);
+  --glass-solid:rgba(255,255,255,.82);
+  --glass-line:rgba(255,255,255,.85);
+  --glass-line-2:rgba(255,255,255,1);
+  --glass-hi:rgba(255,255,255,1);
+  --glass-sheen:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,255,255,.1) 45%,rgba(255,255,255,0) 70%,rgba(255,255,255,.45));
+  --shard:linear-gradient(135deg,rgba(255,255,255,.7),rgba(255,255,255,.22) 55%,rgba(255,255,255,.45));
+  --hover:rgba(11,13,22,.045);
+  --groove:rgba(11,13,22,.07);
+  --groove-line:rgba(11,13,22,.05);
+  --line:rgba(11,13,22,.08); --line-2:rgba(11,13,22,.14);
+  --edge:inset 0 1px 0 rgba(255,255,255,.95);
+  --sh-glass:inset 0 1px 0 rgba(255,255,255,.95),0 0 0 1px rgba(11,13,22,.045),0 2px 6px rgba(16,20,40,.04),0 26px 60px -30px rgba(16,20,40,.32);
+  --sh-glass-2:inset 0 1px 0 #fff,0 0 0 1px rgba(11,13,22,.06),0 6px 14px rgba(16,20,40,.06),0 40px 90px -34px rgba(16,20,40,.4),0 24px 60px -30px var(--glow);
+}
+
+/* ---- frost: the only elements that actually blur their backdrop ---- */
+.cell,.stats,.lnk,.cta-box,.pop,.cmd-box,#drawer,#top,.btn-s,.mq,.sd,.nav-in::before,.ld-inner{
+  -webkit-backdrop-filter:blur(var(--blur)) saturate(var(--sat));
+          backdrop-filter:blur(var(--blur)) saturate(var(--sat));
+}
+.cell .cell,.ic-btn,.kbd,.nav-mid{-webkit-backdrop-filter:none;backdrop-filter:none}
+
+/* ---- rim: a 1px gradient ring that catches light on the top-left edge ---- */
+.cell::before,.lnk::before,.sd::before,.nav-in::after,#drawer::before,.pop::before{
+  content:'';position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;z-index:3;
+  background:linear-gradient(135deg,var(--glass-hi),transparent 34%,transparent 66%,color-mix(in srgb,var(--glass-hi) 45%,transparent));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+          mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+          mask-composite:exclude;
+  opacity:.75;transition:opacity .4s
+}
+.cell:hover::before,.lnk:hover::before{opacity:1}
+
+/* ---- colour field: four drifting auras so glass always has something to refract ---- */
+.aura{opacity:.46}
+.aura.a1{width:660px;height:660px}
+.aura.a2{width:560px;height:560px;opacity:.32;top:6%}
+.aura.a3{width:560px;height:560px;background:var(--c2);bottom:-280px;left:18%;opacity:.28}
+.aura.a4{width:440px;height:440px;background:var(--c3);bottom:-120px;right:10%;opacity:.16}
+[data-theme="light"] .aura{opacity:.36;filter:blur(120px)}
+[data-theme="light"] .aura.a2{opacity:.28}
+[data-theme="light"] .aura.a3{opacity:.26}
+[data-theme="light"] .aura.a4{opacity:.16}
+
+/* ---- preloader ---- */
+#loader{background:radial-gradient(640px 420px at 50% 42%,color-mix(in srgb,var(--c1) 18%,transparent),transparent 70%),
+  radial-gradient(520px 420px at 72% 64%,color-mix(in srgb,var(--c3) 12%,transparent),transparent 70%),var(--bg)}
+.ld-inner{width:272px;padding:30px 28px;border-radius:22px;background:var(--glass-sheen),var(--glass);border:1px solid var(--glass-line);box-shadow:var(--sh-glass)}
+
+/* ---- nav island contents ---- */
+.nav-mid{background:var(--glass-2);border-color:var(--glass-line);box-shadow:var(--edge)}
+#pill{box-shadow:var(--edge),0 1px 2px rgba(0,0,0,.18)}
+.ic-btn,.kbd,.burger{background:var(--glass-2);border-color:var(--glass-line);box-shadow:var(--edge)}
+.ic-btn:hover,.kbd:hover{background:var(--glass-3)}
+.pop{background:var(--glass-sheen),var(--glass-solid);border-color:var(--glass-line-2);box-shadow:var(--sh-glass)}
+@media(min-width:721px){.pop{top:calc(100% + 24px)}}   /* phones keep the bottom-sheet placement from the responsive pass */
+.sw-row:hover{background:var(--hover)}
+
+/* ---- buttons ---- */
+.btn-p{background:linear-gradient(180deg,rgba(255,255,255,.26),rgba(255,255,255,0) 52%),var(--grad)}
+.btn-s{background:var(--glass-sheen),var(--glass);border-color:var(--glass-line-2);box-shadow:var(--edge),0 2px 6px rgba(0,0,0,.12)}
+.btn-s:hover{background:var(--glass-sheen),var(--glass-3);box-shadow:var(--edge),0 16px 30px -16px var(--glow)}
+
+/* ---- hero: floating glass shards ---- */
+.hero-grid{position:relative}
+.shards{position:absolute;right:0;top:-40px;width:360px;height:460px;pointer-events:none;z-index:0;transition:transform .9s var(--ease)}
+.sd{
+  position:absolute;display:block;background:var(--shard);border:1px solid var(--glass-line-2);
+  box-shadow:var(--sh-glass),0 0 0 1px rgba(255,255,255,.02),0 30px 70px -30px var(--glow);
+}
+.sd::after{content:'';position:absolute;top:9%;left:9%;width:42%;height:28%;border-radius:50%;
+  background:radial-gradient(ellipse at 50% 45%,rgba(255,255,255,.4),transparent 70%);filter:blur(6px);transform:rotate(-22deg)}
+.sd1{width:210px;height:210px;border-radius:54px;right:24px;top:0;animation:float1 11s ease-in-out infinite}
+.sd2{width:128px;height:128px;border-radius:50%;right:246px;top:150px;animation:float2 9s ease-in-out infinite}
+.sd3{width:224px;height:66px;border-radius:999px;right:0;top:330px;animation:float3 13s ease-in-out infinite}
+.sd4{width:54px;height:54px;border-radius:18px;right:300px;top:392px;animation:float4 10s ease-in-out infinite}
+.sd3::after{width:30%;height:40%;top:14%;left:7%}
+@keyframes float1{0%,100%{transform:rotate(14deg) translateY(0)}50%{transform:rotate(19deg) translateY(-18px)}}
+@keyframes float2{0%,100%{transform:translateY(0)}50%{transform:translateY(14px) translateX(-6px)}}
+@keyframes float3{0%,100%{transform:rotate(-12deg) translateY(0)}50%{transform:rotate(-9deg) translateY(-12px)}}
+@keyframes float4{0%,100%{transform:rotate(25deg) translateY(0)}50%{transform:rotate(45deg) translateY(10px)}}
+
+/* ---- cards ---- */
+.cell{
+  background:var(--glass-sheen),var(--glass);border-color:var(--glass-line);
+  box-shadow:var(--sh-glass);overflow:visible;
+}
+.cell:hover{border-color:var(--glass-line-2);box-shadow:var(--sh-glass-2)}
+.cell::after{background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--accent) 16%,transparent),transparent 65%)}
+.cell.sub{background:var(--glass-2);box-shadow:var(--edge);padding:20px}
+.cell.sub:hover{transform:translateY(-3px);box-shadow:var(--edge),0 18px 40px -24px rgba(0,0,0,.6)}
+.ic-box{box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 6px 14px -8px var(--glow)}
+.tag,.gh-yr,.job .when{background:var(--glass-2);border-color:var(--glass-line);box-shadow:var(--edge)}
+.job .when{color:var(--body)}
+.tag:hover,.gh-yr:hover{background:var(--glass-3)}
+.kv,.aw{border-bottom-color:var(--line)}
+.track{background:var(--groove);border-color:var(--groove-line)}
+.job::before{background:color-mix(in srgb,var(--accent) 32%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 14%,transparent),0 0 16px var(--glow)}
+.hm i,.hm-key i{background:var(--groove);border-color:transparent}
+
+/* ---- contact ---- */
+.lnk{position:relative;background:var(--glass-sheen),var(--glass);border-color:var(--glass-line);box-shadow:var(--sh-glass)}
+.lnk:hover{box-shadow:var(--sh-glass-2)}
+.cta-box{background:var(--glass-sheen),linear-gradient(150deg,var(--glass-3),var(--glass));border-color:var(--glass-line-2);box-shadow:var(--sh-glass);overflow:visible}
+.cta-box::before{top:0;left:0;right:0;bottom:0;transform:none;width:auto;height:auto;border-radius:inherit;
+  background:radial-gradient(60% 55% at 50% -18%,var(--glow),transparent 70%);opacity:.6}
+/* rotating light travelling along the glass edge */
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+.cta-box::after{
+  inset:-1px;padding:1px;z-index:3;pointer-events:none;transform:none;
+  background:conic-gradient(from var(--ang),transparent 0deg,var(--c1) 50deg,var(--c2) 85deg,var(--c3) 120deg,transparent 170deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+          mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+          mask-composite:exclude;
+  animation:ring 9s linear infinite
+}
+.cta-box.in::after{opacity:1}
+@keyframes ring{to{--ang:360deg}}
+
+/* ---- chrome ---- */
+footer{border-top-color:var(--glass-line)}
+#top{background:var(--glass-sheen),var(--glass-3);border-color:var(--glass-line-2);box-shadow:var(--sh-glass)}
+#toast{background:color-mix(in srgb,var(--ink) 92%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#cmdk{background:color-mix(in srgb,var(--bg) 58%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2)}
+.cmd-box{background:var(--glass-sheen),var(--glass-solid);border-color:var(--glass-line-2);box-shadow:var(--sh-glass)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--ink) 18%,transparent);border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background-color:color-mix(in srgb,var(--ink) 30%,transparent)}
+
+/* ---- phones: smaller field, cheaper blur (see --blur in the responsive pass) ---- */
+@media(max-width:720px){
+  .aura.a3{width:320px;height:320px;opacity:.22;left:auto;right:-120px;bottom:-140px}
+  .aura.a4{display:none}
+  [data-theme="light"] .aura.a3{opacity:.18}
+}
+
+/* ---- graceful degradation: opaque-ish surfaces where blur can't happen ---- */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  :root{--glass:rgba(24,24,36,.9);--glass-2:rgba(30,30,44,.85);--glass-3:rgba(36,36,52,.94);--glass-solid:rgba(12,12,20,.97)}
+  [data-theme="light"]{--glass:rgba(255,255,255,.92);--glass-2:rgba(255,255,255,.85);--glass-3:rgba(255,255,255,.97);--glass-solid:rgba(255,255,255,.98)}
+}
+@media(prefers-reduced-transparency:reduce){
+  :root{--glass:rgba(24,24,36,.96);--glass-2:rgba(30,30,44,.94);--glass-3:rgba(36,36,52,.98);--glass-solid:rgba(12,12,20,.99)}
+  [data-theme="light"]{--glass:rgba(255,255,255,.97);--glass-2:rgba(255,255,255,.94);--glass-3:#fff;--glass-solid:#fff}
+  .cell,.stats,.lnk,.cta-box,.pop,.cmd-box,#drawer,#top,.btn-s,.mq,.sd,.nav-in::before,.ld-inner,#cmdk,#toast{-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .sd,.cta-box::after{animation:none!important}
+}
 </style>
 </head>
 <body>
@@ -834,11 +1037,11 @@ html,body{max-width:100%;overflow-x:clip}
 
 <div class="cur"></div><div class="cur-d"></div>
 <div class="grain"></div>
-<div class="aura a1"></div><div class="aura a2"></div>
+<div class="aura a1"></div><div class="aura a2"></div><div class="aura a3"></div><div class="aura a4"></div>
 <canvas id="field"></canvas>
 <div id="prog"></div>
 
-<nav id="nav"><div class="wrap nav-in">
+<nav id="nav"><div class="wrap"><div class="nav-in">
   <a class="logo" href="#hero"><span class="mk">AK</span>Abhishek Kumar</a>
   <ul class="nav-mid" id="navMid">
     <div id="pill"></div>
@@ -864,7 +1067,7 @@ html,body{max-width:100%;overflow-x:clip}
       <button class="sw-row" data-acc="mono"><span class="dot d-mono"></span>Mono</button>
     </div>
   </div>
-</div></nav>
+</div></div></nav>
 
 <div id="drawer">
   <a href="#about">About</a><a href="#skills">Skills</a><a href="#work">Experience</a>
@@ -874,6 +1077,7 @@ html,body{max-width:100%;overflow-x:clip}
 <main>
 <header class="hero" id="hero"><div class="wrap">
   <div class="hero-grid">
+    <div class="shards" aria-hidden="true"><i class="sd sd1"></i><i class="sd sd2"></i><i class="sd sd3"></i><i class="sd sd4"></i></div>
     <div>
       <h1>
         <span class="ln"><span>Abhishek</span></span>
@@ -900,10 +1104,10 @@ html,body{max-width:100%;overflow-x:clip}
   </div>
 </div>
 
-<div class="mq"><div class="mq-t">
+<div class="mq"><div class="mq-mask"><div class="mq-t">
   <div class="mq-g"><span>Tricentis Tosca</span><i>✦</i><span>Tosca DEX</span><i>✦</i><span>Tosca TCD</span><i>✦</i><span>XScan</span><i>✦</i><span>API Testing</span><i>✦</i><span>Postman</span><i>✦</i><span>SOAP UI</span><i>✦</i><span>JIRA</span><i>✦</i><span>Confluence</span><i>✦</i><span>CI/CD</span><i>✦</i><span>Agile</span><i>✦</i><span>MySQL</span><i>✦</i><span>TQL</span><i>✦</i><span>ISTQB</span><i>✦</i></div>
   <div class="mq-g" aria-hidden="true"><span>Tricentis Tosca</span><i>✦</i><span>Tosca DEX</span><i>✦</i><span>Tosca TCD</span><i>✦</i><span>XScan</span><i>✦</i><span>API Testing</span><i>✦</i><span>Postman</span><i>✦</i><span>SOAP UI</span><i>✦</i><span>JIRA</span><i>✦</i><span>Confluence</span><i>✦</i><span>CI/CD</span><i>✦</i><span>Agile</span><i>✦</i><span>MySQL</span><i>✦</i><span>TQL</span><i>✦</i><span>ISTQB</span><i>✦</i></div>
-</div></div>
+</div></div></div>
 </header>
 
 <section id="about"><div class="wrap">
@@ -930,16 +1134,16 @@ html,body{max-width:100%;overflow-x:clip}
     <div class="cell c6 rv">
       <h3><span class="ic-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>What I deliver</h3>
       <div class="bento" style="gap:14px;margin-top:6px">
-        <div class="cell c3" style="background:var(--surface-2);box-shadow:none;padding:20px">
+        <div class="cell c3 sub">
           <p><b style="color:var(--ink)">Scalable suites</b><br>Automation for web &amp; desktop apps in Tricentis Tosca, built on reusable modules.</p>
         </div>
-        <div class="cell c3" style="background:var(--surface-2);box-shadow:none;padding:20px">
+        <div class="cell c3 sub">
           <p><b style="color:var(--ink)">API coverage</b><br>REST &amp; SOAP validation of payloads, status codes, headers and auth in real time.</p>
         </div>
-        <div class="cell c3" style="background:var(--surface-2);box-shadow:none;padding:20px">
+        <div class="cell c3 sub">
           <p><b style="color:var(--ink)">Parallel execution</b><br>Distributed runs via Tosca DEX with smart agent load balancing.</p>
         </div>
-        <div class="cell c3" style="background:var(--surface-2);box-shadow:none;padding:20px">
+        <div class="cell c3 sub">
           <p><b style="color:var(--ink)">Defect lifecycle</b><br>Triage and tracking in JIRA with fast resolution and minimal re-testing.</p>
         </div>
       </div>
@@ -1312,13 +1516,14 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches && !RM){
 
 /* ---------- Aura parallax ---------- */
 if(!RM){
-  var a1=$('.aura.a1'), a2=$('.aura.a2'), tick=false;
+  var a1=$('.aura.a1'), a2=$('.aura.a2'), a3=$('.aura.a3'), tick=false;
   addEventListener('scroll',function(){
     if(tick)return; tick=true;
     requestAnimationFrame(function(){
       var y=scrollY;
-      a1.style.transform='translate3d(0,'+(y*.14)+'px,0)';
-      a2.style.transform='translate3d(0,'+(y*-.08)+'px,0)';
+      a1.style.setProperty('--py',(y*.14)+'px');
+      a2.style.setProperty('--py',(y*-.08)+'px');
+      if(a3) a3.style.setProperty('--py',(y*-.05)+'px');
       tick=false;
     });
   },{passive:true});
@@ -1633,8 +1838,12 @@ $$('.btn-p').forEach(function(b){
 (function(){
   var cv=$('#field');
   if(!cv||RM||!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
-  var f=null,tx=0,ty=0;
-  function draw(){ cv.style.transform='translate3d('+tx+'px,'+ty+'px,0)'; f=null; }
+  var f=null,tx=0,ty=0,sh=$('.shards');
+  function draw(){
+    cv.style.transform='translate3d('+tx+'px,'+ty+'px,0)';
+    if(sh) sh.style.transform='translate3d('+(tx*-1.4)+'px,'+(ty*-1.4)+'px,0)';
+    f=null;
+  }
   addEventListener('mousemove',function(e){
     tx=(e.clientX/innerWidth-.5)*-18;
     ty=(e.clientY/innerHeight-.5)*-18;
