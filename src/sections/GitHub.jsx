@@ -5,7 +5,7 @@ import { Counter, SectionHead, Spotlight, Stagger, StaggerItem } from '../compon
 
 const API = 'https://api.github.com'
 const CONTRIB = 'https://github-contributions-api.jogruber.de/v4/'
-const levels = ['bg-tint/[0.05]', 'bg-pass/25', 'bg-pass/45', 'bg-pass/70', 'bg-pass']
+const levels = ['bg-tint/[0.09]', 'bg-pass/35', 'bg-pass/55', 'bg-pass/80', 'bg-pass']
 
 const fmt = (d) => new Date(d + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
 
@@ -18,13 +18,18 @@ export default function GitHub() {
   const [year, setYear] = useState('last')
 
   useEffect(() => {
-    fetch(`${API}/users/${user}`).then((r) => (r.ok ? r.json() : Promise.reject())).then(setU).catch(() => {})
-    fetch(`${API}/users/${user}/repos?per_page=100&sort=pushed`)
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
+    // Live data first; if a request is blocked or rate-limited, fall back to
+    // the snapshot the deploy workflow saves daily into public/github-data/.
+    const get = (live, snap) =>
+      fetch(live)
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .catch(() => fetch(snap).then((r) => (r.ok ? r.json() : Promise.reject())))
+
+    get(`${API}/users/${user}`, './github-data/user.json').then(setU).catch(() => {})
+    get(`${API}/users/${user}/repos?per_page=100&sort=pushed`, './github-data/repos.json')
       .then((rs) => setStars(rs.filter((r) => !r.fork).reduce((a, r) => a + r.stargazers_count, 0)))
       .catch(() => {})
-    fetch(`${CONTRIB}${user}?y=all`)
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
+    get(`${CONTRIB}${user}?y=all`, './github-data/contributions.json')
       .then(setData)
       .catch(() => setFailed(true))
   }, [user])

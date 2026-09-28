@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '30 0 * * *'   # daily, so the GitHub stats snapshot stays fresh
   workflow_dispatch:
 
 permissions:
@@ -24,6 +26,19 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Snapshot GitHub stats (fallback if live requests are blocked)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_USER: Abhi23raj472
+        run: |
+          mkdir -p public/github-data
+          save() {  # save URL to FILE only if the download succeeds
+            if curl -fsSL -H "Authorization: Bearer $GH_TOKEN" "$1" -o "$2.tmp"; then mv "$2.tmp" "$2"; else rm -f "$2.tmp"; fi
+          }
+          save "https://api.github.com/users/$GH_USER" public/github-data/user.json
+          save "https://api.github.com/users/$GH_USER/repos?per_page=100&sort=pushed" public/github-data/repos.json
+          if curl -fsSL "https://github-contributions-api.jogruber.de/v4/$GH_USER?y=all" -o c.tmp; then mv c.tmp public/github-data/contributions.json; fi
+          ls -la public/github-data
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
