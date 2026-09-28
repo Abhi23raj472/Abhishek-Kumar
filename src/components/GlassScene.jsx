@@ -46,10 +46,10 @@ function Backdrop() {
       g.fillRect(0, 0, 512, 512)
     }
     // keep every blob well inside the texture so the plane has no visible edge
-    blob(210, 230, 130, 'rgba(52,211,153,0.9)')
-    blob(310, 200, 120, 'rgba(34,211,238,0.8)')
-    blob(290, 320, 130, 'rgba(167,139,250,0.8)')
-    blob(200, 330, 90, 'rgba(52,211,153,0.55)')
+    blob(210, 230, 130, 'rgba(16,185,129,0.85)')
+    blob(310, 200, 120, 'rgba(14,165,233,0.8)')
+    blob(290, 320, 130, 'rgba(139,92,246,0.75)')
+    blob(200, 330, 90, 'rgba(251,146,60,0.45)')
     const t = new THREE.CanvasTexture(c)
     t.colorSpace = THREE.SRGBColorSpace
     return t
@@ -57,7 +57,7 @@ function Backdrop() {
   return (
     <mesh position={[0, 0, -3.5]} scale={[11, 11, 1]}>
       <planeGeometry />
-      <meshBasicMaterial map={tex} transparent opacity={0.55} depthWrite={false} toneMapped={false} />
+      <meshBasicMaterial map={tex} transparent opacity={0.45} depthWrite={false} toneMapped={false} />
     </mesh>
   )
 }
@@ -93,7 +93,7 @@ function Shapes({ reduce }) {
         <Spin speed={0.25} reduce={reduce}>
           <mesh position={[0.2, 0.1, 0]} scale={1.05}>
             <torusKnotGeometry args={[0.9, 0.32, 220, 36]} />
-            <Glass tint="#d9fff0" />
+            <Glass tint="#ffffff" background={new THREE.Color('#e3f1ef')} />
           </mesh>
         </Spin>
       </Float>
@@ -101,21 +101,21 @@ function Shapes({ reduce }) {
       <Float speed={2 * f} rotationIntensity={1.2 * f} floatIntensity={2 * f}>
         <mesh position={[-2.1, 1.3, -0.8]} scale={0.55}>
           <icosahedronGeometry args={[1, 0]} />
-          <Glass tint="#bff6ff" thickness={0.6} background={new THREE.Color('#0f4a4f')} />
+          <Glass tint="#bff6ff" thickness={0.6} background={new THREE.Color('#bfe9f7')} />
         </mesh>
       </Float>
 
       <Float speed={1.7 * f} rotationIntensity={0.8 * f} floatIntensity={1.6 * f}>
         <mesh position={[2.2, -1.2, -0.5]} scale={0.5}>
           <sphereGeometry args={[1, 64, 64]} />
-          <Glass tint="#e7dcff" thickness={1.4} background={new THREE.Color('#2a2358')} />
+          <Glass tint="#e7dcff" thickness={1.4} background={new THREE.Color('#ddd3fe')} />
         </mesh>
       </Float>
 
       <Float speed={2.4 * f} rotationIntensity={1.5 * f} floatIntensity={1.4 * f}>
         <mesh position={[-1.6, -1.5, 0.4]} scale={0.34} rotation={[0.6, 0.4, 0]}>
           <boxGeometry args={[1.3, 1.3, 1.3]} />
-          <Glass tint="#d9fff0" thickness={0.5} background={new THREE.Color('#0f4a3a')} />
+          <Glass tint="#d9fff0" thickness={0.5} background={new THREE.Color('#bff0dc')} />
         </mesh>
       </Float>
     </Rig>
@@ -164,7 +164,7 @@ export default function GlassScene({ reduce = false }) {
         <Shapes reduce={reduce} />
         <Environment resolution={256}>
           <group rotation={[-Math.PI / 3, 0, 1]}>
-            <Lightformer form="circle" intensity={4} color="#34d399" position={[0, 5, -9]} scale={4} />
+            <Lightformer form="circle" intensity={4} color="#10b981" position={[0, 5, -9]} scale={4} />
             <Lightformer form="circle" intensity={3} color="#22d3ee" position={[-5, 1, -1]} scale={3} />
             <Lightformer form="circle" intensity={3} color="#a78bfa" position={[5, -1, -1]} scale={3} />
             <Lightformer form="ring" intensity={2} color="#ffffff" position={[-4, -4, 2]} scale={6} />

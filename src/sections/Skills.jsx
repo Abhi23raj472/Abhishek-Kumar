@@ -26,7 +26,7 @@ export default function Skills() {
                     <span className="font-medium text-fg">{p.name}</span>
                     <span className="font-mono text-xs text-pass">{p.level}</span>
                   </div>
-                  <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-white/[0.06]">
+                  <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-tint/[0.06]">
                     <motion.div
                       className="h-full rounded-full bg-gradient-to-r from-pass to-cyan"
                       initial={{ width: 0 }}
@@ -52,7 +52,7 @@ export default function Skills() {
                     {s.v.map((v) => (
                       <motion.span
                         key={v}
-                        whileHover={{ y: -2, borderColor: 'rgba(52,211,153,0.5)', color: '#eef1f4' }}
+                        whileHover={{ y: -2, borderColor: 'rgba(5,150,105,0.5)', color: '#0b1220' }}
                         className="cursor-default rounded-lg glass-chip px-2.5 py-1 text-sm"
                       >
                         {v}

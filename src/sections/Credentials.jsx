@@ -65,7 +65,7 @@ export default function Credentials() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease, delay: 0.1 + i * 0.08 }}
                   whileHover={{ x: 4 }}
-                  className={`rounded-2xl border p-5 ${i === 0 ? 'border-pass/30 bg-gradient-to-br from-pass/10 to-cyan/5' : 'border-line bg-white/[0.02]'}`}
+                  className={`rounded-2xl border p-5 ${i === 0 ? 'border-pass/30 bg-gradient-to-br from-pass/10 to-cyan/5' : 'border-line bg-tint/[0.02]'}`}
                 >
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <span className="font-display text-lg font-semibold text-fg">

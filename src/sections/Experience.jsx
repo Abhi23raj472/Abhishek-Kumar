@@ -39,7 +39,7 @@ export default function Experience() {
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true, margin: '-100px' }}
                 transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.2 }}
-                className={`absolute -left-8 top-8 grid h-4 w-4 place-items-center rounded-full border-2 md:-left-12 md:h-6 md:w-6 ${job.current ? 'border-pass bg-pass/20' : 'border-line-2 bg-ink'}`}
+                className={`absolute -left-8 top-8 grid h-4 w-4 place-items-center rounded-full border-2 md:-left-12 md:h-6 md:w-6 ${job.current ? 'border-pass bg-pass/20' : 'border-line-2 bg-panel'}`}
               >
                 {job.current && <span className="h-1.5 w-1.5 animate-ping rounded-full bg-pass md:h-2 md:w-2" />}
               </motion.span>
@@ -76,7 +76,7 @@ export default function Experience() {
                   ))}
                 </ul>
 
-                <div className="mt-7 flex flex-wrap gap-1.5 border-t border-white/10 pt-5">
+                <div className="mt-7 flex flex-wrap gap-1.5 border-t border-tint/10 pt-5">
                   {job.tags.map((t) => (
                     <span key={t} className="glass-chip rounded-md px-2 py-1 font-mono text-xs text-dim">{t}</span>
                   ))}

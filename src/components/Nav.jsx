@@ -65,7 +65,7 @@ export default function Nav() {
                   {pill === n.id && (
                     <motion.span
                       layoutId="nav-pill"
-                      className="absolute inset-0 -z-10 rounded-lg bg-white/[0.07]"
+                      className="absolute inset-0 -z-10 rounded-lg bg-tint/[0.07]"
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -78,7 +78,7 @@ export default function Nav() {
           <a
             href={profile.resume}
             download
-            className="ml-auto hidden rounded-xl bg-fg px-4 py-2 text-sm font-semibold text-ink transition hover:bg-pass sm:inline-flex lg:ml-2"
+            className="ml-auto hidden rounded-xl bg-fg px-4 py-2 text-sm font-semibold text-onaccent transition hover:bg-pass sm:inline-flex lg:ml-2"
           >
             Résumé ↓
           </a>
@@ -116,7 +116,7 @@ export default function Nav() {
                     <a
                       href={`#${n.id}`}
                       onClick={() => setOpen(false)}
-                      className="flex items-center justify-between rounded-xl px-4 py-3 text-fg hover:bg-white/5"
+                      className="flex items-center justify-between rounded-xl px-4 py-3 text-fg hover:bg-tint/5"
                     >
                       <span className="font-display text-lg">{n.label}</span>
                       <span className="font-mono text-xs text-mute">0{i + 1}</span>
@@ -127,7 +127,7 @@ export default function Nav() {
               <a
                 href={profile.resume}
                 download
-                className="mt-2 block rounded-xl bg-pass px-4 py-3 text-center font-semibold text-ink"
+                className="mt-2 block rounded-xl bg-pass px-4 py-3 text-center font-semibold text-onaccent"
               >
                 Download résumé (PDF)
               </a>

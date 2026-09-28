@@ -8,17 +8,19 @@
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --color-ink: #07080a;
-  --color-panel: #0d0f12;
-  --color-panel-2: #12151a;
-  --color-line: rgb(255 255 255 / 0.08);
-  --color-line-2: rgb(255 255 255 / 0.14);
-  --color-fg: #eef1f4;
-  --color-dim: #9aa3ad;
-  --color-mute: #6b7480;
-  --color-pass: #34d399;
-  --color-cyan: #22d3ee;
-  --color-violet: #a78bfa;
+  /* Light glass theme. Text colours all pass WCAG AA on the frosted cards. */
+  --color-ink: #eef2f7;        /* page background */
+  --color-panel: #ffffff;
+  --color-line: rgb(15 23 42 / 0.10);
+  --color-line-2: rgb(15 23 42 / 0.16);
+  --color-fg: #0b1220;         /* headings, strong text */
+  --color-dim: #334155;        /* body text */
+  --color-mute: #526072;       /* labels, meta */
+  --color-pass: #059669;       /* emerald accent */
+  --color-cyan: #0284c7;       /* sky accent */
+  --color-violet: #7c3aed;
+  --color-tint: #0f172a;       /* subtle overlays: bg-tint/5, border-tint/10 */
+  --color-onaccent: #ffffff;   /* text on filled accent buttons */
 }
 
 html {
@@ -36,18 +38,18 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
 }
-::selection { background: var(--color-pass); color: var(--color-ink); }
+::selection { background: var(--color-pass); color: #fff; }
 :focus-visible { outline: 2px solid var(--color-pass); outline-offset: 3px; border-radius: 8px; }
 
 /* Subtle dotted grid behind the whole page */
 .grid-bg {
-  background-image: radial-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px);
+  background-image: radial-gradient(rgb(15 23 42 / 0.09) 1px, transparent 1px);
   background-size: 28px 28px;
   mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
 }
 
 .text-gradient {
-  background: linear-gradient(100deg, #34d399 0%, #22d3ee 100%);
+  background: linear-gradient(100deg, #059669 0%, #0284c7 60%, #7c3aed 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -62,7 +64,7 @@ body {
   pointer-events: none;
   opacity: var(--o, 0);
   transition: opacity .3s;
-  background: radial-gradient(420px circle at var(--x, 50%) var(--y, 50%), rgb(52 211 153 / 0.10), transparent 60%);
+  background: radial-gradient(420px circle at var(--x, 50%) var(--y, 50%), rgb(16 185 129 / 0.10), transparent 60%);
 }
 .spotlight::after {
   content: '';
@@ -73,44 +75,56 @@ body {
   pointer-events: none;
   opacity: var(--o, 0);
   transition: opacity .3s;
-  background: radial-gradient(260px circle at var(--x, 50%) var(--y, 50%), rgb(52 211 153 / 0.55), transparent 60%);
+  background: radial-gradient(260px circle at var(--x, 50%) var(--y, 50%), rgb(5 150 105 / 0.55), transparent 60%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
 }
 
-/* ============ Glassmorphism ============ */
-/* Most cards fake the frosted look with a translucent gradient: the aurora
-   behind them is already blurred, so a real backdrop blur on every card adds
-   little but costs a full re-blur of each card on every scroll frame.
-   Real backdrop blur is kept only where something sharp sits behind glass
-   (.glass-blur: the nav, the mobile menu and the hero terminal). */
+/* ============ Glassmorphism (light) ============ */
+/* Cards fake the frost with a translucent white gradient over the pastel
+   background (a real backdrop blur on every card made scrolling lag).
+   Real backdrop blur is kept only on .glass-blur: nav, mobile menu, terminal. */
 .glass {
   background:
-    linear-gradient(135deg, rgb(255 255 255 / 0.10), rgb(255 255 255 / 0.03) 45%, rgb(255 255 255 / 0.05)),
-    rgb(14 17 22 / 0.35);
-  border: 1px solid rgb(255 255 255 / 0.11);
+    linear-gradient(135deg, rgb(255 255 255 / 0.82), rgb(255 255 255 / 0.52) 55%, rgb(255 255 255 / 0.66));
+  border: 1px solid rgb(255 255 255 / 0.9);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.14),
-    inset 0 -1px 0 rgb(255 255 255 / 0.03),
-    0 24px 60px -30px rgb(0 0 0 / 0.7);
+    inset 0 1px 0 rgb(255 255 255 / 1),
+    0 1px 2px rgb(15 23 42 / 0.05),
+    0 24px 50px -28px rgb(30 41 59 / 0.35);
 }
 .glass-blur {
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
 }
-/* smaller frosted chips inside glass cards */
 .glass-chip {
-  background: rgb(255 255 255 / 0.05);
-  border: 1px solid rgb(255 255 255 / 0.09);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08);
+  background: rgb(255 255 255 / 0.7);
+  border: 1px solid rgb(15 23 42 / 0.08);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass-blur { background: rgb(18 21 26 / 0.92); }
+  .glass-blur { background: rgb(255 255 255 / 0.94); }
+}
+
+/* Dark glass island (the hero terminal) inside the light page */
+.scope-dark {
+  --color-fg: #f1f5f9;
+  --color-dim: #cbd5e1;
+  --color-mute: #94a3b8;
+  --color-pass: #34d399;
+  --color-cyan: #38bdf8;
+  --color-tint: #ffffff;
+  color: var(--color-dim);
+}
+.glass.scope-dark {
+  background: linear-gradient(135deg, rgb(15 23 42 / 0.88), rgb(15 23 42 / 0.78));
+  border-color: rgb(255 255 255 / 0.12);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.10), 0 40px 90px -35px rgb(15 23 42 / 0.6);
 }
 
 /* Film grain over the aurora so the gradients don't band */
 .grain {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
-  opacity: 0.035;
+  opacity: 0.05;
 }

@@ -31,7 +31,7 @@ export default function Contact() {
       <Spotlight tilt={3} className="overflow-hidden p-8 md:p-14">
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-40 -top-40 h-[32rem] w-[32rem] bg-[radial-gradient(closest-side,rgb(52_211_153/0.18),transparent)]"
+          className="pointer-events-none absolute -right-40 -top-40 h-[32rem] w-[32rem] bg-[radial-gradient(closest-side,rgb(110_231_183/0.35),transparent)]"
         />
         <Reveal className="font-mono text-xs uppercase tracking-[0.2em] text-pass">07 — Contact</Reveal>
         <Reveal delay={0.06}>
@@ -50,7 +50,7 @@ export default function Contact() {
           <Magnetic>
             <button
               onClick={copy}
-              className="relative inline-flex min-w-[190px] items-center justify-center gap-2 overflow-hidden rounded-2xl bg-pass px-6 py-3.5 font-semibold text-ink"
+              className="relative inline-flex min-w-[190px] items-center justify-center gap-2 overflow-hidden rounded-2xl bg-pass px-6 py-3.5 font-semibold text-onaccent"
             >
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
@@ -70,7 +70,7 @@ export default function Contact() {
               href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(profile.email)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 glass-chip rounded-2xl px-6 py-3.5 font-semibold text-fg hover:bg-white/10"
+              className="inline-flex items-center gap-2 glass-chip rounded-2xl px-6 py-3.5 font-semibold text-fg hover:bg-tint/10"
             >
               Open in Gmail ↗
             </a>
@@ -79,14 +79,14 @@ export default function Contact() {
             <a
               href={profile.resume}
               download
-              className="inline-flex items-center gap-2 glass-chip rounded-2xl px-6 py-3.5 font-semibold text-fg hover:bg-white/10"
+              className="inline-flex items-center gap-2 glass-chip rounded-2xl px-6 py-3.5 font-semibold text-fg hover:bg-tint/10"
             >
               Download résumé ↓
             </a>
           </Magnetic>
         </Reveal>
 
-        <div className="mt-12 grid gap-3 border-t border-white/10 pt-8 md:grid-cols-3">
+        <div className="mt-12 grid gap-3 border-t border-tint/10 pt-8 md:grid-cols-3">
           {links.map((l, i) => (
             <motion.a
               key={l.k}

@@ -50,8 +50,8 @@ function Terminal() {
       style={{ transformPerspective: 1200 }}
       className="relative w-full"
     >
-     <Spotlight tilt={9} className="glass-blur overflow-hidden shadow-[0_40px_120px_-30px_rgba(52,211,153,0.35)]">
-      <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+     <Spotlight tilt={9} className="scope-dark glass-blur overflow-hidden">
+      <div className="flex items-center gap-2 border-b border-tint/10 px-4 py-3">
         <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
         <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
         <span className="h-3 w-3 rounded-full bg-[#28c840]" />
@@ -73,7 +73,7 @@ function Terminal() {
           <motion.div
             key={c.t}
             initial={false}
-            animate={i < done ? { opacity: 1, x: 0 } : { opacity: 0.18, x: 0 }}
+            animate={i < done ? { opacity: 1, x: 0 } : { opacity: 0.4, x: 0 }}
             transition={{ duration: 0.35 }}
             className="flex items-center gap-3"
           >
@@ -93,7 +93,7 @@ function Terminal() {
         <motion.div
           initial={false}
           animate={{ opacity: finished ? 1 : 0, y: finished ? 0 : 6 }}
-          className="mt-3 border-t border-white/10 pt-3 text-dim"
+          className="mt-3 border-t border-tint/10 pt-3 text-dim"
         >
           <span className="text-pass">6 passed</span>, 0 failed · <span className="text-fg">open to new roles</span>
         </motion.div>
@@ -107,7 +107,7 @@ function Marquee() {
   const reduce = useReducedMotion()
   const row = [...marquee, ...marquee]
   return (
-    <div className="relative mt-16 overflow-hidden border-y border-white/10 bg-white/[0.02] py-5 [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
+    <div className="relative mt-16 overflow-hidden border-y border-tint/10 bg-tint/[0.02] py-5 [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
       <motion.div
         className="flex w-max gap-10 pr-10"
         animate={reduce ? {} : { x: ['0%', '-50%'] }}
@@ -129,7 +129,7 @@ export default function Hero() {
   const [webgl] = useState(() => hasWebGL())
   const mx = useMotionValue(-1000)
   const my = useMotionValue(-1000)
-  const glow = useMotionTemplate`radial-gradient(600px circle at ${mx}px ${my}px, rgba(52,211,153,0.10), transparent 70%)`
+  const glow = useMotionTemplate`radial-gradient(600px circle at ${mx}px ${my}px, rgba(16,185,129,0.10), transparent 70%)`
   const { scrollY } = useScroll()
   const yText = useTransform(scrollY, [0, 600], [0, -60])
   const fade = useTransform(scrollY, [0, 500], [1, 0.3])
@@ -152,7 +152,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease, delay: 0.2 }}
-            className="inline-flex items-center gap-2 rounded-full border border-pass/25 bg-pass/10 py-1 pl-2 pr-3 font-mono text-xs text-pass"
+            className="glass-chip inline-flex items-center gap-2 rounded-full py-1 pl-2 pr-3 font-mono text-xs font-medium text-pass"
           >
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pass opacity-60" />
@@ -204,7 +204,7 @@ export default function Hero() {
             <Magnetic>
               <a
                 href="#contact"
-                className="group inline-flex items-center gap-2 rounded-2xl bg-pass px-6 py-3.5 font-semibold text-ink shadow-[0_10px_40px_-10px_rgba(52,211,153,0.7)]"
+                className="group inline-flex items-center gap-2 rounded-2xl bg-pass px-6 py-3.5 font-semibold text-onaccent shadow-[0_12px_30px_-10px_rgba(5,150,105,0.55)]"
               >
                 Get in touch
                 <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -213,7 +213,7 @@ export default function Hero() {
             <Magnetic>
               <a
                 href="#experience"
-                className="glass inline-flex items-center gap-2 rounded-2xl px-6 py-3.5 font-semibold text-fg transition-colors hover:bg-white/10"
+                className="glass inline-flex items-center gap-2 rounded-2xl px-6 py-3.5 font-semibold text-fg transition-colors hover:bg-tint/10"
               >
                 View experience
               </a>

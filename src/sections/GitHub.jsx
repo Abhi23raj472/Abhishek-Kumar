@@ -5,7 +5,7 @@ import { Counter, SectionHead, Spotlight, Stagger, StaggerItem } from '../compon
 
 const API = 'https://api.github.com'
 const CONTRIB = 'https://github-contributions-api.jogruber.de/v4/'
-const levels = ['bg-white/[0.05]', 'bg-pass/25', 'bg-pass/45', 'bg-pass/70', 'bg-pass']
+const levels = ['bg-tint/[0.05]', 'bg-pass/25', 'bg-pass/45', 'bg-pass/70', 'bg-pass']
 
 const fmt = (d) => new Date(d + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
 
@@ -96,7 +96,7 @@ export default function GitHub() {
                 <button
                   key={b.y}
                   onClick={() => setYear(b.y)}
-                  className={`relative rounded-lg px-3 py-1.5 font-mono text-xs transition-colors ${year === b.y ? 'text-ink' : 'text-mute hover:text-fg'}`}
+                  className={`relative rounded-lg px-3 py-1.5 font-mono text-xs transition-colors ${year === b.y ? 'text-onaccent' : 'text-mute hover:text-fg'}`}
                 >
                   {year === b.y && (
                     <motion.span layoutId="yr" className="absolute inset-0 -z-0 rounded-lg bg-pass" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />

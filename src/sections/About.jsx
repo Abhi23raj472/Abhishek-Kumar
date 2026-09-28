@@ -35,7 +35,7 @@ export default function About() {
             <div className="font-mono text-xs uppercase tracking-[0.2em] text-mute">profile.json</div>
             <dl className="mt-5 space-y-3 font-mono text-[13px]">
               {facts.map(([k, v]) => (
-                <div key={k} className="flex justify-between gap-4 border-b border-white/10 pb-3 last:border-0">
+                <div key={k} className="flex justify-between gap-4 border-b border-tint/10 pb-3 last:border-0">
                   <dt className="text-mute">{k}</dt>
                   <dd className={k === 'status' ? 'text-pass' : 'text-fg'}>{v}</dd>
                 </div>
