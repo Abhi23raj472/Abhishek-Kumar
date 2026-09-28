@@ -1,0 +1,78 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+
+@theme {
+  --font-display: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-ink: #07080a;
+  --color-panel: #0d0f12;
+  --color-panel-2: #12151a;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-2: rgb(255 255 255 / 0.14);
+  --color-fg: #eef1f4;
+  --color-dim: #9aa3ad;
+  --color-mute: #6b7480;
+  --color-pass: #34d399;
+  --color-cyan: #22d3ee;
+}
+
+html {
+  scroll-padding-top: 96px;
+  -webkit-text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+body {
+  background: var(--color-ink);
+  color: var(--color-dim);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+::selection { background: var(--color-pass); color: var(--color-ink); }
+:focus-visible { outline: 2px solid var(--color-pass); outline-offset: 3px; border-radius: 8px; }
+
+/* Subtle dotted grid behind the whole page */
+.grid-bg {
+  background-image: radial-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+}
+
+.text-gradient {
+  background: linear-gradient(100deg, #34d399 0%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Card spotlight: --x/--y are set from the pointer in Spotlight.jsx */
+.spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--o, 0);
+  transition: opacity .3s;
+  background: radial-gradient(420px circle at var(--x, 50%) var(--y, 50%), rgb(52 211 153 / 0.10), transparent 60%);
+}
+.spotlight::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  opacity: var(--o, 0);
+  transition: opacity .3s;
+  background: radial-gradient(260px circle at var(--x, 50%) var(--y, 50%), rgb(52 211 153 / 0.55), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
