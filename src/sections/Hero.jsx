@@ -8,7 +8,7 @@ import {
   useSpring,
   useTransform,
 } from 'framer-motion'
-import { marquee, profile, specChecks, stats } from '../data'
+import { marquee, profile, stats } from '../data'
 import { Counter, Depth, Magnetic, Spotlight, ease } from '../components/motion'
 
 const GlassScene = lazy(() => import('../components/GlassScene'))
@@ -30,78 +30,6 @@ class SceneBoundary extends Component {
 }
 
 const headline = ['I', 'build', 'test', 'automation', 'that', 'ships', 'with', 'confidence.']
-
-function Terminal() {
-  const reduce = useReducedMotion()
-  const [done, setDone] = useState(reduce ? specChecks.length : 0)
-  useEffect(() => {
-    if (reduce) return
-    if (done >= specChecks.length) return
-    const t = setTimeout(() => setDone((d) => d + 1), done === 0 ? 1100 : 420)
-    return () => clearTimeout(t)
-  }, [done, reduce])
-  const finished = done >= specChecks.length
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30, rotateX: 12 }}
-      animate={{ opacity: 1, y: 0, rotateX: 0 }}
-      transition={{ duration: 1, ease, delay: 0.5 }}
-      style={{ transformPerspective: 1200 }}
-      className="relative w-full"
-    >
-     <Spotlight tilt={9} className="scope-dark glass-blur overflow-hidden">
-      <div className="flex items-center gap-2 border-b border-tint/10 px-4 py-3">
-        <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
-        <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
-        <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-        <span className="ml-3 font-mono text-xs text-mute">profile.spec</span>
-        <span className={`ml-auto flex items-center gap-1.5 font-mono text-[11px] ${finished ? 'text-pass' : 'text-cyan'}`}>
-          <motion.span
-            className={`h-1.5 w-1.5 rounded-full ${finished ? 'bg-pass' : 'bg-cyan'}`}
-            animate={finished ? { opacity: 1 } : { opacity: [1, 0.2, 1] }}
-            transition={{ repeat: finished ? 0 : Infinity, duration: 1 }}
-          />
-          {finished ? 'passed' : 'running'}
-        </span>
-      </div>
-      <div className="space-y-2 p-5 font-mono text-[13px] leading-relaxed">
-        <div className="text-dim">
-          <span className="text-pass">$</span> tosca run --suite profile
-        </div>
-        {specChecks.map((c, i) => (
-          <motion.div
-            key={c.t}
-            initial={false}
-            animate={i < done ? { opacity: 1, x: 0 } : { opacity: 0.4, x: 0 }}
-            transition={{ duration: 0.35 }}
-            className="flex items-center gap-3"
-          >
-            <span className="w-4 text-center">
-              {i < done ? (
-                <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="inline-block text-pass">✓</motion.span>
-              ) : i === done ? (
-                <motion.span className="inline-block text-cyan" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 0.9, ease: 'linear' }}>◌</motion.span>
-              ) : (
-                <span className="text-mute">·</span>
-              )}
-            </span>
-            <span className={i < done ? 'text-fg' : 'text-mute'}>{c.t}</span>
-            <span className="ml-auto text-mute">{i < done ? `${c.ms}ms` : ''}</span>
-          </motion.div>
-        ))}
-        <motion.div
-          initial={false}
-          animate={{ opacity: finished ? 1 : 0, y: finished ? 0 : 6 }}
-          className="mt-3 border-t border-tint/10 pt-3 text-dim"
-        >
-          <span className="text-pass">6 passed</span>, 0 failed · <span className="text-fg">open to new roles</span>
-        </motion.div>
-      </div>
-     </Spotlight>
-    </motion.div>
-  )
-}
 
 function Marquee() {
   const reduce = useReducedMotion()
@@ -221,13 +149,13 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        <div className="relative h-[430px] sm:h-[500px] lg:h-[580px]">
+        <div className="relative h-[340px] sm:h-[420px] lg:h-[540px]">
           {webgl && (
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.6, ease, delay: 0.2 }}
-              className="absolute -inset-x-10 -top-16 bottom-24 lg:-inset-x-16 lg:-top-24"
+              className="absolute -inset-x-10 -inset-y-10 lg:-inset-x-16 lg:-inset-y-16"
             >
               <SceneBoundary>
                 <Suspense fallback={null}>
@@ -236,9 +164,6 @@ export default function Hero() {
               </SceneBoundary>
             </motion.div>
           )}
-          <div className="absolute inset-x-0 bottom-0 lg:left-8">
-            <Terminal />
-          </div>
         </div>
       </div>
 

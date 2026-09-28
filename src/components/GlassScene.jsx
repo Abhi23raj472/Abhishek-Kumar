@@ -99,21 +99,21 @@ function Shapes({ reduce }) {
       </Float>
 
       <Float speed={2 * f} rotationIntensity={1.2 * f} floatIntensity={2 * f}>
-        <mesh position={[-2.1, 1.3, -0.8]} scale={0.55}>
+        <mesh position={[-1.6, 1.15, -0.8]} scale={0.5}>
           <icosahedronGeometry args={[1, 0]} />
           <Glass tint="#bff6ff" thickness={0.6} background={new THREE.Color('#bfe9f7')} />
         </mesh>
       </Float>
 
       <Float speed={1.7 * f} rotationIntensity={0.8 * f} floatIntensity={1.6 * f}>
-        <mesh position={[2.2, -1.2, -0.5]} scale={0.5}>
+        <mesh position={[1.7, -1.05, -0.5]} scale={0.45}>
           <sphereGeometry args={[1, 64, 64]} />
           <Glass tint="#e7dcff" thickness={1.4} background={new THREE.Color('#ddd3fe')} />
         </mesh>
       </Float>
 
       <Float speed={2.4 * f} rotationIntensity={1.5 * f} floatIntensity={1.4 * f}>
-        <mesh position={[-1.6, -1.5, 0.4]} scale={0.34} rotation={[0.6, 0.4, 0]}>
+        <mesh position={[-1.3, -1.2, 0.4]} scale={0.32} rotation={[0.6, 0.4, 0]}>
           <boxGeometry args={[1.3, 1.3, 1.3]} />
           <Glass tint="#d9fff0" thickness={0.5} background={new THREE.Color('#bff0dc')} />
         </mesh>
@@ -148,13 +148,13 @@ export default function GlassScene({ reduce = false }) {
       ref={wrap}
       className="h-full w-full"
       style={{
-        maskImage: 'radial-gradient(ellipse 70% 70% at 50% 50%, #000 55%, transparent 100%)',
-        WebkitMaskImage: 'radial-gradient(ellipse 70% 70% at 50% 50%, #000 55%, transparent 100%)',
+        maskImage: 'radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%)',
+        WebkitMaskImage: 'radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%)',
       }}
     >
       <Canvas
         dpr={small ? 1 : [1, 1.25]}
-        camera={{ position: [0, 0, 6.2], fov: 42 }}
+        camera={{ position: [0, 0, 6.8], fov: 42 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         <ambientLight intensity={0.4} />

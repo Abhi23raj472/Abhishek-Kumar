@@ -21,15 +21,6 @@ export const nav = [
   { id: 'contact', label: 'Contact' },
 ]
 
-export const specChecks = [
-  { t: 'experience >= 5 years', ms: 12 },
-  { t: 'tricentis tosca certified', ms: 8 },
-  { t: 'istqb foundation level', ms: 6 },
-  { t: 'api coverage: rest + soap', ms: 14 },
-  { t: 'ci/cd quality gates wired', ms: 9 },
-  { t: 'uat escalations == 0', ms: 5 },
-]
-
 export const stats = [
   { v: 5, suffix: '+', k: 'years in quality engineering' },
   { v: 12, suffix: '', k: 'certifications earned' },
