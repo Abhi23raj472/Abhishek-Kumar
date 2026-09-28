@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Component, Suspense, lazy, useEffect, useState } from 'react'
 import {
   motion,
   useMotionTemplate,
@@ -9,7 +9,25 @@ import {
   useTransform,
 } from 'framer-motion'
 import { marquee, profile, specChecks, stats } from '../data'
-import { Counter, Magnetic, ease } from '../components/motion'
+import { Counter, Depth, Magnetic, Spotlight, ease } from '../components/motion'
+
+const GlassScene = lazy(() => import('../components/GlassScene'))
+
+function hasWebGL() {
+  try {
+    const c = document.createElement('canvas')
+    return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl')))
+  } catch {
+    return false
+  }
+}
+
+// If WebGL fails for any reason, drop the 3D scene and keep the page.
+class SceneBoundary extends Component {
+  state = { failed: false }
+  static getDerivedStateFromError() { return { failed: true } }
+  render() { return this.state.failed ? null : this.props.children }
+}
 
 const headline = ['I', 'build', 'test', 'automation', 'that', 'ships', 'with', 'confidence.']
 
@@ -30,9 +48,10 @@ function Terminal() {
       animate={{ opacity: 1, y: 0, rotateX: 0 }}
       transition={{ duration: 1, ease, delay: 0.5 }}
       style={{ transformPerspective: 1200 }}
-      className="relative w-full overflow-hidden rounded-3xl border border-line bg-panel/80 shadow-[0_30px_120px_-30px_rgba(52,211,153,0.25)] backdrop-blur"
+      className="relative w-full"
     >
-      <div className="flex items-center gap-2 border-b border-line px-4 py-3">
+     <Spotlight tilt={9} className="overflow-hidden shadow-[0_40px_120px_-30px_rgba(52,211,153,0.35)]">
+      <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
         <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
         <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
         <span className="h-3 w-3 rounded-full bg-[#28c840]" />
@@ -74,11 +93,12 @@ function Terminal() {
         <motion.div
           initial={false}
           animate={{ opacity: finished ? 1 : 0, y: finished ? 0 : 6 }}
-          className="mt-3 border-t border-line pt-3 text-dim"
+          className="mt-3 border-t border-white/10 pt-3 text-dim"
         >
           <span className="text-pass">6 passed</span>, 0 failed · <span className="text-fg">open to new roles</span>
         </motion.div>
       </div>
+     </Spotlight>
     </motion.div>
   )
 }
@@ -87,7 +107,7 @@ function Marquee() {
   const reduce = useReducedMotion()
   const row = [...marquee, ...marquee]
   return (
-    <div className="relative mt-16 overflow-hidden border-y border-line py-5 [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
+    <div className="glass relative mt-16 overflow-hidden border-x-0 py-5 [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
       <motion.div
         className="flex w-max gap-10 pr-10"
         animate={reduce ? {} : { x: ['0%', '-50%'] }}
@@ -105,6 +125,8 @@ function Marquee() {
 }
 
 export default function Hero() {
+  const reduce = useReducedMotion()
+  const [webgl] = useState(() => hasWebGL())
   const mx = useMotionValue(-1000)
   const my = useMotionValue(-1000)
   const glow = useMotionTemplate`radial-gradient(600px circle at ${mx}px ${my}px, rgba(52,211,153,0.10), transparent 70%)`
@@ -122,20 +144,7 @@ export default function Hero() {
       }}
       className="relative overflow-hidden pt-32 md:pt-40"
     >
-      <div className="grid-bg pointer-events-none absolute inset-0" />
       <motion.div className="pointer-events-none absolute inset-0" style={{ background: glow }} />
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-pass/10 blur-[120px]"
-        animate={{ opacity: [0.5, 0.9, 0.5], scale: [1, 1.08, 1] }}
-        transition={{ repeat: Infinity, duration: 10, ease: 'easeInOut' }}
-      />
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute right-[-10%] top-40 h-[380px] w-[380px] rounded-full bg-cyan/10 blur-[110px]"
-        animate={{ x: [0, -40, 0], y: [0, 30, 0] }}
-        transition={{ repeat: Infinity, duration: 14, ease: 'easeInOut' }}
-      />
 
       <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 md:px-8 lg:grid-cols-[1.15fr_1fr]">
         <motion.div style={{ y: yText, opacity: fade }}>
@@ -204,7 +213,7 @@ export default function Hero() {
             <Magnetic>
               <a
                 href="#experience"
-                className="inline-flex items-center gap-2 rounded-2xl border border-line-2 px-6 py-3.5 font-semibold text-fg transition-colors hover:bg-white/5"
+                className="glass inline-flex items-center gap-2 rounded-2xl px-6 py-3.5 font-semibold text-fg transition-colors hover:bg-white/10"
               >
                 View experience
               </a>
@@ -212,22 +221,43 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        <Terminal />
+        <div className="relative h-[430px] sm:h-[500px] lg:h-[580px]">
+          {webgl && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.6, ease, delay: 0.2 }}
+              className="absolute -inset-x-10 -top-16 bottom-24 lg:-inset-x-16 lg:-top-24"
+            >
+              <SceneBoundary>
+                <Suspense fallback={null}>
+                  <GlassScene reduce={!!reduce} />
+                </Suspense>
+              </SceneBoundary>
+            </motion.div>
+          )}
+          <div className="absolute inset-x-0 bottom-0 lg:left-8">
+            <Terminal />
+          </div>
+        </div>
       </div>
 
       <div className="relative mx-auto mt-16 grid max-w-6xl grid-cols-2 gap-3 px-5 md:grid-cols-4 md:px-8">
         {stats.map((s, i) => (
           <motion.div
             key={s.k}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease, delay: 1.1 + i * 0.08 }}
-            className="rounded-2xl border border-line bg-panel/60 p-5 backdrop-blur"
+            initial={{ opacity: 0, y: 30, rotateX: 30, transformPerspective: 900 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0, transformPerspective: 900 }}
+            transition={{ duration: 0.8, ease, delay: 1.1 + i * 0.08 }}
           >
-            <div className="font-display text-4xl font-semibold text-fg">
-              <Counter to={s.v} suffix={s.suffix} />
-            </div>
-            <div className="mt-1 font-mono text-xs text-mute">{s.k}</div>
+            <Spotlight tilt={14} className="rounded-2xl p-5">
+              <Depth z={28}>
+                <div className="font-display text-4xl font-semibold text-fg">
+                  <Counter to={s.v} suffix={s.suffix} />
+                </div>
+                <div className="mt-1 font-mono text-xs text-mute">{s.k}</div>
+              </Depth>
+            </Spotlight>
           </motion.div>
         ))}
       </div>

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { MotionConfig } from 'framer-motion'
 import Nav from './components/Nav'
+import Aurora from './components/Aurora'
 import Hero from './sections/Hero'
 import About from './sections/About'
 import Skills from './sections/Skills'
@@ -22,6 +23,7 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
+      <Aurora />
       <Nav />
       <main>
         <Hero />
@@ -33,7 +35,7 @@ export default function App() {
         <Credentials />
         <Contact />
       </main>
-      <footer className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-8 font-mono text-xs text-mute md:px-8">
+      <footer className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-white/10 px-5 py-8 font-mono text-xs text-mute md:px-8">
         <span>© {new Date().getFullYear()} {profile.name}</span>
         <span>{profile.role} · {profile.focus}</span>
         <a href="#top" className="hover:text-fg">Back to top ↑</a>

@@ -9,7 +9,7 @@ export default function Experience() {
   const line = useSpring(scrollYProgress, { stiffness: 90, damping: 22 })
 
   return (
-    <section id="experience" className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+    <section id="experience" className="overflow-x-clip mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
       <SectionHead
         index="03"
         kicker="Experience"
@@ -28,8 +28,8 @@ export default function Experience() {
           {experience.map((job) => (
             <motion.article
               key={job.org}
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: 60, rotateY: -18, transformPerspective: 1200 }}
+              whileInView={{ opacity: 1, x: 0, rotateY: 0, transformPerspective: 1200 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.8, ease }}
               className="relative"
@@ -44,7 +44,7 @@ export default function Experience() {
                 {job.current && <span className="h-1.5 w-1.5 animate-ping rounded-full bg-pass md:h-2 md:w-2" />}
               </motion.span>
 
-              <Spotlight className="p-7 md:p-9">
+              <Spotlight tilt={3} className="p-7 md:p-9">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="font-display text-2xl font-semibold text-fg md:text-3xl">{job.role}</h3>
@@ -76,9 +76,9 @@ export default function Experience() {
                   ))}
                 </ul>
 
-                <div className="mt-7 flex flex-wrap gap-1.5 border-t border-line pt-5">
+                <div className="mt-7 flex flex-wrap gap-1.5 border-t border-white/10 pt-5">
                   {job.tags.map((t) => (
-                    <span key={t} className="rounded-md bg-white/[0.04] px-2 py-1 font-mono text-xs text-dim">{t}</span>
+                    <span key={t} className="glass-chip rounded-md px-2 py-1 font-mono text-xs text-dim">{t}</span>
                   ))}
                 </div>
               </Spotlight>

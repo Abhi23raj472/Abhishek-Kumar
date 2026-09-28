@@ -28,7 +28,7 @@ export default function Contact() {
 
   return (
     <section id="contact" className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
-      <Spotlight className="overflow-hidden p-8 md:p-14">
+      <Spotlight tilt={3} className="overflow-hidden p-8 md:p-14">
         <motion.div
           aria-hidden
           className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-pass/15 blur-[100px]"
@@ -72,7 +72,7 @@ export default function Contact() {
               href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(profile.email)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-2xl border border-line-2 px-6 py-3.5 font-semibold text-fg hover:bg-white/5"
+              className="inline-flex items-center gap-2 glass-chip rounded-2xl px-6 py-3.5 font-semibold text-fg hover:bg-white/10"
             >
               Open in Gmail ↗
             </a>
@@ -81,14 +81,14 @@ export default function Contact() {
             <a
               href={profile.resume}
               download
-              className="inline-flex items-center gap-2 rounded-2xl border border-line-2 px-6 py-3.5 font-semibold text-fg hover:bg-white/5"
+              className="inline-flex items-center gap-2 glass-chip rounded-2xl px-6 py-3.5 font-semibold text-fg hover:bg-white/10"
             >
               Download résumé ↓
             </a>
           </Magnetic>
         </Reveal>
 
-        <div className="mt-12 grid gap-3 border-t border-line pt-8 md:grid-cols-3">
+        <div className="mt-12 grid gap-3 border-t border-white/10 pt-8 md:grid-cols-3">
           {links.map((l, i) => (
             <motion.a
               key={l.k}
@@ -100,7 +100,7 @@ export default function Contact() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 * i }}
               whileHover={{ y: -3 }}
-              className="group flex items-center justify-between rounded-2xl border border-line bg-white/[0.02] p-5 transition-colors hover:border-pass/40"
+              className="group flex items-center justify-between rounded-2xl glass-chip p-5 transition-colors hover:border-pass/40"
             >
               <span className="min-w-0">
                 <span className="block font-mono text-xs text-mute">{l.k}</span>

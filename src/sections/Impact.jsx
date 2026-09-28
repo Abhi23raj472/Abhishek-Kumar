@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { impact } from '../data'
-import { SectionHead, Spotlight, Stagger, item } from '../components/motion'
+import { Depth, SectionHead, Spotlight, Stagger, item } from '../components/motion'
 
 export default function Impact() {
   return (
@@ -15,7 +15,8 @@ export default function Impact() {
         {impact.map((c) => (
           <motion.div key={c.code} variants={item}>
             <Spotlight
-              className="group h-full overflow-hidden p-7"
+              tilt={12}
+              className="group h-full p-7"
               whileHover={{ y: -6 }}
               transition={{ type: 'spring', stiffness: 300, damping: 22 }}
             >
@@ -31,8 +32,12 @@ export default function Impact() {
                   ✓ PASS
                 </motion.span>
               </div>
-              <h3 className="mt-8 font-display text-xl font-semibold text-fg">{c.title}</h3>
-              <p className="mt-2 leading-relaxed">{c.body}</p>
+              <Depth z={40}>
+                <h3 className="mt-8 font-display text-xl font-semibold text-fg">{c.title}</h3>
+              </Depth>
+              <Depth z={20}>
+                <p className="mt-2 leading-relaxed">{c.body}</p>
+              </Depth>
               <div className="absolute inset-x-7 bottom-0 h-px origin-left scale-x-0 bg-gradient-to-r from-pass to-cyan transition-transform duration-500 group-hover:scale-x-100" />
             </Spotlight>
           </motion.div>

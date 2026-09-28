@@ -14,7 +14,7 @@ export default function Skills() {
 
       <Stagger className="grid gap-4 md:grid-cols-5">
         <StaggerItem className="md:col-span-3">
-          <Spotlight className="h-full p-7 md:p-8">
+          <Spotlight tilt={3} className="h-full p-7 md:p-8">
             <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-mute">
               <span>Proficiency</span>
               <span className="normal-case tracking-normal">self-assessed</span>
@@ -42,7 +42,7 @@ export default function Skills() {
         </StaggerItem>
 
         <StaggerItem className="md:col-span-2">
-          <Spotlight className="h-full p-7 md:p-8">
+          <Spotlight tilt={3} className="h-full p-7 md:p-8">
             <div className="font-mono text-xs uppercase tracking-[0.2em] text-mute">Daily drivers</div>
             <div className="mt-6 space-y-5">
               {stack.map((s) => (
@@ -53,7 +53,7 @@ export default function Skills() {
                       <motion.span
                         key={v}
                         whileHover={{ y: -2, borderColor: 'rgba(52,211,153,0.5)', color: '#eef1f4' }}
-                        className="cursor-default rounded-lg border border-line bg-white/[0.03] px-2.5 py-1 text-sm"
+                        className="cursor-default rounded-lg glass-chip px-2.5 py-1 text-sm"
                       >
                         {v}
                       </motion.span>
@@ -66,7 +66,7 @@ export default function Skills() {
         </StaggerItem>
 
         <StaggerItem className="md:col-span-5">
-          <Spotlight className="p-7 md:p-8">
+          <Spotlight tilt={3} className="p-7 md:p-8">
             <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-mute">
               <span>Core competencies</span>
               <span className="text-pass">{String(competencies.length).padStart(2, '0')}</span>
@@ -74,7 +74,7 @@ export default function Skills() {
             <Stagger className="mt-6 flex flex-wrap gap-2" gap={0.04}>
               {competencies.map((c) => (
                 <StaggerItem key={c}>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.03] px-4 py-2 text-fg">
+                  <span className="inline-flex items-center gap-2 rounded-full glass-chip px-4 py-2 text-fg">
                     <span className="h-1.5 w-1.5 rounded-full bg-pass" />
                     {c}
                   </span>

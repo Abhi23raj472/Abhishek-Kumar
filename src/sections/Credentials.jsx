@@ -16,7 +16,7 @@ export default function Credentials() {
 
       <Stagger className="grid gap-4 lg:grid-cols-2">
         <StaggerItem className="flex flex-col gap-4">
-          <Spotlight className="p-7 md:p-8">
+          <Spotlight tilt={3} className="p-7 md:p-8">
             <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-mute">
               <span>Certifications</span>
               <span className="text-pass">{certCount} total</span>
@@ -40,7 +40,7 @@ export default function Credentials() {
             </div>
           </Spotlight>
 
-          <Spotlight className="p-7 md:p-8">
+          <Spotlight tilt={3} className="p-7 md:p-8">
             <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-mute">
               <span>Education</span>
               <span className="text-pass">{education.year}</span>
@@ -51,7 +51,7 @@ export default function Credentials() {
         </StaggerItem>
 
         <StaggerItem>
-          <Spotlight className="h-full p-7 md:p-8">
+          <Spotlight tilt={3} className="h-full p-7 md:p-8">
             <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-mute">
               <span>Awards</span>
               <span className="text-pass">{String(awards.length).padStart(2, '0')}</span>

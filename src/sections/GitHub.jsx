@@ -77,7 +77,7 @@ export default function GitHub() {
       <Stagger className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {tiles.map((t) => (
           <StaggerItem key={t.k}>
-            <Spotlight className="p-6">
+            <Spotlight tilt={12} className="p-6">
               <div className="font-display text-4xl font-semibold text-fg">
                 <Counter to={t.v ?? null} />
               </div>
@@ -87,7 +87,7 @@ export default function GitHub() {
         ))}
       </Stagger>
 
-      <Spotlight className="mt-4 p-6 md:p-8">
+      <Spotlight tilt={3} className="mt-4 p-6 md:p-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="font-mono text-xs uppercase tracking-[0.2em] text-mute">Contribution graph</div>
           {!!years.length && (
