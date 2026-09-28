@@ -50,7 +50,7 @@ function Terminal() {
       style={{ transformPerspective: 1200 }}
       className="relative w-full"
     >
-     <Spotlight tilt={9} className="overflow-hidden shadow-[0_40px_120px_-30px_rgba(52,211,153,0.35)]">
+     <Spotlight tilt={9} className="glass-blur overflow-hidden shadow-[0_40px_120px_-30px_rgba(52,211,153,0.35)]">
       <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
         <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
         <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
@@ -107,7 +107,7 @@ function Marquee() {
   const reduce = useReducedMotion()
   const row = [...marquee, ...marquee]
   return (
-    <div className="glass relative mt-16 overflow-hidden border-x-0 py-5 [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
+    <div className="relative mt-16 overflow-hidden border-y border-white/10 bg-white/[0.02] py-5 [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
       <motion.div
         className="flex w-max gap-10 pr-10"
         animate={reduce ? {} : { x: ['0%', '-50%'] }}
@@ -131,7 +131,7 @@ export default function Hero() {
   const my = useMotionValue(-1000)
   const glow = useMotionTemplate`radial-gradient(600px circle at ${mx}px ${my}px, rgba(52,211,153,0.10), transparent 70%)`
   const { scrollY } = useScroll()
-  const yText = useSpring(useTransform(scrollY, [0, 600], [0, -60]), { stiffness: 80, damping: 20 })
+  const yText = useTransform(scrollY, [0, 600], [0, -60])
   const fade = useTransform(scrollY, [0, 500], [1, 0.3])
 
   return (

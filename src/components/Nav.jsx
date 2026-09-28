@@ -48,7 +48,7 @@ export default function Nav() {
         transition={{ duration: 0.8, ease, delay: 0.1 }}
         className="fixed inset-x-0 top-3 z-50 px-4"
       >
-        <nav className="glass mx-auto flex max-w-6xl items-center gap-3 rounded-2xl px-3 py-2">
+        <nav className="glass glass-blur mx-auto flex max-w-6xl items-center gap-3 rounded-2xl px-3 py-2">
           <a href="#top" className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 text-fg">
             <span className="grid h-8 w-8 place-items-center rounded-lg bg-pass/15 font-display text-sm font-bold text-pass">AK</span>
             <span className="font-display font-semibold">{profile.name}</span>
@@ -104,7 +104,7 @@ export default function Nav() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.98 }}
               transition={{ duration: 0.3, ease }}
-              className="glass mx-auto mt-2 max-w-6xl rounded-2xl p-3 lg:hidden"
+              className="glass glass-blur mx-auto mt-2 max-w-6xl rounded-2xl p-3 lg:hidden"
             >
               <motion.ul
                 initial="h"

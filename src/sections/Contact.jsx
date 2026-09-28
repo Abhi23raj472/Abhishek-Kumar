@@ -29,11 +29,9 @@ export default function Contact() {
   return (
     <section id="contact" className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
       <Spotlight tilt={3} className="overflow-hidden p-8 md:p-14">
-        <motion.div
+        <div
           aria-hidden
-          className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-pass/15 blur-[100px]"
-          animate={{ scale: [1, 1.15, 1] }}
-          transition={{ repeat: Infinity, duration: 8, ease: 'easeInOut' }}
+          className="pointer-events-none absolute -right-40 -top-40 h-[32rem] w-[32rem] bg-[radial-gradient(closest-side,rgb(52_211_153/0.18),transparent)]"
         />
         <Reveal className="font-mono text-xs uppercase tracking-[0.2em] text-pass">07 — Contact</Reveal>
         <Reveal delay={0.06}>

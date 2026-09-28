@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Environment, Float, Lightformer, MeshTransmissionMaterial } from '@react-three/drei'
 import * as THREE from 'three'
 
@@ -10,8 +10,8 @@ const small = typeof window !== 'undefined' && window.matchMedia('(max-width: 76
 function Glass({ tint = '#ffffff', ...props }) {
   return (
     <MeshTransmissionMaterial
-      samples={small ? 3 : 6}
-      resolution={small ? 256 : 512}
+      samples={small ? 3 : 4}
+      resolution={small ? 256 : 384}
       thickness={0.9}
       roughness={0.05}
       transmission={1}
@@ -122,6 +122,13 @@ function Shapes({ reduce }) {
   )
 }
 
+/** Switches the render loop on/off from inside the canvas. */
+function LoopControl({ running }) {
+  const setFrameloop = useThree((s) => s.setFrameloop)
+  useEffect(() => { setFrameloop(running ? 'always' : 'never') }, [running, setFrameloop])
+  return null
+}
+
 /**
  * Hero 3D scene. Stops rendering when scrolled out of view to save battery.
  * All lighting is built in-scene (no external HDR download).
@@ -131,7 +138,7 @@ export default function GlassScene({ reduce = false }) {
   const [visible, setVisible] = useState(true)
 
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0 })
+    const obs = new IntersectionObserver(([e]) => setVisible(e.intersectionRatio > 0.25), { threshold: [0, 0.25, 0.5] })
     if (wrap.current) obs.observe(wrap.current)
     return () => obs.disconnect()
   }, [])
@@ -146,13 +153,13 @@ export default function GlassScene({ reduce = false }) {
       }}
     >
       <Canvas
-        dpr={small ? [1, 1.25] : [1, 1.6]}
-        frameloop={visible ? 'always' : 'never'}
+        dpr={small ? 1 : [1, 1.25]}
         camera={{ position: [0, 0, 6.2], fov: 42 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         <ambientLight intensity={0.4} />
         <directionalLight position={[3, 4, 5]} intensity={1.2} />
+        <LoopControl running={visible} />
         <Backdrop />
         <Shapes reduce={reduce} />
         <Environment resolution={256}>
