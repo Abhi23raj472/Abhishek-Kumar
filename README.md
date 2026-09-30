@@ -2,19 +2,28 @@
 
 Personal portfolio built with React, Vite, Tailwind CSS and Framer Motion.
 
+The design uses frosted glass panels, a light default theme, a persistent light/dark toggle, scroll reveals, parallax, magnetic buttons and subtle card tilt. Reduced-motion preferences are respected.
+
 ## Run locally
 
 ```bash
-npm install
+npm ci
 npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+npm run preview
 ```
 
 ## Edit content
 
-All text (experience, skills, certifications, awards, links) lives in `src/data.js`.
-The résumé download is `public/Abhishek_Kumar_Resume.pdf` — replace that file to update it.
+The portfolio content and animations live in `src/App.jsx`; styling and light/dark theme variables live in `src/index.css`.
+Replace `public/Abhishek_Kumar_Resume.pdf` to update the resume download.
 
-## Deploy
+## GitHub Pages
 
-Pushing to `main` builds the site and publishes it to GitHub Pages via
-`.github/workflows/deploy.yml`. One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+The existing workflow publishes pushes to `main` using GitHub Actions. Vite's relative base and resume links support the `/Abhishek-Kumar/` path.
+The redesign branch can be reviewed and merged before publishing to the existing GitHub Pages site.
