@@ -1,87 +1,107 @@
-import { motion } from 'framer-motion'
-import { awards, certs, education } from '../data'
-import { SectionHead, Spotlight, Stagger, StaggerItem, ease } from '../components/motion'
+import { useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { BadgeCheck, Plus, Trophy } from 'lucide-react'
+import { awards, certs } from '../data'
+import { SectionHead, Stagger, StaggerItem, ease } from '../lib/motion'
 
-const certCount = certs.reduce((a, c) => a + c.items.length, 0)
+/** One award per row; hovering (or tapping) opens it up. */
+function AwardRow({ a, i, open, onOpen }) {
+  return (
+    <motion.li
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.7, ease, delay: i * 0.08 }}
+      onPointerEnter={(e) => e.pointerType === 'mouse' && onOpen(i)}
+      className="relative isolate border-b border-line"
+    >
+      <motion.span
+        aria-hidden
+        className="absolute inset-0 -z-10 origin-bottom bg-lime"
+        initial={false}
+        animate={{ scaleY: open ? 1 : 0 }}
+        transition={{ duration: 0.5, ease }}
+      />
+      <button
+        type="button"
+        onClick={() => onOpen(open ? null : i)}
+        aria-expanded={open}
+        className={`grid w-full grid-cols-[4.5rem_1fr_auto] items-center gap-4 px-2 py-6 text-left transition-colors duration-300 md:grid-cols-[8rem_1fr_auto] md:px-4 md:py-8 ${
+          open ? 'text-on-lime' : ''
+        }`}
+      >
+        <span className="font-mono text-xs uppercase tracking-wider opacity-70">{a.date}</span>
+        <span className="font-display text-[clamp(1.6rem,3.6vw,3.25rem)] font-semibold leading-none tracking-[-0.04em]">
+          {a.name}
+          {i === 0 && <Trophy className="ml-3 inline-block align-middle" size={26} strokeWidth={1.5} />}
+        </span>
+        <motion.span animate={{ rotate: open ? 45 : 0 }} transition={{ duration: 0.3, ease }}>
+          <Plus size={24} />
+        </motion.span>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.45, ease }}
+            className="overflow-hidden text-on-lime"
+          >
+            <p className="max-w-2xl px-2 pb-8 text-lg md:pl-[calc(8rem+2rem)] md:pr-4">
+              {a.body}
+              {a.by && <span className="mt-2 block font-mono text-xs uppercase tracking-wider opacity-70">Awarded by {a.by}</span>}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.li>
+  )
+}
 
 export default function Credentials() {
+  const [open, setOpen] = useState(0)
   return (
-    <section id="credentials" className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
-      <SectionHead
-        index="06"
-        kicker="Credentials"
-        title={<>Certified, and <span className="text-gradient">recognized</span>.</>}
-        sub="Formal training, enterprise awards and academic background."
-      />
+    <section id="credentials" className="shell py-24 md:py-40">
+      <SectionHead index="07" kicker="Recognition" title="The work gets noticed." highlight={['noticed.']} />
 
-      <Stagger className="grid gap-4 lg:grid-cols-2">
-        <StaggerItem className="flex flex-col gap-4">
-          <Spotlight tilt={3} className="p-7 md:p-8">
-            <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-mute">
-              <span>Certifications</span>
-              <span className="text-pass">{certCount} total</span>
-            </div>
-            <div className="mt-6 space-y-5">
-              {certs.map((c) => (
-                <div key={c.org}>
-                  <div className="text-sm font-semibold text-fg">{c.org}</div>
-                  <Stagger className="mt-2 flex flex-wrap gap-1.5" gap={0.03}>
-                    {c.items.map((it) => (
-                      <StaggerItem key={it}>
-                        <span className="inline-flex items-center gap-1.5 rounded-lg border border-pass/20 bg-pass/[0.07] px-2.5 py-1 font-mono text-xs text-fg">
-                          <span className="text-pass">✓</span>
-                          {it}
-                        </span>
-                      </StaggerItem>
-                    ))}
-                  </Stagger>
-                </div>
-              ))}
-            </div>
-          </Spotlight>
+      <ul className="border-t border-line" onPointerLeave={(e) => e.pointerType === 'mouse' && setOpen(null)}>
+        {awards.map((a, i) => (
+          <AwardRow key={a.name} a={a} i={i} open={open === i} onOpen={setOpen} />
+        ))}
+      </ul>
 
-          <Spotlight tilt={3} className="p-7 md:p-8">
-            <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-mute">
-              <span>Education</span>
-              <span className="text-pass">{education.year}</span>
-            </div>
-            <div className="mt-4 font-display text-xl font-semibold text-fg">{education.degree}</div>
-            <div className="mt-1">{education.school}</div>
-          </Spotlight>
-        </StaggerItem>
-
-        <StaggerItem>
-          <Spotlight tilt={3} className="h-full p-7 md:p-8">
-            <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-mute">
-              <span>Awards</span>
-              <span className="text-pass">{String(awards.length).padStart(2, '0')}</span>
-            </div>
-            <ol className="mt-6 space-y-2">
-              {awards.map((a, i) => (
-                <motion.li
-                  key={a.name}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, ease, delay: 0.1 + i * 0.08 }}
-                  whileHover={{ x: 4 }}
-                  className={`rounded-2xl border p-5 ${i === 0 ? 'border-pass/30 bg-gradient-to-br from-pass/10 to-cyan/5' : 'border-line bg-tint/[0.02]'}`}
-                >
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="font-display text-lg font-semibold text-fg">
-                      {i === 0 && <span className="mr-2">🏆</span>}
-                      {a.name}
-                    </span>
-                    <span className="font-mono text-xs text-mute">{a.date}</span>
-                  </div>
-                  {a.by && <div className="mt-0.5 text-sm text-pass">{a.by}</div>}
-                  <p className="mt-2 text-sm leading-relaxed">{a.body}</p>
-                </motion.li>
-              ))}
-            </ol>
-          </Spotlight>
-        </StaggerItem>
-      </Stagger>
+      <div className="mt-24 md:mt-32">
+        <h3 className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.2em] text-mute">
+          <BadgeCheck size={16} className="text-accent" /> Certifications
+        </h3>
+        <Stagger className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" gap={0.1}>
+          {certs.map((c) => (
+            <StaggerItem
+              key={c.org}
+              whileHover={{ y: -6 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              className="flex flex-col rounded-[1.5rem] border border-line bg-surface p-6"
+            >
+              <div className="flex items-baseline justify-between">
+                <span className="font-display text-xl font-semibold tracking-tight">{c.org}</span>
+                <span className="font-mono text-xs text-mute">×{c.items.length}</span>
+              </div>
+              <Stagger className="mt-6 flex flex-wrap gap-2" gap={0.05} delay={0.2}>
+                {c.items.map((it) => (
+                  <StaggerItem
+                    key={it}
+                    variants={{ hidden: { opacity: 0, scale: 0.5 }, show: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 420, damping: 18 } } }}
+                    className="rounded-full bg-fg/[0.06] px-3 py-1.5 text-sm"
+                  >
+                    {it}
+                  </StaggerItem>
+                ))}
+              </Stagger>
+            </StaggerItem>
+          ))}
+        </Stagger>
+      </div>
     </section>
   )
 }

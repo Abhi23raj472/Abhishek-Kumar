@@ -1,90 +1,122 @@
 import { useRef } from 'react'
-import { motion, useScroll, useSpring } from 'framer-motion'
-import { experience } from '../data'
-import { SectionHead, Spotlight, ease } from '../components/motion'
+import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion'
+import { GraduationCap } from 'lucide-react'
+import { education, experience } from '../data'
+import { SectionHead, Stagger, StaggerItem, ease } from '../lib/motion'
 
+function Dot({ current }) {
+  return (
+    <motion.span
+      aria-hidden
+      className="absolute -left-[7px] top-1 grid h-[15px] w-[15px] place-items-center rounded-full border-2 border-bg bg-accent md:left-[calc(30%-7px)]"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true, margin: '-30% 0px' }}
+      transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+    >
+      {current && <span className="absolute inset-0 animate-ping rounded-full bg-accent opacity-60 motion-reduce:animate-none" />}
+    </motion.span>
+  )
+}
+
+/** Timeline whose spine draws itself as you scroll through it. */
 export default function Experience() {
   const ref = useRef(null)
+  const reduce = useReducedMotion()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 70%', 'end 60%'] })
-  const line = useSpring(scrollYProgress, { stiffness: 90, damping: 22 })
+  const draw = useSpring(scrollYProgress, { stiffness: 120, damping: 28 })
 
   return (
-    <section id="experience" className="overflow-x-clip mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
-      <SectionHead
-        index="03"
-        kicker="Experience"
-        title={<>Owning automation <span className="text-gradient">end to end</span>.</>}
-        sub="Delivery across two global enterprises — from framework architecture to daily regression reports."
-      />
+    <section id="experience" className="shell py-24 md:py-40">
+      <SectionHead index="03" kicker="Experience" title="Where I've shipped quality." highlight={['quality']} />
 
-      <div ref={ref} className="relative pl-8 md:pl-12">
-        <div className="absolute bottom-0 left-[7px] top-2 w-px bg-line md:left-[11px]" />
+      <div ref={ref} className="relative">
+        <div aria-hidden className="absolute bottom-0 left-0 top-0 w-px bg-line md:left-[30%]" />
         <motion.div
-          style={{ scaleY: line }}
-          className="absolute bottom-0 left-[7px] top-2 w-px origin-top bg-gradient-to-b from-pass via-cyan to-pass md:left-[11px]"
+          aria-hidden
+          className="absolute left-0 top-0 h-full w-[2px] origin-top bg-accent md:left-[30%]"
+          style={{ scaleY: reduce ? 1 : draw }}
         />
 
-        <div className="space-y-8">
-          {experience.map((job) => (
-            <motion.article
-              key={job.org}
-              initial={{ opacity: 0, x: 60, rotateY: -18, transformPerspective: 1200 }}
-              whileInView={{ opacity: 1, x: 0, rotateY: 0, transformPerspective: 1200 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.8, ease }}
-              className="relative"
-            >
-              <motion.span
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.2 }}
-                className={`absolute -left-8 top-8 grid h-4 w-4 place-items-center rounded-full border-2 md:-left-12 md:h-6 md:w-6 ${job.current ? 'border-pass bg-pass/20' : 'border-line-2 bg-panel'}`}
-              >
-                {job.current && <span className="h-1.5 w-1.5 animate-ping rounded-full bg-pass md:h-2 md:w-2" />}
-              </motion.span>
+        <ol className="space-y-20 md:space-y-28">
+          {experience.map((e) => (
+            <li key={e.org} className="relative grid gap-6 pl-8 md:grid-cols-[30%_1fr] md:gap-0 md:pl-0">
+              <Dot current={e.current} />
+              <div className="md:sticky md:top-28 md:self-start md:pr-12 md:text-right">
+                <motion.p
+                  className="font-mono text-xs uppercase tracking-[0.18em] text-accent"
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, ease }}
+                >
+                  {e.period}
+                </motion.p>
+                <p className="mt-2 font-display text-2xl font-semibold tracking-tight">{e.org}</p>
+                <p className="mt-1 text-sm text-mute">{e.place}</p>
+                {e.current && (
+                  <span className="mt-4 inline-block rounded-full bg-lime px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-on-lime">
+                    Current
+                  </span>
+                )}
+              </div>
 
-              <Spotlight tilt={3} className="p-7 md:p-9">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <h3 className="font-display text-2xl font-semibold text-fg md:text-3xl">{job.role}</h3>
-                    <p className="mt-1 text-fg/80">
-                      {job.org} <span className="text-mute">· {job.place}</span>
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {job.current && (
-                      <span className="rounded-full bg-pass/15 px-2.5 py-1 font-mono text-[11px] text-pass">current</span>
-                    )}
-                    <span className="rounded-full border border-line px-3 py-1 font-mono text-xs text-dim">{job.period}</span>
-                  </div>
-                </div>
-
-                <ul className="mt-6 grid gap-x-8 gap-y-3 md:grid-cols-2">
-                  {job.points.map((p, i) => (
-                    <motion.li
-                      key={i}
-                      initial={{ opacity: 0, y: 8 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: 0.25 + i * 0.05 }}
-                      className="flex gap-3 leading-relaxed"
+              <div className="md:pl-12">
+                <motion.h3
+                  className="font-display text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-none tracking-[-0.04em]"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, ease }}
+                >
+                  {e.role}
+                </motion.h3>
+                <Stagger as="ul" className="mt-8 divide-y divide-line border-y border-line" gap={0.06}>
+                  {e.points.map((pt, i) => (
+                    <StaggerItem as="li" key={pt} className="flex gap-5 py-4 text-mute md:text-lg">
+                      <span className="pt-1 font-mono text-xs text-accent">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="text-fg/85">{pt}</span>
+                    </StaggerItem>
+                  ))}
+                </Stagger>
+                <Stagger className="mt-6 flex flex-wrap gap-2" gap={0.04}>
+                  {e.tags.map((t) => (
+                    <StaggerItem
+                      key={t}
+                      variants={{ hidden: { opacity: 0, scale: 0.6 }, show: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 400, damping: 20 } } }}
+                      className="rounded-full border border-line px-3 py-1.5 font-mono text-xs"
                     >
-                      <span className="mt-[3px] font-mono text-sm text-pass">✓</span>
-                      <span>{p}</span>
-                    </motion.li>
+                      {t}
+                    </StaggerItem>
                   ))}
-                </ul>
-
-                <div className="mt-7 flex flex-wrap gap-1.5 border-t border-tint/10 pt-5">
-                  {job.tags.map((t) => (
-                    <span key={t} className="glass-chip rounded-md px-2 py-1 font-mono text-xs text-dim">{t}</span>
-                  ))}
-                </div>
-              </Spotlight>
-            </motion.article>
+                </Stagger>
+              </div>
+            </li>
           ))}
-        </div>
+
+          <li className="relative grid gap-6 pl-8 md:grid-cols-[30%_1fr] md:gap-0 md:pl-0">
+            <Dot />
+            <div className="md:pr-12 md:text-right">
+              <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent">{education.year}</p>
+              <p className="mt-2 font-display text-2xl font-semibold tracking-tight">Education</p>
+            </div>
+            <motion.div
+              className="flex items-center gap-5 md:pl-12"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease }}
+            >
+              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-violet text-on-violet">
+                <GraduationCap size={24} />
+              </span>
+              <div>
+                <h3 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">{education.degree}</h3>
+                <p className="mt-1 text-mute">{education.school}</p>
+              </div>
+            </motion.div>
+          </li>
+        </ol>
       </div>
     </section>
   )

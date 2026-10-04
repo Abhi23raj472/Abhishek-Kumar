@@ -2,7 +2,18 @@
 
 Personal portfolio built with React, Vite, Tailwind CSS and Framer Motion.
 
-The design uses frosted glass panels, a light default theme, a persistent light/dark toggle, scroll reveals, parallax, magnetic buttons and subtle card tilt. Reduced-motion preferences are respected.
+An editorial, type-led design with scroll-driven Framer Motion effects:
+
+- **Intro**: a short "test run" preloader (once per session), then the name rises in letter by letter.
+- **Hero**: cursor-following glow, name lines that split apart on scroll, a rotating role ticker and a circular badge that spins with the scroll.
+- **Velocity marquee**: tool names that speed up, reverse and skew with scroll speed and direction.
+- **About**: a paragraph whose words light up as you scroll through it, plus count-up stats.
+- **What I do**: a pinned section where vertical scrolling slides the cards sideways.
+- **Experience**: a timeline whose spine draws itself as you scroll.
+- **Impact**: cards that pin and stack on top of each other.
+- **Skills, GitHub, Awards, Contact**: animated bars, live contribution graph, expanding award rows and a scaling footer headline.
+
+The light/dark theme follows the system until toggled, and is remembered. With reduced motion turned on, scroll-linked effects and the intro are switched off and the pinned sections fall back to plain layouts.
 
 ## Run locally
 
@@ -20,10 +31,9 @@ npm run preview
 
 ## Edit content
 
-The portfolio content and animations live in `src/App.jsx`; styling and light/dark theme variables live in `src/index.css`.
+All text content lives in `src/data.js`. Each section is a component in `src/sections/`, shared animation helpers are in `src/lib/motion.jsx`, and theme colours are CSS variables at the top of `src/index.css`.
 Replace `public/Abhishek_Kumar_Resume.pdf` to update the resume download.
 
 ## GitHub Pages
 
 The existing workflow publishes pushes to `main` using GitHub Actions. Vite's relative base and resume links support the `/Abhishek-Kumar/` path.
-The redesign branch can be reviewed and merged before publishing to the existing GitHub Pages site.

@@ -1,31 +1,77 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion'
+import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from 'framer-motion'
+import { Moon, Sun, X } from 'lucide-react'
 import { nav, profile } from '../data'
-import { ease } from './motion'
+import { ease } from '../lib/motion'
 
-function useActiveSection(ids) {
+const ids = nav.map((n) => n.id)
+const resume = `${import.meta.env.BASE_URL}${profile.resume}`
+
+function useActiveSection() {
   const [active, setActive] = useState('')
   useEffect(() => {
     const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id) })
-      },
+      (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
       { rootMargin: '-45% 0px -50% 0px' },
     )
-    ids.forEach((id) => { const el = document.getElementById(id); if (el) obs.observe(el) })
+    ids.forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) obs.observe(el)
+    })
     return () => obs.disconnect()
-  }, [ids])
+  }, [])
   return active
 }
 
-const ids = nav.map((n) => n.id)
+function ThemeToggle() {
+  const [dark, setDark] = useState(() => document.documentElement.dataset.theme === 'dark')
+  const toggle = () => {
+    const next = dark ? 'light' : 'dark'
+    document.documentElement.dataset.theme = next
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#0a0b0d' : '#f3f1ea')
+    try {
+      localStorage.setItem('ak-portfolio-theme', next)
+    } catch {
+      /* storage blocked: theme still applies for this visit */
+    }
+    setDark(!dark)
+  }
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}
+      className="relative grid h-10 w-10 place-items-center overflow-hidden rounded-full border border-line text-fg transition-colors hover:bg-fg/5"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={dark ? 'moon' : 'sun'}
+          initial={{ y: 18, rotate: -90, opacity: 0 }}
+          animate={{ y: 0, rotate: 0, opacity: 1 }}
+          exit={{ y: -18, rotate: 90, opacity: 0 }}
+          transition={{ duration: 0.3, ease }}
+        >
+          {dark ? <Moon size={16} /> : <Sun size={16} />}
+        </motion.span>
+      </AnimatePresence>
+    </button>
+  )
+}
 
 export default function Nav() {
-  const active = useActiveSection(ids)
+  const active = useActiveSection()
   const [open, setOpen] = useState(false)
-  const [hover, setHover] = useState(null)
-  const { scrollYProgress } = useScroll()
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 24 })
+  const [hidden, setHidden] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const { scrollY, scrollYProgress } = useScroll()
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 26 })
+
+  // Tuck the bar away while scrolling down, bring it back on the way up.
+  useMotionValueEvent(scrollY, 'change', (y) => {
+    const prev = scrollY.getPrevious() ?? 0
+    setHidden(y > prev && y > 240 && !open)
+    setScrolled(y > 24)
+  })
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -34,107 +80,131 @@ export default function Nav() {
     return () => window.removeEventListener('keydown', onKey)
   }, [open])
 
-  const pill = hover ?? active
-
   return (
     <>
       <motion.div
+        aria-hidden
         style={{ scaleX: progress }}
-        className="fixed inset-x-0 top-0 z-[60] h-[2px] origin-left bg-gradient-to-r from-pass to-cyan"
+        className="fixed inset-x-0 top-0 z-[70] h-[3px] origin-left bg-lime"
       />
+
       <motion.header
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease, delay: 0.1 }}
-        className="fixed inset-x-0 top-3 z-50 px-4"
+        animate={{ y: hidden ? '-120%' : '0%' }}
+        transition={{ duration: 0.45, ease }}
+        className="fixed inset-x-0 top-0 z-[60]"
       >
-        <nav className="glass glass-blur mx-auto flex max-w-6xl items-center gap-3 rounded-2xl px-3 py-2">
-          <a href="#top" className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 text-fg">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-pass/15 font-display text-sm font-bold text-pass">AK</span>
-            <span className="font-display font-semibold">{profile.name}</span>
+        <div
+          className={`shell flex h-[72px] items-center gap-4 transition-[background-color,border-color,backdrop-filter] duration-300 ${
+            scrolled ? 'border-b border-line bg-bg/80 backdrop-blur-md' : 'border-b border-transparent'
+          }`}
+          style={{ maxWidth: 'none' }}
+        >
+          <a href="#top" className="group flex items-center gap-2 font-display text-lg font-semibold tracking-tight" aria-label="Abhishek Kumar, back to top">
+            <span className="grid h-9 w-9 place-items-center rounded-full bg-fg text-sm text-bg transition-transform duration-500 group-hover:rotate-[360deg]">
+              AK
+            </span>
+            <span className="hidden sm:inline">{profile.name}</span>
           </a>
 
-          <ul className="ml-auto hidden items-center lg:flex" onPointerLeave={() => setHover(null)}>
-            {nav.map((n) => (
-              <li key={n.id}>
-                <a
-                  href={`#${n.id}`}
-                  onPointerEnter={() => setHover(n.id)}
-                  className={`relative block rounded-lg px-3 py-2 font-mono text-[12.5px] transition-colors ${active === n.id ? 'text-fg' : 'text-mute hover:text-fg'}`}
-                >
-                  {pill === n.id && (
-                    <motion.span
-                      layoutId="nav-pill"
-                      className="absolute inset-0 -z-10 rounded-lg bg-tint/[0.07]"
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                  {n.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+          <nav aria-label="Main" className="ml-auto hidden xl:block">
+            <ul className="flex items-center rounded-full border border-line p-1">
+              {nav.map((n) => (
+                <li key={n.id}>
+                  <a
+                    href={`#${n.id}`}
+                    aria-current={active === n.id ? 'true' : undefined}
+                    className={`relative isolate block rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
+                      active === n.id ? 'text-on-lime' : 'text-mute hover:text-fg'
+                    }`}
+                  >
+                    {active === n.id && (
+                      <motion.span
+                        layoutId="nav-pill"
+                        className="absolute inset-0 -z-10 rounded-full bg-lime"
+                        transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                      />
+                    )}
+                    {n.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-          <a
-            href={profile.resume}
-            download
-            className="ml-auto hidden rounded-xl bg-fg px-4 py-2 text-sm font-semibold text-onaccent transition hover:bg-pass sm:inline-flex lg:ml-2"
-          >
-            Résumé ↓
-          </a>
-
-          <button
-            onClick={() => setOpen((o) => !o)}
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            aria-expanded={open}
-            className="glass-chip ml-auto grid h-10 w-10 place-items-center rounded-xl text-fg sm:ml-0 lg:hidden"
-          >
-            <div className="relative h-3 w-4">
-              <motion.span animate={open ? { rotate: 45, y: 5 } : { rotate: 0, y: 0 }} className="absolute left-0 top-0 h-[1.5px] w-4 bg-current" />
-              <motion.span animate={open ? { opacity: 0 } : { opacity: 1 }} className="absolute left-0 top-[5px] h-[1.5px] w-4 bg-current" />
-              <motion.span animate={open ? { rotate: -45, y: -5 } : { rotate: 0, y: 0 }} className="absolute left-0 top-[10px] h-[1.5px] w-4 bg-current" />
-            </div>
-          </button>
-        </nav>
-
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.98 }}
-              transition={{ duration: 0.3, ease }}
-              className="glass glass-blur mx-auto mt-2 max-w-6xl rounded-2xl p-3 lg:hidden"
+          <div className="ml-auto flex items-center gap-2 xl:ml-2">
+            <ThemeToggle />
+            <a
+              href={resume}
+              download
+              className="hidden h-10 items-center rounded-full bg-fg px-5 text-sm font-semibold text-bg transition-opacity hover:opacity-85 sm:inline-flex"
             >
-              <motion.ul
-                initial="h"
-                animate="s"
-                variants={{ h: {}, s: { transition: { staggerChildren: 0.04 } } }}
-              >
-                {nav.map((n, i) => (
-                  <motion.li key={n.id} variants={{ h: { opacity: 0, x: -12 }, s: { opacity: 1, x: 0 } }}>
-                    <a
-                      href={`#${n.id}`}
-                      onClick={() => setOpen(false)}
-                      className="flex items-center justify-between rounded-xl px-4 py-3 text-fg hover:bg-tint/5"
-                    >
-                      <span className="font-display text-lg">{n.label}</span>
-                      <span className="font-mono text-xs text-mute">0{i + 1}</span>
-                    </a>
-                  </motion.li>
-                ))}
-              </motion.ul>
-              <a
-                href={profile.resume}
-                download
-                className="mt-2 block rounded-xl bg-pass px-4 py-3 text-center font-semibold text-onaccent"
-              >
-                Download résumé (PDF)
-              </a>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              Résumé ↓
+            </a>
+            <button
+              type="button"
+              onClick={() => setOpen((o) => !o)}
+              aria-label={open ? 'Close menu' : 'Open menu'}
+              aria-expanded={open}
+              className="relative z-[80] grid h-10 w-10 place-items-center rounded-full bg-lime text-on-lime xl:hidden"
+            >
+              <span className="relative block h-3 w-4">
+                <motion.span animate={open ? { rotate: 45, y: 5 } : { rotate: 0, y: 0 }} className="absolute left-0 top-0 h-[1.5px] w-4 bg-current" />
+                <motion.span animate={open ? { opacity: 0 } : { opacity: 1 }} className="absolute left-0 top-[5px] h-[1.5px] w-4 bg-current" />
+                <motion.span animate={open ? { rotate: -45, y: -5 } : { rotate: 0, y: 0 }} className="absolute left-0 top-[10px] h-[1.5px] w-4 bg-current" />
+              </span>
+            </button>
+          </div>
+        </div>
       </motion.header>
+
+      {/* Full-screen menu that grows out of the menu button. */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ clipPath: 'circle(0% at calc(100% - 44px) 36px)' }}
+            animate={{ clipPath: 'circle(150% at calc(100% - 44px) 36px)' }}
+            exit={{ clipPath: 'circle(0% at calc(100% - 44px) 36px)' }}
+            transition={{ duration: 0.7, ease }}
+            className="fixed inset-0 z-[65] flex flex-col bg-fg text-bg xl:hidden"
+          >
+            <div className="shell flex h-[72px] items-center justify-between">
+              <span className="font-mono text-xs uppercase tracking-[0.2em] opacity-60">Menu</span>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close menu"
+                className="grid h-10 w-10 place-items-center rounded-full bg-lime text-on-lime"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <motion.ul
+              className="shell flex-1 pt-6"
+              initial="h"
+              animate="s"
+              variants={{ h: {}, s: { transition: { staggerChildren: 0.05, delayChildren: 0.2 } } }}
+            >
+              {nav.map((n, i) => (
+                <motion.li key={n.id} className="overflow-hidden border-b border-bg/15" variants={{ h: { y: '100%' }, s: { y: '0%', transition: { duration: 0.6, ease } } }}>
+                  <a href={`#${n.id}`} onClick={() => setOpen(false)} className="flex items-baseline justify-between py-3">
+                    <span className="font-display text-[clamp(2rem,8vw,3.5rem)] font-semibold tracking-tight">{n.label}</span>
+                    <span className="font-mono text-xs opacity-60">0{i + 1}</span>
+                  </a>
+                </motion.li>
+              ))}
+            </motion.ul>
+            <motion.div
+              className="shell flex flex-wrap gap-3 py-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+            >
+              <a href={resume} download className="rounded-full bg-lime px-5 py-3 font-semibold text-on-lime">Download résumé</a>
+              <a href={`mailto:${profile.email}`} className="rounded-full border border-bg/30 px-5 py-3 font-semibold">Email me</a>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
