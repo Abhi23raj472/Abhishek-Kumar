@@ -33,24 +33,31 @@
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
 }
 
+/* Page-level colour, font and background sit outside any CSS layer on
+   purpose: unlayered rules beat layered ones, so a host page's own reset
+   (an iframe preview, a browser extension) can't turn the text dark or swap
+   the font. Everything else stays in Tailwind's layers. */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+  /* A soft dark halo keeps text legible when a planet or the Earth's
+     bright limb drifts behind it. */
+  text-shadow: 0 1px 14px rgb(3 5 10 / 0.9), 0 0 2px rgb(3 5 10 / 0.6);
+}
+
 @layer base {
-  html {
-    scroll-behavior: smooth;
-    scroll-padding-top: 80px;
-  }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: var(--font-sans);
-    font-feature-settings: "cv11", "ss01";
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    overflow-x: clip;
-    /* A soft dark halo keeps text legible when a planet or the Earth's
-       bright limb drifts behind it. */
-    text-shadow: 0 1px 14px rgb(3 5 10 / 0.9), 0 0 2px rgb(3 5 10 / 0.6);
-  }
   /* Light buttons carry dark text, which needs no halo. */
   .bg-ink,
   .bg-ink * {
