@@ -1,38 +1,50 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-
-/* Near-monochrome palette with one muted accent, used sparingly.
-   `--ink` is the solid fill for buttons and highlights (always paired
-   with `--on-ink`); `--accent` is for small details like indices and lines. */
-:root {
-  color-scheme: light;
-  --bg: #fafaf9;
-  --surface: #ffffff;
-  --surface-2: #f2f2f0;
-  --fg: #18181b;
-  --mute: #5f6168;
-  --line: rgb(24 24 27 / 0.1);
-  --ink: #18181b;
-  --on-ink: #fafaf9;
-  --accent: #3b5bdb;
-  --grid: rgb(24 24 27 / 0.04);
-  --glow: rgb(59 91 219 / 0.08);
-}
-
+/* Two themes. Dark (default): near-black sky, starlight text, one cool
+   accent and one warm signal colour used sparingly. Light: a cool grey
+   daytime sky with ink text. Secondary text stays at 6.5:1 or better in
+   both. Toggled by data-theme on <html>; the choice is remembered. */
+:root,
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0c0c0d;
-  --surface: #141416;
-  --surface-2: #1b1b1e;
-  --fg: #ececee;
-  --mute: #9a9ba3;
-  --line: rgb(255 255 255 / 0.09);
-  --ink: #ececee;
-  --on-ink: #0c0c0d;
-  --accent: #8ea6ff;
-  --grid: rgb(255 255 255 / 0.035);
-  --glow: rgb(142 166 255 / 0.07);
+  --bg: #03050a;
+  --surface: rgb(160 190 255 / 0.04);
+  --surface-2: rgb(160 190 255 / 0.08);
+  --fg: #e6ebf5;
+  --mute: #aab4c8;
+  --line: rgb(170 195 255 / 0.18);
+  --ink: #e6ebf5;
+  --on-ink: #03050a;
+  --accent: #8fc4ff;
+  --signal: #f2c27b;
+  --panel: rgb(8 12 24 / 0.72);
+  --stage: rgb(8 12 24 / 0.45);
+  --star: #ffffff;
+  --halo: 0 1px 14px rgb(3 5 10 / 0.9), 0 0 2px rgb(3 5 10 / 0.6);
+  --sky-top: #0b1b3a;
+  --sky: #03050a;
+  --vignette: rgb(0 0 0 / 0.55);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #eef1f5;
+  --surface: rgb(16 30 60 / 0.04);
+  --surface-2: rgb(16 30 60 / 0.07);
+  --fg: #101726;
+  --mute: #4a5467;
+  --line: rgb(16 23 38 / 0.14);
+  --ink: #101726;
+  --on-ink: #f5f7fa;
+  --accent: #2456c4;
+  --signal: #9a5208;
+  --panel: rgb(255 255 255 / 0.78);
+  --stage: rgb(255 255 255 / 0.5);
+  --star: #2456c4;
+  --halo: 0 1px 12px rgb(238 241 245 / 0.9), 0 0 2px rgb(238 241 245 / 0.7);
+  --sky-top: #ffffff;
+  --sky: #e3e8ef;
+  --vignette: rgb(196 205 218 / 0.4);
 }
 
 @theme inline {
@@ -45,29 +57,60 @@
   --color-ink: var(--ink);
   --color-on-ink: var(--on-ink);
   --color-accent: var(--accent);
-  --font-display: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --color-signal: var(--signal);
+  --font-display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
 }
 
+/* Page-level colour, font and background sit outside any CSS layer on
+   purpose: unlayered rules beat layered ones, so a host page's own reset
+   (an iframe preview, a browser extension) can't turn the text dark or swap
+   the font. Everything else stays in Tailwind's layers. */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+  /* A soft halo in the background colour keeps text legible when a planet
+     or the Earth's limb drifts behind it. */
+  text-shadow: var(--halo);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Sky colours behind the 3D canvas (and in place of it without WebGL). */
+.sky-fallback {
+  background: radial-gradient(ellipse at 50% 120%, var(--sky-top), var(--sky) 60%);
+}
+.sky-vignette {
+  background: radial-gradient(ellipse at center, transparent 55%, var(--vignette));
+}
+.preloader-bg {
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--bg) 92%, transparent),
+    color-mix(in srgb, var(--bg) 35%, transparent)
+  );
+}
+
 @layer base {
-  html {
-    scroll-behavior: smooth;
-    scroll-padding-top: 80px;
-  }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: var(--font-sans);
-    font-feature-settings: "cv11", "ss01";
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    transition: background-color 0.4s ease, color 0.4s ease;
-    overflow-x: clip;
+  /* Light buttons carry dark text, which needs no halo. */
+  .bg-ink,
+  .bg-ink * {
+    text-shadow: none;
   }
   ::selection {
-    background: var(--ink);
+    background: var(--accent);
     color: var(--on-ink);
   }
   a,
@@ -85,26 +128,30 @@
 }
 
 @layer components {
-  .grid-lines {
-    background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 64px 64px;
-  }
-  .outline-text {
-    color: transparent;
-    -webkit-text-stroke: 1px var(--mute);
-  }
   .shell {
     margin-inline: auto;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1160px;
     padding-inline: 1.25rem;
   }
   @media (min-width: 768px) {
     .shell {
       padding-inline: 2.5rem;
     }
+  }
+  /* Glass panel for content that sits over the sky. */
+  .panel {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--mute);
   }
 }
 
@@ -136,12 +183,38 @@ html.lenis.lenis-smooth {
   transform: translateY(-100%);
 }
 
+/* A slowly turning radar sweep inside the About porthole. */
+@keyframes sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.sweep {
+  animation: sweep 6s linear infinite;
+}
+
+/* Planet surfaces drift sideways behind a fixed terminator shadow. */
+@keyframes drift {
+  to {
+    background-position: -200% 0;
+  }
+}
+.planet-surface {
+  animation: drift 40s linear infinite;
+}
+.group:hover .planet-surface {
+  animation-duration: 10s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .roll-in {
+  .roll-in,
+  .sweep,
+  .planet-surface {
     transition: none;
+    animation: none;
   }
   :is(a, button):hover .roll-in {
     transform: none;

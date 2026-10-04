@@ -1,22 +1,23 @@
 # Abhishek Kumar — Portfolio
 
-Personal portfolio built with React, Vite, Tailwind CSS and Framer Motion.
+Personal portfolio built with React, Vite, Tailwind CSS, Framer Motion, Lenis and three.js.
 
-A clean, minimal design (Inter, near-monochrome palette with one muted accent) with scroll-driven Framer Motion effects:
+The site is a flight from Earth orbit into deep space:
 
-- **Smooth scrolling**: Lenis gives the wheel an eased, inertia feel; in-page links glide to their section.
-- **Intro**: a short "test run" preloader with a slow marquee (once per session), then the name drifts up out of a blur letter by letter.
-- **Text reveals**: section titles rise letter by letter and paragraphs word by word, replaying each time they scroll back into view.
-- **Cursor and links**: a soft blob trails the mouse and inverts what it passes over; link labels roll up to a copy on hover.
-- **Hero**: cursor-following glow, name lines that split apart on scroll, a role ticker that swaps letter by letter and a circular badge that spins with the scroll.
-- **Velocity marquee**: tool names that speed up, reverse and skew with scroll speed and direction.
-- **About**: a paragraph whose words light up as you scroll through it, plus count-up stats.
-- **What I do**: a pinned section where vertical scrolling slides the cards sideways.
-- **Experience**: a timeline whose spine draws itself as you scroll.
-- **Impact**: cards that pin and stack on top of each other.
-- **Skills, GitHub, Awards, Contact**: animated bars, live contribution graph, expanding award rows and a scaling footer headline.
+- **Launch**: a short countdown (once per session), then the camera lifts off from Earth's limb into orbit.
+- **Sky**: a three.js scene behind the page with a twinkling starfield, faint nebulae, a procedurally shaded Earth (clouds, city lights, atmosphere glow), planets that drift past the edges and the odd meteor. Scrolling flies the camera forward.
+- **Hero**: the name fades up out of a blur with a satellite orbiting it; the focus line decodes from random glyphs.
+- **About**: a porthole radar scope and a crew record that types itself out.
+- **What I do**: each area of work is a small rotating planet.
+- **Impact**: results arrive as downlink packets with live signal traces.
+- **Experience**: a constellation; select a star to open that role's mission log.
+- **Skills**: a draggable 3D sphere of tags with category filters, beside proficiency gauges.
+- **Awards & Contact**: expanding award rows, certifications and a contact footer.
+- **Throughout**: Lenis smooth scrolling, a targeting-reticle cursor that snaps onto links, and rolling link labels.
 
-The light/dark theme follows the system until toggled, and is remembered. With reduced motion turned on, scroll-linked effects and the intro are switched off and the pinned sections fall back to plain layouts.
+There are two themes, switched from the sun/moon button in the top bar and remembered for next time: the dark space theme (default) and a light grey daytime theme, where the sky turns pale and Earth stays in view.
+
+The three.js scene loads in its own chunk so the page renders straight away. With reduced motion turned on, the intro, flight, smooth scrolling and cursor are off and the sky holds a single still frame.
 
 ## Run locally
 
@@ -34,9 +35,10 @@ npm run preview
 
 ## Edit content
 
-All text content lives in `src/data.js`. Each section is a component in `src/sections/`, shared animation helpers are in `src/lib/motion.jsx`, and theme colours are CSS variables at the top of `src/index.css`.
+All text content lives in `src/data.js`. Each section is a component in `src/sections/`, the sky is `src/components/SpaceScene.jsx`, shared animation helpers are in `src/lib/motion.jsx`, and theme colours are CSS variables at the top of `src/index.css`.
 Replace `public/Abhishek_Kumar_Resume.pdf` to update the resume download.
 
 ## GitHub Pages
 
-The existing workflow publishes pushes to `main` using GitHub Actions. Vite's relative base and resume links support the `/Abhishek-Kumar/` path.
+The workflow in `.github/workflows/deploy.yml` builds and publishes every push to `main`. Vite's relative base and resume links support the `/Abhishek-Kumar/` path.
+Set **Settings → Pages → Source** to **GitHub Actions** so only this workflow publishes the site.

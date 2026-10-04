@@ -6,19 +6,19 @@
     <title>Abhishek Kumar — Quality Engineer</title>
     <meta name="description" content="Abhishek Kumar — Tricentis-certified Quality Engineer building scalable Tosca automation, API validation and CI/CD-integrated testing." />
     <meta name="author" content="Abhishek Kumar" />
-    <meta name="theme-color" content="#fafaf9" />
+    <meta name="theme-color" content="#03050a" />
     <meta property="og:title" content="Abhishek Kumar — Quality Engineer" />
     <meta property="og:description" content="Test automation specialist: Tricentis Tosca, API validation and CI/CD quality gates." />
     <meta property="og:type" content="profile" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <script>
-      // Apply the saved theme (or the system preference) before first paint.
+      // Apply the remembered theme before first paint. Dark is the default.
       (function () {
         var t
         try { t = localStorage.getItem('ak-portfolio-theme') } catch (e) {}
-        if (t !== 'dark' && t !== 'light') t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        t = t === 'light' ? 'light' : 'dark'
         document.documentElement.dataset.theme = t
-        if (t === 'dark') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0c0c0d')
+        if (t === 'light') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#eef1f5')
       })()
     </script>
   </head>

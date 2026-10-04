@@ -1,20 +1,20 @@
-import { useCallback, useState } from 'react'
+import { Suspense, lazy, useCallback, useState } from 'react'
 import { AnimatePresence, MotionConfig } from 'framer-motion'
 import Cursor from './components/Cursor'
 import Nav from './components/Nav'
 import Preloader from './components/Preloader'
-import VelocityMarquee from './components/VelocityMarquee'
-import { marquee } from './data'
 import { useSmoothScroll } from './lib/smoothScroll'
 import About from './sections/About'
 import Contact from './sections/Contact'
 import Credentials from './sections/Credentials'
 import Experience from './sections/Experience'
-import GitHub from './sections/GitHub'
 import Hero from './sections/Hero'
 import Impact from './sections/Impact'
 import Skills from './sections/Skills'
 import Work from './sections/Work'
+
+// three.js is large, so the sky loads in its own chunk while the page renders.
+const SpaceScene = lazy(() => import('./components/SpaceScene'))
 
 // The intro plays once per browser session, and never with reduced motion.
 function shouldShowIntro() {
@@ -42,18 +42,20 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
+      <div aria-hidden className="sky-fallback fixed inset-0 -z-30" />
+      <Suspense fallback={null}>
+        <SpaceScene launched={!loading} />
+      </Suspense>
       <AnimatePresence>{loading && <Preloader key="intro" onDone={done} />}</AnimatePresence>
       <Cursor />
       <Nav />
       <main>
         <Hero ready={!loading} />
-        <VelocityMarquee items={marquee} />
         <About />
         <Work />
-        <Experience />
         <Impact />
+        <Experience />
         <Skills />
-        <GitHub />
         <Credentials />
       </main>
       <Contact />

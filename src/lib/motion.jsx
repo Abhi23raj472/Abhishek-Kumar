@@ -4,9 +4,7 @@ import {
   motion,
   useInView,
   useReducedMotion,
-  useScroll,
   useSpring,
-  useTransform,
 } from 'framer-motion'
 
 export const ease = [0.22, 1, 0.36, 1]
@@ -66,7 +64,7 @@ const charRise = {
 
 /**
  * Title whose letters rise and untwist one after another as it enters the
- * viewport, and fold away again when it leaves so the reveal replays.
+ * viewport. It plays once and then stays put, so a title never sits hidden.
  */
 export function SplitChars({ text, highlight = [], className = '' }) {
   const words = text.split(' ')
@@ -78,11 +76,11 @@ export function SplitChars({ text, highlight = [], className = '' }) {
         className="block"
         initial="hidden"
         whileInView="show"
-        viewport={{ once: false, margin: '0px 0px -20% 0px' }}
+        viewport={{ once: true, margin: '0px 0px -40px 0px' }}
         variants={{ hidden: {}, show: { transition: { staggerChildren: 0.018 } } }}
       >
         {words.map((w, i) => (
-          <span key={i} className={`mr-[0.24em] inline-block whitespace-nowrap ${highlight.includes(bare(w)) ? 'text-mute' : ''}`}>
+          <span key={i} className={`mr-[0.24em] inline-block whitespace-nowrap ${highlight.includes(bare(w)) ? 'italic text-accent' : ''}`}>
             {[...w].map((ch, j) => (
               <motion.span key={j} className="inline-block origin-bottom-left" variants={charRise}>
                 {ch}
@@ -100,7 +98,7 @@ const wordRise = {
   show: { opacity: 1, y: '0em', transition: { duration: 0.9, ease } },
 }
 
-/** Paragraph whose words rise in with a quick stagger each time it scrolls into view. */
+/** Paragraph whose words rise in with a quick stagger when it scrolls into view. */
 export function RevealWords({ text, className = '', as = 'p', delay = 0 }) {
   const M = motion[as]
   return (
@@ -108,7 +106,7 @@ export function RevealWords({ text, className = '', as = 'p', delay = 0 }) {
       className={className}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: false, margin: '0px 0px -15% 0px' }}
+      viewport={{ once: true, margin: '0px 0px -40px 0px' }}
       variants={{ hidden: {}, show: { transition: { staggerChildren: 0.012, delayChildren: delay } } }}
     >
       <span className="sr-only">{text}</span>
@@ -130,36 +128,6 @@ export function Roll({ children }) {
         <span aria-hidden>{children}</span>
       </span>
     </span>
-  )
-}
-
-function ScrollWord({ children, progress, range }) {
-  const opacity = useTransform(progress, range, [0.18, 1])
-  return (
-    <motion.span style={{ opacity }} className="mr-[0.25em] inline-block">
-      {children}
-    </motion.span>
-  )
-}
-
-/** Paragraph whose words light up one by one as it scrolls through the viewport. */
-export function ScrollText({ text, className = '' }) {
-  const ref = useRef(null)
-  const reduce = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.5'] })
-  const words = text.replaceAll('*', '').split(' ')
-  return (
-    <p ref={ref} className={className}>
-      {words.map((w, i) => {
-        if (reduce) return <span key={i} className="mr-[0.25em] inline-block">{w}</span>
-        const start = i / words.length
-        return (
-          <ScrollWord key={i} progress={scrollYProgress} range={[start, start + 1 / words.length]}>
-            {w}
-          </ScrollWord>
-        )
-      })}
-    </p>
   )
 }
 
@@ -224,7 +192,7 @@ export function SectionHead({ index, kicker, title, highlight = [], sub, classNa
           transition={{ duration: 1.4, ease, delay: 0.2 }}
         />
       </Reveal>
-      <h2 className="mt-5 max-w-3xl text-[clamp(1.875rem,3.4vw,3rem)] font-semibold leading-[1.1] tracking-[-0.03em]">
+      <h2 className="mt-5 max-w-3xl font-display text-[clamp(2.25rem,4.6vw,3.75rem)] font-normal leading-[1.05] tracking-[-0.01em]">
         <SplitChars text={title} highlight={highlight} />
       </h2>
       {typeof sub === 'string' ? (

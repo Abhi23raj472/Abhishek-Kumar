@@ -24,35 +24,41 @@ function useActiveSection() {
   return active
 }
 
+const THEME_KEY = 'ak-portfolio-theme'
+
+/** Switches between the dark space theme and the light grey one, and remembers it. */
 function ThemeToggle() {
-  const [dark, setDark] = useState(() => document.documentElement.dataset.theme === 'dark')
+  const [light, setLight] = useState(() => document.documentElement.dataset.theme === 'light')
   const toggle = () => {
-    const next = dark ? 'light' : 'dark'
+    const next = light ? 'dark' : 'light'
     document.documentElement.dataset.theme = next
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#0c0c0d' : '#fafaf9')
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'light' ? '#eef1f5' : '#03050a')
     try {
-      localStorage.setItem('ak-portfolio-theme', next)
+      localStorage.setItem(THEME_KEY, next)
     } catch {
-      /* storage blocked: theme still applies for this visit */
+      /* storage blocked: the theme still applies for this visit */
     }
-    setDark(!dark)
+    setLight(!light)
   }
   return (
     <button
       type="button"
       onClick={toggle}
-      aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}
-      className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-full border border-line text-fg transition-colors hover:bg-fg/5"
+      role="switch"
+      aria-checked={light}
+      aria-label="Light theme"
+      title={light ? 'Switch to dark theme' : 'Switch to light theme'}
+      className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-full border border-line text-fg transition-colors hover:border-accent"
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span
-          key={dark ? 'moon' : 'sun'}
-          initial={{ y: 16, rotate: -90, opacity: 0 }}
+          key={light ? 'sun' : 'moon'}
+          initial={{ y: 14, rotate: -90, opacity: 0 }}
           animate={{ y: 0, rotate: 0, opacity: 1 }}
-          exit={{ y: -16, rotate: 90, opacity: 0 }}
+          exit={{ y: -14, rotate: 90, opacity: 0 }}
           transition={{ duration: 0.3, ease }}
         >
-          {dark ? <Moon size={15} /> : <Sun size={15} />}
+          {light ? <Sun size={15} /> : <Moon size={15} />}
         </motion.span>
       </AnimatePresence>
     </button>
@@ -83,19 +89,21 @@ export default function Nav() {
 
   return (
     <>
-      <motion.div aria-hidden style={{ scaleX: progress }} className="fixed inset-x-0 top-0 z-[70] h-[2px] origin-left bg-accent" />
+      {/* Altitude rail: how far through the page you are. */}
+      <div aria-hidden className="fixed bottom-[15vh] right-4 top-[15vh] z-[55] hidden w-px bg-line md:block">
+        <motion.div className="h-full w-px origin-top bg-accent" style={{ scaleY: progress }} />
+      </div>
 
       <motion.header
         animate={{ y: hidden ? '-120%' : '0%' }}
         transition={{ duration: 0.45, ease }}
         className={`fixed inset-x-0 top-0 z-[60] border-b transition-[background-color,border-color] duration-300 ${
-          scrolled ? 'border-line bg-bg/85 backdrop-blur-md' : 'border-transparent'
+          scrolled ? 'border-line bg-bg/70 backdrop-blur-md' : 'border-transparent'
         }`}
       >
         <div className="shell flex h-16 items-center gap-4">
-          <a href="#top" className="flex items-center gap-2.5 text-[15px] font-semibold tracking-tight" aria-label="Abhishek Kumar, back to top">
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-ink text-xs text-on-ink">AK</span>
-            <span className="hidden sm:inline">{profile.name}</span>
+          <a href="#top" className="font-display text-2xl italic" aria-label="Abhishek Kumar, back to top">
+            Abhishek
           </a>
 
           <nav aria-label="Main" className="ml-auto hidden xl:block">
@@ -110,8 +118,8 @@ export default function Nav() {
                     <Roll>{n.label}</Roll>
                     {active === n.id && (
                       <motion.span
-                        layoutId="nav-underline"
-                        className="absolute inset-x-3 -bottom-px h-px bg-fg"
+                        layoutId="nav-dot"
+                        className="absolute -bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-accent"
                         transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                       />
                     )}
@@ -126,9 +134,9 @@ export default function Nav() {
             <a
               href={resume}
               download
-              className="hidden h-9 items-center rounded-full bg-ink px-4 text-[13px] font-medium text-on-ink transition-opacity hover:opacity-85 sm:inline-flex"
+              className="hidden h-9 items-center rounded-full border border-line px-4 text-[13px] text-fg transition-colors hover:border-accent sm:inline-flex"
             >
-              <Roll>Résumé</Roll>
+              <Roll>Resume</Roll>
             </a>
             <button
               type="button"
@@ -154,10 +162,10 @@ export default function Nav() {
             animate={{ clipPath: 'circle(150% at calc(100% - 38px) 32px)' }}
             exit={{ clipPath: 'circle(0% at calc(100% - 38px) 32px)' }}
             transition={{ duration: 0.6, ease }}
-            className="fixed inset-0 z-[65] flex flex-col bg-bg text-fg xl:hidden"
+            className="fixed inset-0 z-[65] flex flex-col bg-bg/95 text-fg backdrop-blur-md xl:hidden"
           >
             <div className="shell flex h-16 items-center justify-between">
-              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-mute">Menu</span>
+              <span className="label">Navigation</span>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
@@ -173,11 +181,12 @@ export default function Nav() {
               animate="s"
               variants={{ h: {}, s: { transition: { staggerChildren: 0.04, delayChildren: 0.15 } } }}
             >
-              {nav.map((n, i) => (
+              {nav.map((n) => (
                 <motion.li key={n.id} className="overflow-hidden border-b border-line" variants={{ h: { y: '100%' }, s: { y: '0%', transition: { duration: 0.5, ease } } }}>
-                  <a href={`#${n.id}`} onClick={() => setOpen(false)} className="flex items-baseline justify-between py-3.5">
-                    <span className="text-2xl font-medium tracking-tight"><Roll>{n.label}</Roll></span>
-                    <span className="font-mono text-[11px] text-mute">0{i + 1}</span>
+                  <a href={`#${n.id}`} onClick={() => setOpen(false)} className="block py-3">
+                    <span className="font-display text-3xl">
+                      <Roll>{n.label}</Roll>
+                    </span>
                   </a>
                 </motion.li>
               ))}
@@ -188,7 +197,7 @@ export default function Nav() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
-              <a href={resume} download className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">Download résumé</a>
+              <a href={resume} download className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">Download resume</a>
               <a href={`mailto:${profile.email}`} className="rounded-full border border-line px-5 py-2.5 text-sm font-medium">Email me</a>
             </motion.div>
           </motion.div>

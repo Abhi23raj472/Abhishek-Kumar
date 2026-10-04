@@ -1,121 +1,101 @@
-import { useLayoutEffect, useRef, useState } from 'react'
-import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
-import { Bug, Cpu, Layers3, Webhook } from 'lucide-react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { doing } from '../data'
 import { SectionHead, Stagger, StaggerItem } from '../lib/motion'
 
-const icons = [Layers3, Webhook, Cpu, Bug]
-const tones = ['bg-surface border border-line', 'bg-surface-2 border border-line']
+// One world per area of work: band colours, size, glow and an optional ring.
+const worlds = [
+  { bands: ['#173a73', '#2f68b8', '#5c95dc', '#2a5aa3'], size: 132, glow: 'rgb(80 140 255 / 0.35)' },
+  { bands: ['#8a6a46', '#d8c19a', '#b49468', '#e8d8b6'], size: 118, glow: 'rgb(242 194 123 / 0.3)', ring: '#d9c6a0' },
+  { bands: ['#5b2a1f', '#9a4a31', '#7a3a27', '#b8613f'], size: 104, glow: 'rgb(220 110 80 / 0.28)' },
+  { bands: ['#6f93b4', '#c9def0', '#9dbad3', '#e6f1fa'], size: 112, glow: 'rgb(170 210 255 / 0.3)', ring: '#b9d3ec' },
+]
 
-function Card({ d, i, progress }) {
-  const Icon = icons[i % icons.length]
-  // Each card's index drifts against the scroll for a bit of depth.
-  const numX = useTransform(progress, [0, 1], ['0%', `${-20 - i * 8}%`])
+function Ring({ color, front }) {
   return (
-    <article
-      className={`relative flex h-[min(52svh,420px)] w-[80vw] shrink-0 flex-col justify-between overflow-hidden rounded-2xl p-7 sm:w-[56vw] md:p-8 lg:w-[30vw] lg:max-w-[400px] ${tones[i % tones.length]}`}
-    >
-      <div className="flex items-start justify-between">
-        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-mute">{d.code}</span>
-        <span className="grid h-10 w-10 place-items-center rounded-full border border-line text-fg">
-          <Icon size={18} strokeWidth={1.5} />
-        </span>
-      </div>
-      <motion.span
-        aria-hidden
-        style={{ x: numX }}
-        className="pointer-events-none absolute -bottom-6 right-2 text-[clamp(6rem,10vw,8.5rem)] font-bold leading-none tracking-[-0.06em] text-fg/[0.05]"
-      >
-        0{i + 1}
-      </motion.span>
-      <div className="relative">
-        <h3 className="text-xl font-semibold tracking-[-0.02em] md:text-2xl">{d.title}</h3>
-        <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-mute">{d.body}</p>
-      </div>
-    </article>
+    <span
+      aria-hidden
+      className="absolute left-1/2 top-1/2 h-[34%] w-[170%] -translate-x-1/2 -translate-y-1/2 -rotate-[16deg] rounded-[50%] border-[3px]"
+      style={{
+        borderColor: color,
+        opacity: 0.7,
+        zIndex: front ? 2 : 0,
+        clipPath: front ? 'inset(50% 0 0 0)' : 'inset(0 0 50% 0)',
+        boxShadow: `0 0 0 4px ${color}22`,
+      }}
+    />
   )
 }
 
-/**
- * Pinned horizontal scroll: the section sticks to the viewport while vertical
- * scrolling slides the card track sideways.
- */
+function Planet({ w }) {
+  const [a, b, c, d] = w.bands
+  return (
+    <div className="relative" style={{ width: w.size, height: w.size }}>
+      {w.ring && <Ring color={w.ring} />}
+      <div
+        className="relative z-[1] h-full w-full overflow-hidden rounded-full"
+        style={{ boxShadow: `0 0 60px ${w.glow}` }}
+      >
+        <div
+          className="planet-surface absolute inset-0"
+          style={{
+            backgroundImage: [
+              'radial-gradient(ellipse 14% 9% at 30% 62%, rgb(255 255 255 / 0.22), transparent 70%)',
+              'radial-gradient(ellipse 10% 6% at 75% 35%, rgb(0 0 0 / 0.25), transparent 70%)',
+              `repeating-linear-gradient(176deg, ${a} 0 9%, ${b} 9% 15%, ${c} 15% 24%, ${d} 24% 31%, ${a} 31% 38%)`,
+            ].join(','),
+            backgroundSize: '50% 100%, 50% 100%, 100% 100%',
+          }}
+        />
+        {/* Lit from the upper left, falling into night on the lower right. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 rounded-full"
+          style={{
+            background:
+              'radial-gradient(circle at 30% 28%, rgb(255 255 255 / 0.22), transparent 38%), radial-gradient(circle at 78% 80%, rgb(0 0 0 / 0.92), transparent 68%)',
+            boxShadow: 'inset -14px -12px 34px rgb(0 0 0 / 0.85), inset 2px 2px 6px rgb(255 255 255 / 0.12)',
+          }}
+        />
+      </div>
+      {w.ring && <Ring color={w.ring} front />}
+    </div>
+  )
+}
+
 export default function Work() {
   const reduce = useReducedMotion()
-  const target = useRef(null)
-  const track = useRef(null)
-  const [dist, setDist] = useState(0)
-  const distMV = useMotionValue(0)
-
-  useLayoutEffect(() => {
-    if (reduce) return
-    const measure = () => {
-      const d = Math.max(0, track.current.scrollWidth - window.innerWidth)
-      distMV.set(d)
-      setDist(d)
-    }
-    measure()
-    const ro = new ResizeObserver(measure)
-    ro.observe(track.current)
-    window.addEventListener('resize', measure)
-    return () => {
-      ro.disconnect()
-      window.removeEventListener('resize', measure)
-    }
-  }, [reduce, distMV])
-
-  const { scrollYProgress } = useScroll({ target, offset: ['start start', 'end end'] })
-  const x = useSpring(
-    useTransform(() => -scrollYProgress.get() * distMV.get()),
-    { stiffness: 260, damping: 40, mass: 0.2 },
-  )
-
-  const head = (
-    <SectionHead
-      index="02"
-      kicker="What I do"
-      title="Quality, engineered end to end."
-      highlight={['end', 'to', 'end.']}
-      sub="Four ways I turn complex testing needs into dependable releases."
-      className="mb-0!"
-    />
-  )
-
-  if (reduce) {
-    return (
-      <section id="work" className="shell py-24 md:py-32">
-        {head}
-        <Stagger className="mt-10 grid gap-4 md:grid-cols-2">
-          {doing.map((d, i) => (
-            <StaggerItem key={d.code} className={`rounded-2xl p-7 ${tones[i % tones.length]}`}>
-              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-mute">{d.code}</span>
-              <h3 className="mt-8 text-xl font-semibold tracking-tight">{d.title}</h3>
-              <p className="mt-2 text-[15px] text-mute">{d.body}</p>
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </section>
-    )
-  }
-
   return (
-    <section id="work" ref={target} className="relative" style={{ height: `calc(100svh + ${dist}px)` }}>
-      <div className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden">
-        <motion.div ref={track} style={{ x }} className="flex w-max items-center gap-4 px-5 md:gap-5 md:px-10 xl:pl-[max(2.5rem,calc((100vw-1200px)/2+2.5rem))]">
-          <div className="w-[80vw] shrink-0 pr-6 sm:w-[56vw] lg:w-[30vw] lg:max-w-[400px]">{head}</div>
-          {doing.map((d, i) => (
-            <Card key={d.code} d={d} i={i} progress={scrollYProgress} />
-          ))}
-        </motion.div>
+    <section id="work" className="shell py-24 md:py-36">
+      <SectionHead
+        index="02"
+        kicker="What I do"
+        title="Four worlds I keep in orbit."
+        highlight={['orbit.']}
+        sub="The areas I own on a release, from building suites to closing out defects."
+      />
 
-        <div className="shell mt-10 flex items-center gap-4 font-mono text-[11px] text-mute" aria-hidden>
-          <span>01</span>
-          <div className="h-px flex-1 bg-line">
-            <motion.div className="h-px origin-left bg-fg" style={{ scaleX: scrollYProgress }} />
-          </div>
-          <span>0{doing.length}</span>
-        </div>
-      </div>
+      <Stagger className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4" gap={0.12}>
+        {doing.map((d, i) => {
+          const w = worlds[i % worlds.length]
+          return (
+            <StaggerItem key={d.code} className="group flex flex-col items-center text-center" data-cursor>
+              <motion.div
+                className="grid h-44 place-items-center"
+                animate={reduce ? undefined : { y: [0, -8, 0] }}
+                transition={{ duration: 6 + i, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <div className="transition-transform duration-500 group-hover:scale-110">
+                  <Planet w={w} />
+                </div>
+              </motion.div>
+              <p className="label mt-4">{d.code}</p>
+              <h3 className="mt-2 font-display text-2xl">{d.title}</h3>
+              <span aria-hidden className="my-4 h-6 w-px origin-top scale-y-50 bg-line transition-transform duration-500 group-hover:scale-y-100 group-hover:bg-accent" />
+              <p className="max-w-[17rem] text-sm leading-relaxed text-mute transition-colors group-hover:text-fg">{d.body}</p>
+            </StaggerItem>
+          )
+        })}
+      </Stagger>
     </section>
   )
 }
