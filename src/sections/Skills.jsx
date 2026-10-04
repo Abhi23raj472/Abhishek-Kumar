@@ -1,36 +1,179 @@
-import { motion } from 'framer-motion'
-import { competencies, proficiency, stack } from '../data'
-import { Counter, Reveal, SectionHead, Stagger, StaggerItem, ease } from '../lib/motion'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { proficiency, skillCats, skillCloud } from '../data'
+import { Counter, SectionHead, ease } from '../lib/motion'
 
-const pop = {
-  hidden: { opacity: 0, y: 10, scale: 0.9 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 380, damping: 24 } },
+const sizes = { 1: 'text-[13px]', 2: 'text-[15px]', 3: 'text-lg font-medium' }
+
+/** Evenly spread points on a unit sphere (Fibonacci lattice). */
+function spherePoints(n) {
+  const pts = []
+  const golden = Math.PI * (3 - Math.sqrt(5))
+  for (let i = 0; i < n; i++) {
+    const y = 1 - (i / (n - 1)) * 2
+    const r = Math.sqrt(1 - y * y)
+    const t = golden * i
+    pts.push([Math.cos(t) * r, y, Math.sin(t) * r])
+  }
+  return pts
 }
 
-const label = 'font-mono text-[11px] uppercase tracking-[0.18em] text-mute'
+/**
+ * Tags on a slowly turning sphere. Drag to spin it; it keeps some momentum.
+ * Positions are written straight to the DOM each frame, outside React.
+ */
+function TagSphere({ filter }) {
+  const reduce = useReducedMotion()
+  const stage = useRef(null)
+  const els = useRef([])
+  const filterRef = useRef(filter)
+  filterRef.current = filter
+  const pts = useMemo(() => spherePoints(skillCloud.length), [])
+
+  useEffect(() => {
+    const el = stage.current
+    let radius = 160
+    const ro = new ResizeObserver(([e]) => {
+      radius = Math.min(e.contentRect.width, e.contentRect.height) * 0.4
+    })
+    ro.observe(el)
+
+    const rot = { x: -0.25, y: 0, vx: 0, vy: reduce ? 0 : 0.0025 }
+    const drag = { on: false, px: 0, py: 0 }
+    const auto = reduce ? 0 : 0.0025
+
+    const down = (e) => {
+      drag.on = true
+      drag.px = e.clientX
+      drag.py = e.clientY
+      el.setPointerCapture(e.pointerId)
+    }
+    const move = (e) => {
+      if (!drag.on) return
+      const dx = e.clientX - drag.px
+      const dy = e.clientY - drag.py
+      drag.px = e.clientX
+      drag.py = e.clientY
+      rot.vy = dx * 0.006
+      rot.vx = -dy * 0.006
+    }
+    const up = () => (drag.on = false)
+    el.addEventListener('pointerdown', down)
+    el.addEventListener('pointermove', move)
+    el.addEventListener('pointerup', up)
+    el.addEventListener('pointercancel', up)
+
+    let raf = 0
+    const frame = () => {
+      raf = requestAnimationFrame(frame)
+      if (!drag.on) {
+        rot.vy += (auto - rot.vy) * 0.02
+        rot.vx *= 0.94
+      }
+      rot.y += rot.vy
+      rot.x = Math.max(-1.2, Math.min(1.2, rot.x + rot.vx))
+      const cy = Math.cos(rot.y)
+      const sy = Math.sin(rot.y)
+      const cx = Math.cos(rot.x)
+      const sx = Math.sin(rot.x)
+      const f = filterRef.current
+      pts.forEach(([x, y, z], i) => {
+        const node = els.current[i]
+        if (!node) return
+        // Rotate about Y, then X.
+        const x1 = x * cy + z * sy
+        const z1 = -x * sy + z * cy
+        const y2 = y * cx - z1 * sx
+        const z2 = y * sx + z1 * cx
+        const depth = (z2 + 1) / 2
+        const scale = 0.62 + depth * 0.55
+        const match = f === 'all' || node.dataset.cat === f
+        node.style.transform = `translate(-50%, -50%) translate3d(${(x1 * radius).toFixed(1)}px, ${(y2 * radius).toFixed(1)}px, 0) scale(${scale.toFixed(3)})`
+        node.style.opacity = ((0.18 + depth * 0.82) * (match ? 1 : 0.22)).toFixed(3)
+        node.style.zIndex = String(Math.round(depth * 100))
+      })
+    }
+    frame()
+    return () => {
+      cancelAnimationFrame(raf)
+      ro.disconnect()
+      el.removeEventListener('pointerdown', down)
+      el.removeEventListener('pointermove', move)
+      el.removeEventListener('pointerup', up)
+      el.removeEventListener('pointercancel', up)
+    }
+  }, [pts, reduce])
+
+  return (
+    <div
+      ref={stage}
+      className="relative mx-auto aspect-square w-full max-w-[520px] cursor-grab touch-pan-y select-none active:cursor-grabbing"
+      role="img"
+      aria-label={`Skills: ${skillCloud.map((s) => s[0]).join(', ')}`}
+    >
+      <div aria-hidden className="absolute inset-[10%] rounded-full bg-[radial-gradient(circle,rgb(77_141_255/0.1),transparent_65%)]" />
+      {skillCloud.map(([name, cat, w], i) => (
+        <span
+          key={name}
+          aria-hidden
+          ref={(n) => (els.current[i] = n)}
+          data-cat={cat}
+          className={`absolute left-1/2 top-1/2 whitespace-nowrap transition-colors duration-300 ${sizes[w]} ${
+            filter !== 'all' && filter === cat ? 'text-accent' : 'text-fg'
+          }`}
+        >
+          {name}
+        </span>
+      ))}
+    </div>
+  )
+}
 
 export default function Skills() {
+  const [filter, setFilter] = useState('all')
   return (
-    <section id="skills" className="shell py-24 md:py-32">
-      <SectionHead index="05" kicker="Skills" title="The toolkit behind the work." highlight={['behind', 'the', 'work.']} />
+    <section id="skills" className="shell py-24 md:py-36">
+      <SectionHead index="05" kicker="Skills" title="The toolkit, in full rotation." highlight={['rotation.']} />
 
-      <div className="grid gap-14 lg:grid-cols-2 lg:gap-20">
-        {/* Proficiency bars fill as they scroll in. */}
+      <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter skills">
+        {[{ id: 'all', label: 'All' }, ...skillCats].map((c) => (
+          <button
+            key={c.id}
+            type="button"
+            onClick={() => setFilter(c.id)}
+            aria-pressed={filter === c.id}
+            className={`relative rounded-full border px-3.5 py-1.5 text-[13px] transition-colors ${
+              filter === c.id ? 'border-transparent text-on-ink' : 'border-line text-mute hover:text-fg'
+            }`}
+          >
+            {filter === c.id && (
+              <motion.span layoutId="skill-filter" className="absolute inset-0 rounded-full bg-ink" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
+            )}
+            <span className="relative">{c.label}</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-6 grid items-center gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
         <div>
-          <Reveal className={label}>Proficiency</Reveal>
-          <ul className="mt-6 space-y-6">
+          <TagSphere filter={filter} />
+          <p className="label mt-2 text-center">Drag to spin</p>
+        </div>
+
+        <div className="panel rounded-2xl p-6">
+          <p className="label">Proficiency</p>
+          <ul className="mt-5 space-y-5">
             {proficiency.map((p, i) => (
               <li key={p.name}>
-                <div className="flex items-baseline justify-between gap-4">
-                  <span className="text-[15px] font-medium">{p.name}</span>
+                <div className="flex items-baseline justify-between gap-4 text-sm">
+                  <span>{p.name}</span>
                   <span className="font-mono text-xs text-mute">
-                    <span className="mr-3 uppercase tracking-wider">{p.level}</span>
                     <Counter to={p.pct} suffix="%" />
                   </span>
                 </div>
-                <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-fg/[0.07]" role="presentation">
+                <div className="mt-2 h-px bg-line" role="presentation">
                   <motion.div
-                    className="h-full origin-left rounded-full bg-fg"
+                    className="h-px origin-left bg-accent shadow-[0_0_8px_var(--accent)]"
                     initial={{ scaleX: 0 }}
                     whileInView={{ scaleX: p.pct / 100 }}
                     viewport={{ once: true }}
@@ -40,53 +183,6 @@ export default function Skills() {
               </li>
             ))}
           </ul>
-        </div>
-
-        <div className="space-y-10">
-          <div>
-            <Reveal className={label}>Stack</Reveal>
-            <dl className="mt-5 divide-y divide-line border-y border-line">
-              {stack.map((g) => (
-                <div key={g.k} className="grid gap-2.5 py-4 sm:grid-cols-[6.5rem_1fr] sm:items-center">
-                  <dt className={label}>{g.k}</dt>
-                  <Stagger as="dd" className="flex flex-wrap gap-1.5" gap={0.05}>
-                    {g.v.map((t) => (
-                      <StaggerItem
-                        key={t}
-                        variants={pop}
-                        className="rounded-full border border-line px-3 py-1 text-[13px] transition-colors hover:border-fg/40"
-                      >
-                        {t}
-                      </StaggerItem>
-                    ))}
-                  </Stagger>
-                </div>
-              ))}
-            </dl>
-          </div>
-
-          {/* Competencies read like a passing test report. */}
-          <div className="rounded-2xl border border-line bg-surface p-6 font-mono text-[13px]">
-            <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.16em] text-mute">
-              <span>competencies.spec</span>
-              <span>{competencies.length} passed</span>
-            </div>
-            <Stagger as="ul" className="mt-4 space-y-1.5" gap={0.06}>
-              {competencies.map((c) => (
-                <StaggerItem
-                  as="li"
-                  key={c}
-                  variants={{ hidden: { opacity: 0, x: -10 }, show: { opacity: 1, x: 0, transition: { duration: 0.4, ease } } }}
-                  className="flex items-center gap-3"
-                >
-                  <span className="text-accent">✓</span>
-                  <span>{c}</span>
-                  <span aria-hidden className="hidden h-px flex-1 border-t border-dashed border-line sm:block" />
-                  <span className="ml-auto text-[11px] text-mute">pass</span>
-                </StaggerItem>
-              ))}
-            </Stagger>
-          </div>
         </div>
       </div>
     </section>

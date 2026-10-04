@@ -29,7 +29,7 @@ function AwardRow({ a, i, open, onOpen }) {
         className="grid w-full grid-cols-[4.5rem_1fr_auto] items-center gap-4 px-2 py-5 text-left md:grid-cols-[7rem_1fr_auto] md:px-4"
       >
         <span className="font-mono text-[11px] uppercase tracking-wider text-mute">{a.date}</span>
-        <span className="text-lg font-semibold tracking-[-0.02em] md:text-xl">
+        <span className="font-display text-xl md:text-2xl">
           {a.name}
           {a.by && <span className="ml-2 hidden text-sm font-normal text-mute sm:inline">· {a.by}</span>}
         </span>
@@ -58,7 +58,7 @@ export default function Credentials() {
   const [open, setOpen] = useState(0)
   return (
     <section id="credentials" className="shell py-24 md:py-32">
-      <SectionHead index="07" kicker="Recognition" title="The work gets noticed." highlight={['gets', 'noticed.']} />
+      <SectionHead index="07" kicker="Recognition" title="Commendations along the way." highlight={['along', 'the', 'way.']} />
 
       <ul className="border-t border-line" onPointerLeave={(e) => e.pointerType === 'mouse' && setOpen(null)}>
         {awards.map((a, i) => (
@@ -76,10 +76,10 @@ export default function Credentials() {
               key={c.org}
               whileHover={{ y: -4 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              className="flex flex-col rounded-2xl border border-line bg-surface p-5"
+              className="panel flex flex-col rounded-2xl p-5"
             >
               <div className="flex items-baseline justify-between">
-                <span className="text-[15px] font-semibold">{c.org}</span>
+                <span className="font-display text-xl">{c.org}</span>
                 <span className="font-mono text-[11px] text-mute">×{c.items.length}</span>
               </div>
               <Stagger className="mt-4 flex flex-wrap gap-1.5" gap={0.05} delay={0.2}>

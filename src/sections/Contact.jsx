@@ -46,7 +46,7 @@ export default function Contact() {
   }
 
   return (
-    <footer id="contact" ref={ref} className="relative overflow-hidden border-t border-line pt-24 md:pt-32">
+    <footer id="contact" ref={ref} className="relative overflow-hidden border-t border-line bg-bg/60 pt-24 backdrop-blur-sm md:pt-32">
       <div className="shell">
         <p className={label}>
           <span className="text-accent">08</span>&nbsp;&nbsp;&nbsp;Contact
@@ -54,9 +54,9 @@ export default function Contact() {
 
         <motion.h2
           style={reduce ? undefined : { scale, y, opacity }}
-          className="mt-6 max-w-3xl origin-bottom-left text-[clamp(2.25rem,5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.04em]"
+          className="mt-6 max-w-3xl origin-bottom-left font-display text-[clamp(2.5rem,6vw,4.75rem)] font-normal leading-[1.02]"
         >
-          Let's build quality into your <span className="text-mute">next release.</span>
+          Open a channel for your <span className="italic text-accent">next launch.</span>
         </motion.h2>
 
         <div className="mt-10 grid gap-8 md:grid-cols-12 md:items-end">

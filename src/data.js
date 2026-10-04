@@ -14,8 +14,8 @@ export const profile = {
 export const nav = [
   { id: 'about', label: 'About' },
   { id: 'work', label: 'Work' },
-  { id: 'experience', label: 'Experience' },
   { id: 'impact', label: 'Impact' },
+  { id: 'experience', label: 'Experience' },
   { id: 'skills', label: 'Skills' },
   { id: 'github', label: 'GitHub' },
   { id: 'credentials', label: 'Awards' },
@@ -132,3 +132,55 @@ export const awards = [
 ]
 
 export const education = { degree: 'B.Tech — Computer Science & Engineering', school: 'Galgotias University · Greater Noida', year: '2021' }
+
+// About: read out like a mission record.
+export const record = [
+  ['Name', 'Abhishek Kumar'],
+  ['Role', 'Quality Engineer'],
+  ['Organisation', 'Optum Global Solutions, UnitedHealth Group'],
+  ['Base', 'India'],
+  ['Experience', '5+ years in quality engineering'],
+  ['Specialty', 'Tricentis Tosca, API validation, CI/CD'],
+  ['Status', 'Open to new roles'],
+]
+
+// Skills sphere. Weight 1-3 sets the size of each tag.
+export const skillCats = [
+  { id: 'automation', label: 'Automation' },
+  { id: 'api', label: 'API & data' },
+  { id: 'testing', label: 'Testing' },
+  { id: 'delivery', label: 'Delivery & tools' },
+]
+
+export const skillCloud = [
+  ['Tricentis Tosca', 'automation', 3],
+  ['XScan', 'automation', 2],
+  ['TCD', 'automation', 2],
+  ['Tosca DEX', 'automation', 3],
+  ['TQL', 'automation', 1],
+  ['Recovery scenarios', 'automation', 1],
+  ['Reusable modules', 'automation', 2],
+  ['REST', 'api', 3],
+  ['SOAP', 'api', 2],
+  ['Postman', 'api', 2],
+  ['SoapUI', 'api', 2],
+  ['Tosca API', 'api', 2],
+  ['MySQL', 'api', 1],
+  ['Test data', 'api', 1],
+  ['Regression', 'testing', 3],
+  ['Functional', 'testing', 2],
+  ['Smoke', 'testing', 1],
+  ['UI testing', 'testing', 1],
+  ['Risk-based testing', 'testing', 2],
+  ['Test case design', 'testing', 2],
+  ['Coverage mapping', 'testing', 1],
+  ['ISTQB', 'testing', 1],
+  ['CI/CD', 'delivery', 3],
+  ['JIRA', 'delivery', 2],
+  ['Confluence', 'delivery', 1],
+  ['ALM', 'delivery', 1],
+  ['Rally', 'delivery', 1],
+  ['Scrum', 'delivery', 2],
+  ['Kanban', 'delivery', 1],
+  ['STLC', 'delivery', 1],
+]

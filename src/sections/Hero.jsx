@@ -1,13 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  AnimatePresence,
   motion,
-  useMotionTemplate,
+  useAnimationFrame,
   useMotionValue,
   useReducedMotion,
   useScroll,
-  useSpring,
-  useTime,
   useTransform,
 } from 'framer-motion'
 import { ArrowDown, ArrowUpRight, Download } from 'lucide-react'
@@ -15,8 +12,8 @@ import { profile, roles } from '../data'
 import { Magnetic, Roll, ease } from '../lib/motion'
 
 const resume = `${import.meta.env.BASE_URL}${profile.resume}`
-
 const inOut = [0.65, 0, 0.35, 1]
+const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>#*+'
 
 /** Letters drift up out of a blur, one after another. */
 function Letters({ text, ready, delay = 0 }) {
@@ -26,9 +23,9 @@ function Letters({ text, ready, delay = 0 }) {
         <motion.span
           key={i}
           className="inline-block"
-          initial={{ opacity: 0, y: '0.5em', filter: 'blur(8px)' }}
+          initial={{ opacity: 0, y: '0.4em', filter: 'blur(10px)' }}
           animate={ready ? { opacity: 1, y: '0em', filter: 'blur(0px)' } : undefined}
-          transition={{ duration: 1.2, ease: inOut, delay: delay + i * 0.03 }}
+          transition={{ duration: 1.3, ease: inOut, delay: delay + i * 0.045 }}
         >
           {ch === ' ' ? ' ' : ch}
         </motion.span>
@@ -37,66 +34,73 @@ function Letters({ text, ready, delay = 0 }) {
   )
 }
 
-const swap = {
-  hidden: { y: '110%' },
-  show: { y: '0%', transition: { duration: 0.7, ease: inOut } },
-  exit: { y: '-110%', transition: { duration: 0.7, ease: inOut } },
+/** Text that resolves out of random glyphs, like a signal locking on. */
+function Decode({ text, run, delay = 0 }) {
+  const reduce = useReducedMotion()
+  const [out, setOut] = useState(reduce ? text : '')
+  useEffect(() => {
+    if (!run || reduce) {
+      if (reduce) setOut(text)
+      return
+    }
+    let frame = 0
+    let id
+    const start = setTimeout(() => {
+      id = setInterval(() => {
+        frame++
+        const locked = Math.floor(frame / 2)
+        setOut(
+          [...text]
+            .map((ch, i) => (ch === ' ' || i < locked ? ch : GLYPHS[Math.floor(Math.random() * GLYPHS.length)]))
+            .join(''),
+        )
+        if (locked >= text.length) clearInterval(id)
+      }, 30)
+    }, delay * 1000)
+    return () => {
+      clearTimeout(start)
+      clearInterval(id)
+    }
+  }, [text, run, delay, reduce])
+  return <span aria-hidden>{out || ' '}</span>
 }
 
-/** Each role rolls out letter by letter while the next rolls in behind it. */
-function RoleRotator() {
+/** Cycles through focus areas, decoding each one in. */
+function RoleTicker({ run }) {
   const [i, setI] = useState(0)
   useEffect(() => {
+    if (!run) return
     const t = setInterval(() => setI((v) => (v + 1) % roles.length), 3200)
     return () => clearInterval(t)
-  }, [])
-  return (
-    <span aria-hidden className="relative block h-[1.4em] overflow-hidden">
-      <AnimatePresence initial={false}>
-        <motion.span
-          key={i}
-          className="absolute inset-x-0 top-0 whitespace-nowrap"
-          initial="hidden"
-          animate="show"
-          exit="exit"
-          variants={{ show: { transition: { staggerChildren: 0.025 } }, exit: { transition: { staggerChildren: 0.025 } } }}
-        >
-          {[...roles[i]].map((ch, j) => (
-            <motion.span key={j} className="inline-block" variants={swap}>
-              {ch === ' ' ? ' ' : ch}
-            </motion.span>
-          ))}
-        </motion.span>
-      </AnimatePresence>
-    </span>
-  )
+  }, [run])
+  return <Decode key={i} text={roles[i]} run={run} delay={i === 0 ? 1.4 : 0} />
 }
 
-const lede =
-  'building scalable test automation for web, desktop and API experiences, so teams release with speed and confidence.'
-
-/** Circular text badge: spins slowly, and faster as you scroll. */
-function Badge({ reduce }) {
-  const { scrollY } = useScroll()
-  const time = useTime()
-  const rotate = useTransform(() => (reduce ? 0 : time.get() / 90 + scrollY.get() * 0.2))
-  const r = 78
+/** A small satellite on a tilted orbit around the name, passing behind it on the far side. */
+function Satellite({ reduce }) {
+  const angle = useMotionValue(Math.PI * 0.15)
+  useAnimationFrame((_, delta) => {
+    if (!reduce) angle.set(angle.get() + delta * 0.00035)
+  })
+  const left = useTransform(angle, (a) => `${50 + Math.cos(a) * 54}%`)
+  const top = useTransform(angle, (a) => `${50 + Math.sin(a) * 42}%`)
+  const front = useTransform(angle, (a) => Math.sin(a) > 0)
+  const z = useTransform(front, (f) => (f ? 3 : 0))
+  const scale = useTransform(angle, (a) => 0.7 + (Math.sin(a) + 1) * 0.18)
+  const opacity = useTransform(angle, (a) => 0.45 + (Math.sin(a) + 1) * 0.27)
   return (
-    <a href="#about" aria-label="Scroll to about section" className="group relative grid h-28 w-28 shrink-0 place-items-center">
-      <motion.svg viewBox="0 0 200 200" className="absolute inset-0 h-full w-full" style={{ rotate }} aria-hidden>
-        <defs>
-          <path id="badge-circle" d={`M100,100 m-${r},0 a${r},${r} 0 1,1 ${r * 2},0 a${r},${r} 0 1,1 -${r * 2},0`} />
-        </defs>
-        <text className="fill-mute font-mono text-[13px] uppercase">
-          <textPath href="#badge-circle" textLength={2 * Math.PI * r - 6} lengthAdjust="spacing">
-            Quality Engineer · Tosca Automation · 5+ Years ·
-          </textPath>
-        </text>
+    <motion.div aria-hidden className="pointer-events-none absolute" style={{ left, top, zIndex: z }}>
+      <motion.svg viewBox="0 0 64 28" className="-ml-6 -mt-3 w-12" style={{ scale, opacity }}>
+        <rect x="1" y="9" width="20" height="10" rx="1" fill="#16264d" stroke="#8fc4ff" strokeWidth="1" />
+        <rect x="43" y="9" width="20" height="10" rx="1" fill="#16264d" stroke="#8fc4ff" strokeWidth="1" />
+        <path d="M8 9v10M14 9v10M50 9v10M56 9v10" stroke="#8fc4ff" strokeWidth="0.6" />
+        <path d="M21 14h5M38 14h5" stroke="#cfdcf3" strokeWidth="1.2" />
+        <rect x="26" y="7" width="12" height="14" rx="2" fill="#dfe7f5" />
+        <rect x="28.5" y="10" width="7" height="4" rx="0.8" fill="#3b6fd8" />
+        <path d="M32 7V3" stroke="#dfe7f5" strokeWidth="1" />
+        <circle cx="32" cy="2.5" r="1.4" fill="#f2c27b" />
       </motion.svg>
-      <span className="grid h-11 w-11 place-items-center rounded-full border border-line transition-colors duration-300 group-hover:bg-ink group-hover:text-on-ink">
-        <ArrowDown size={16} />
-      </span>
-    </a>
+    </motion.div>
   )
 }
 
@@ -104,117 +108,86 @@ export default function Hero({ ready }) {
   const reduce = useReducedMotion()
   const ref = useRef(null)
 
-  // Soft cursor-following glow behind the type.
-  const mx = useMotionValue(0)
-  const my = useMotionValue(0)
-  const gx = useSpring(mx, { stiffness: 80, damping: 20 })
-  const gy = useSpring(my, { stiffness: 80, damping: 20 })
-  const glow = useMotionTemplate`radial-gradient(520px circle at ${gx}px ${gy}px, var(--glow), transparent 70%)`
-  useEffect(() => {
-    mx.set(window.innerWidth * 0.65)
-    my.set(window.innerHeight * 0.45)
-  }, [mx, my])
-  const onMove = (e) => {
-    if (reduce || e.pointerType !== 'mouse') return
-    const r = ref.current.getBoundingClientRect()
-    mx.set(e.clientX - r.left)
-    my.set(e.clientY - r.top)
-  }
-
-  // Scrolling away slides the two name lines apart and lifts the content.
+  // Scrolling away lifts the content and fades it into the sky.
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const line1 = useTransform(p, [0, 1], ['0%', '-12%'])
-  const line2 = useTransform(p, [0, 1], ['0%', '12%'])
-  const lift = useTransform(p, [0, 1], ['0%', '25%'])
-  const fade = useTransform(p, [0, 0.75], [1, 0])
-  const motionStyle = (s) => (reduce ? undefined : s)
+  const lift = useTransform(p, [0, 1], ['0%', '-30%'])
+  const fade = useTransform(p, [0, 0.6], [1, 0])
 
   const show = (delay) => ({
-    initial: { opacity: 0, y: 20 },
+    initial: { opacity: 0, y: 16 },
     animate: ready ? { opacity: 1, y: 0 } : undefined,
-    transition: { duration: 0.9, ease, delay },
+    transition: { duration: 1, ease, delay },
   })
 
   return (
-    <section ref={ref} id="top" onPointerMove={onMove} className="relative isolate flex min-h-svh flex-col overflow-hidden pb-10 pt-24 md:pt-28">
-      <div aria-hidden className="grid-lines absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]" />
-      <motion.div aria-hidden className="absolute inset-0 -z-10" style={{ backgroundImage: glow }} />
-
-      <motion.div style={motionStyle({ y: lift, opacity: fade })} className="shell flex flex-1 flex-col justify-center gap-12 md:gap-16">
-        <motion.div {...show(0.1)} className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-mute">
-          <span className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-fg">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:animate-none" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
-            </span>
-            Open to new roles
+    <section ref={ref} id="top" className="relative flex min-h-svh flex-col pb-[22svh] pt-28">
+      <motion.div style={reduce ? undefined : { y: lift, opacity: fade }} className="shell flex flex-1 flex-col items-center justify-center text-center">
+        <motion.p {...show(1.6)} className="label inline-flex items-center gap-2.5">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-60 motion-reduce:animate-none" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-signal" />
           </span>
-          <span>{profile.company} · {profile.location}</span>
-        </motion.div>
+          Open to new roles · {profile.location}
+        </motion.p>
 
-        <div>
-          <h1 className="text-[clamp(2.75rem,8vw,6.5rem)] font-semibold leading-[0.95] tracking-[-0.045em]">
-            <span className="sr-only">Abhishek Kumar, Quality Engineer</span>
-            <motion.span className="block" style={motionStyle({ x: line1 })}>
-              <Letters text="Abhishek" ready={ready} delay={0.05} />
-            </motion.span>
-            <motion.span className="block text-mute md:pl-[12%]" style={motionStyle({ x: line2 })}>
-              <Letters text="Kumar." ready={ready} delay={0.3} />
-            </motion.span>
+        <div className="relative mt-6 isolate">
+          <motion.svg
+            aria-hidden
+            viewBox="0 0 100 40"
+            preserveAspectRatio="none"
+            className="pointer-events-none absolute -inset-x-[8%] -inset-y-[20%] -z-10 h-[140%] w-[116%]"
+            initial={{ opacity: 0 }}
+            animate={ready ? { opacity: 1 } : undefined}
+            transition={{ duration: 2, delay: 1.8 }}
+          >
+            <ellipse cx="50" cy="20" rx="46" ry="16" fill="none" stroke="rgb(143 196 255 / 0.18)" strokeWidth="0.15" strokeDasharray="0.6 0.9" vectorEffect="non-scaling-stroke" />
+          </motion.svg>
+          <h1 className="relative z-[1] font-display text-[clamp(3.25rem,10vw,7.5rem)] font-normal leading-[0.95] tracking-[-0.01em]">
+            <span className="sr-only">Abhishek Kumar, {profile.role}</span>
+            <Letters text="Abhishek" ready={ready} delay={0.2} />{' '}
+            <span className="italic text-accent">
+              <Letters text="Kumar" ready={ready} delay={0.55} />
+            </span>
           </h1>
-          <motion.p
-            className="mt-6 max-w-xl text-base leading-relaxed text-mute md:text-lg"
-            initial="hidden"
-            animate={ready ? 'show' : 'hidden'}
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.02, delayChildren: 0.6 } } }}
-          >
-            <span className="sr-only">Quality Engineer {lede}</span>
-            {['Quality', 'Engineer', ...lede.split(' ')].map((w, i) => (
-              <motion.span
-                key={i}
-                aria-hidden
-                className={`mr-[0.26em] inline-block ${i < 2 ? 'text-fg' : ''}`}
-                variants={{ hidden: { opacity: 0, y: '1em' }, show: { opacity: 1, y: '0em', transition: { duration: 0.9, ease } } }}
-              >
-                {w}
-              </motion.span>
-            ))}
-          </motion.p>
+          {ready && <Satellite reduce={reduce} />}
         </div>
 
-        <div className="flex flex-wrap items-end justify-between gap-8">
-          <motion.div {...show(0.7)} className="flex flex-wrap items-center gap-3">
-            <Magnetic>
-              <a href="#work" className="group inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">
-                <Roll>See my work</Roll>
-                <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:rotate-45" />
-              </a>
-            </Magnetic>
-            <Magnetic>
-              <a href={resume} download className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-medium transition-colors hover:bg-fg/5">
-                <Roll>Résumé</Roll> <Download size={15} />
-              </a>
-            </Magnetic>
-          </motion.div>
+        <motion.p {...show(1.2)} className="mt-6 max-w-lg text-base leading-relaxed text-mute md:text-lg">
+          <span className="text-fg">Quality Engineer</span> building scalable test automation for web, desktop and API
+          experiences, so teams release with speed and confidence.
+        </motion.p>
 
-          <motion.div {...show(0.8)} className="min-w-[14rem]">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-mute">Currently focused on</p>
-            <p className="mt-1.5 text-lg font-medium tracking-tight md:text-xl">
-              <span className="sr-only">{roles.join(', ')}</span>
-              <RoleRotator />
-            </p>
-          </motion.div>
+        <motion.p {...show(1.4)} className="mt-5 font-mono text-xs uppercase tracking-[0.16em] text-mute">
+          <span className="sr-only">Focus: {roles.join(', ')}</span>
+          Focus ▸ <span className="text-accent"><RoleTicker run={ready} /></span>
+        </motion.p>
 
-          <motion.div
-            className="hidden md:block"
-            initial={{ opacity: 0, scale: 0.7 }}
-            animate={ready ? { opacity: 1, scale: 1 } : undefined}
-            transition={{ duration: 1, ease, delay: 0.8 }}
-          >
-            <Badge reduce={reduce} />
-          </motion.div>
-        </div>
+        <motion.div {...show(1.6)} className="mt-9 flex flex-wrap items-center justify-center gap-3">
+          <Magnetic>
+            <a href="#work" className="group inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">
+              <Roll>Explore the mission</Roll>
+              <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:rotate-45" />
+            </a>
+          </Magnetic>
+          <Magnetic>
+            <a href={resume} download className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-medium transition-colors hover:border-accent">
+              <Roll>Résumé</Roll> <Download size={15} />
+            </a>
+          </Magnetic>
+        </motion.div>
       </motion.div>
+
+      <motion.a
+        href="#about"
+        {...show(2)}
+        className="absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 text-mute hover:text-fg"
+        aria-label="Scroll to about"
+      >
+        <span className="label">Scroll</span>
+        <motion.span animate={reduce ? undefined : { y: [0, 6, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}>
+          <ArrowDown size={14} />
+        </motion.span>
+      </motion.a>
     </section>
   )
 }

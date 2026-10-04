@@ -6,7 +6,7 @@ import { Counter, Roll, SectionHead, Stagger, StaggerItem } from '../lib/motion'
 
 const API = 'https://api.github.com'
 const CONTRIB = 'https://github-contributions-api.jogruber.de/v4/'
-const levels = ['bg-fg/[0.06]', 'bg-fg/25', 'bg-fg/45', 'bg-fg/70', 'bg-fg']
+const levels = ['bg-fg/[0.06]', 'bg-accent/25', 'bg-accent/45', 'bg-accent/70', 'bg-accent']
 const DAY = 864e5
 
 const fmt = (d) => new Date(d + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
@@ -69,8 +69,8 @@ export default function GitHub() {
       <SectionHead
         index="06"
         kicker="GitHub"
-        title="Building in the open."
-        highlight={['in', 'the', 'open.']}
+        title="Transmissions from GitHub."
+        highlight={['GitHub.']}
         sub={
           <>
             Live from{' '}
@@ -82,10 +82,10 @@ export default function GitHub() {
         }
       />
 
-      <Stagger className="grid grid-cols-2 border-l border-t border-line md:grid-cols-4">
+      <Stagger className="panel grid grid-cols-2 overflow-hidden rounded-2xl border-0 md:grid-cols-4">
         {tiles.map((t) => (
-          <StaggerItem key={t.k} className="border-b border-r border-line p-5 md:p-6">
-            <div className="text-[clamp(1.75rem,2.6vw,2.25rem)] font-semibold leading-none tracking-[-0.03em]">
+          <StaggerItem key={t.k} className="border border-line/60 p-5 md:p-6">
+            <div className="font-display text-[clamp(2rem,3vw,2.75rem)] leading-none">
               <Counter to={t.v ?? null} />
             </div>
             <div className="mt-2 text-[13px] text-mute">{t.k}</div>
@@ -93,7 +93,7 @@ export default function GitHub() {
         ))}
       </Stagger>
 
-      <div className="mt-5 rounded-2xl border border-line bg-surface p-5 md:p-7">
+      <div className="panel mt-5 rounded-2xl p-5 md:p-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-mute">Contribution graph</span>
           {!!years.length && (

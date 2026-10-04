@@ -1,38 +1,19 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-
-/* Near-monochrome palette with one muted accent, used sparingly.
-   `--ink` is the solid fill for buttons and highlights (always paired
-   with `--on-ink`); `--accent` is for small details like indices and lines. */
+/* Deep-space theme: near-black sky, starlight text, one cool accent for
+   instrument details and one warm signal colour used very sparingly. */
 :root {
-  color-scheme: light;
-  --bg: #fafaf9;
-  --surface: #ffffff;
-  --surface-2: #f2f2f0;
-  --fg: #18181b;
-  --mute: #5f6168;
-  --line: rgb(24 24 27 / 0.1);
-  --ink: #18181b;
-  --on-ink: #fafaf9;
-  --accent: #3b5bdb;
-  --grid: rgb(24 24 27 / 0.04);
-  --glow: rgb(59 91 219 / 0.08);
-}
-
-:root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0c0c0d;
-  --surface: #141416;
-  --surface-2: #1b1b1e;
-  --fg: #ececee;
-  --mute: #9a9ba3;
-  --line: rgb(255 255 255 / 0.09);
-  --ink: #ececee;
-  --on-ink: #0c0c0d;
-  --accent: #8ea6ff;
-  --grid: rgb(255 255 255 / 0.035);
-  --glow: rgb(142 166 255 / 0.07);
+  --bg: #03050a;
+  --surface: rgb(160 190 255 / 0.04);
+  --surface-2: rgb(160 190 255 / 0.08);
+  --fg: #e6ebf5;
+  --mute: #8d97ab;
+  --line: rgb(170 195 255 / 0.13);
+  --ink: #e6ebf5;
+  --on-ink: #03050a;
+  --accent: #8fc4ff;
+  --signal: #f2c27b;
 }
 
 @theme inline {
@@ -45,7 +26,8 @@
   --color-ink: var(--ink);
   --color-on-ink: var(--on-ink);
   --color-accent: var(--accent);
-  --font-display: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --color-signal: var(--signal);
+  --font-display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
 }
@@ -63,11 +45,10 @@
     font-feature-settings: "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    transition: background-color 0.4s ease, color 0.4s ease;
     overflow-x: clip;
   }
   ::selection {
-    background: var(--ink);
+    background: var(--accent);
     color: var(--on-ink);
   }
   a,
@@ -85,26 +66,30 @@
 }
 
 @layer components {
-  .grid-lines {
-    background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 64px 64px;
-  }
-  .outline-text {
-    color: transparent;
-    -webkit-text-stroke: 1px var(--mute);
-  }
   .shell {
     margin-inline: auto;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1160px;
     padding-inline: 1.25rem;
   }
   @media (min-width: 768px) {
     .shell {
       padding-inline: 2.5rem;
     }
+  }
+  /* Glass panel for content that sits over the sky. */
+  .panel {
+    border: 1px solid var(--line);
+    background: rgb(8 12 24 / 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--mute);
   }
 }
 
@@ -136,12 +121,38 @@ html.lenis.lenis-smooth {
   transform: translateY(-100%);
 }
 
+/* A slowly turning radar sweep inside the About porthole. */
+@keyframes sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.sweep {
+  animation: sweep 6s linear infinite;
+}
+
+/* Planet surfaces drift sideways behind a fixed terminator shadow. */
+@keyframes drift {
+  to {
+    background-position: -200% 0;
+  }
+}
+.planet-surface {
+  animation: drift 40s linear infinite;
+}
+.group:hover .planet-surface {
+  animation-duration: 10s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .roll-in {
+  .roll-in,
+  .sweep,
+  .planet-surface {
     transition: none;
+    animation: none;
   }
   :is(a, button):hover .roll-in {
     transform: none;
