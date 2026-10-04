@@ -2,10 +2,13 @@
 
 Personal portfolio built with React, Vite, Tailwind CSS and Framer Motion.
 
-An editorial, type-led design with scroll-driven Framer Motion effects:
+A clean, minimal design (Inter, near-monochrome palette with one muted accent) with scroll-driven Framer Motion effects:
 
-- **Intro**: a short "test run" preloader (once per session), then the name rises in letter by letter.
-- **Hero**: cursor-following glow, name lines that split apart on scroll, a rotating role ticker and a circular badge that spins with the scroll.
+- **Smooth scrolling**: Lenis gives the wheel an eased, inertia feel; in-page links glide to their section.
+- **Intro**: a short "test run" preloader with a slow marquee (once per session), then the name drifts up out of a blur letter by letter.
+- **Text reveals**: section titles rise letter by letter and paragraphs word by word, replaying each time they scroll back into view.
+- **Cursor and links**: a soft blob trails the mouse and inverts what it passes over; link labels roll up to a copy on hover.
+- **Hero**: cursor-following glow, name lines that split apart on scroll, a role ticker that swaps letter by letter and a circular badge that spins with the scroll.
 - **Velocity marquee**: tool names that speed up, reverse and skew with scroll speed and direction.
 - **About**: a paragraph whose words light up as you scroll through it, plus count-up stats.
 - **What I do**: a pinned section where vertical scrolling slides the cards sideways.

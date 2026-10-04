@@ -5,41 +5,33 @@ import { doing } from '../data'
 import { SectionHead, Stagger, StaggerItem } from '../lib/motion'
 
 const icons = [Layers3, Webhook, Cpu, Bug]
-const tones = [
-  'bg-surface text-fg border border-line',
-  'bg-lime text-on-lime',
-  'bg-surface-2 text-fg border border-line',
-  'bg-violet text-on-violet',
-]
+const tones = ['bg-surface border border-line', 'bg-surface-2 border border-line']
 
-function Card({ d, i, progress, total }) {
+function Card({ d, i, progress }) {
   const Icon = icons[i % icons.length]
-  // Each card's big number drifts against the scroll for a bit of depth.
-  const numX = useTransform(progress, [0, 1], ['0%', `${-30 - i * 10}%`])
+  // Each card's index drifts against the scroll for a bit of depth.
+  const numX = useTransform(progress, [0, 1], ['0%', `${-20 - i * 8}%`])
   return (
     <article
-      className={`relative flex h-[min(62svh,560px)] w-[82vw] shrink-0 flex-col justify-between overflow-hidden rounded-[2rem] p-7 sm:w-[60vw] md:p-10 lg:w-[38vw] ${tones[i % tones.length]}`}
+      className={`relative flex h-[min(52svh,420px)] w-[80vw] shrink-0 flex-col justify-between overflow-hidden rounded-2xl p-7 sm:w-[56vw] md:p-8 lg:w-[30vw] lg:max-w-[400px] ${tones[i % tones.length]}`}
     >
       <div className="flex items-start justify-between">
-        <span className="font-mono text-xs uppercase tracking-[0.2em] opacity-70">{d.code}</span>
-        <span className="grid h-14 w-14 place-items-center rounded-full border border-current/20">
-          <Icon size={24} strokeWidth={1.5} />
+        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-mute">{d.code}</span>
+        <span className="grid h-10 w-10 place-items-center rounded-full border border-line text-fg">
+          <Icon size={18} strokeWidth={1.5} />
         </span>
       </div>
       <motion.span
         aria-hidden
         style={{ x: numX }}
-        className="pointer-events-none absolute -bottom-10 right-0 font-display text-[clamp(10rem,22vw,20rem)] font-bold leading-none tracking-[-0.08em] opacity-10"
+        className="pointer-events-none absolute -bottom-6 right-2 text-[clamp(6rem,10vw,8.5rem)] font-bold leading-none tracking-[-0.06em] text-fg/[0.05]"
       >
         0{i + 1}
       </motion.span>
       <div className="relative">
-        <h3 className="font-display text-[clamp(2rem,3.4vw,3.25rem)] font-semibold leading-[1] tracking-[-0.04em]">{d.title}</h3>
-        <p className="mt-4 max-w-md text-base leading-relaxed opacity-80 md:text-lg">{d.body}</p>
+        <h3 className="text-xl font-semibold tracking-[-0.02em] md:text-2xl">{d.title}</h3>
+        <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-mute">{d.body}</p>
       </div>
-      <span className="sr-only">
-        {i + 1} of {total}
-      </span>
     </article>
   )
 }
@@ -78,16 +70,27 @@ export default function Work() {
     { stiffness: 260, damping: 40, mass: 0.2 },
   )
 
+  const head = (
+    <SectionHead
+      index="02"
+      kicker="What I do"
+      title="Quality, engineered end to end."
+      highlight={['end', 'to', 'end.']}
+      sub="Four ways I turn complex testing needs into dependable releases."
+      className="mb-0!"
+    />
+  )
+
   if (reduce) {
     return (
       <section id="work" className="shell py-24 md:py-32">
-        <SectionHead index="02" kicker="What I do" title="Quality, engineered end to end." highlight={['engineered']} />
-        <Stagger className="grid gap-4 md:grid-cols-2">
+        {head}
+        <Stagger className="mt-10 grid gap-4 md:grid-cols-2">
           {doing.map((d, i) => (
-            <StaggerItem key={d.code} className={`rounded-[2rem] p-8 ${tones[i % tones.length]}`}>
-              <span className="font-mono text-xs uppercase tracking-[0.2em] opacity-70">{d.code}</span>
-              <h3 className="mt-10 font-display text-3xl font-semibold tracking-tight">{d.title}</h3>
-              <p className="mt-3 opacity-80">{d.body}</p>
+            <StaggerItem key={d.code} className={`rounded-2xl p-7 ${tones[i % tones.length]}`}>
+              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-mute">{d.code}</span>
+              <h3 className="mt-8 text-xl font-semibold tracking-tight">{d.title}</h3>
+              <p className="mt-2 text-[15px] text-mute">{d.body}</p>
             </StaggerItem>
           ))}
         </Stagger>
@@ -98,26 +101,17 @@ export default function Work() {
   return (
     <section id="work" ref={target} className="relative" style={{ height: `calc(100svh + ${dist}px)` }}>
       <div className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden">
-        <motion.div ref={track} style={{ x }} className="flex w-max items-center gap-5 px-5 md:gap-6 md:px-10">
-          <div className="flex w-[82vw] shrink-0 flex-col justify-center sm:w-[60vw] lg:w-[34vw]">
-            <SectionHead
-              index="02"
-              kicker="What I do"
-              title="Quality, engineered end to end."
-              highlight={['engineered']}
-              sub="Scroll on — four ways I turn complex testing needs into dependable releases."
-              className="mb-0!"
-            />
-          </div>
+        <motion.div ref={track} style={{ x }} className="flex w-max items-center gap-4 px-5 md:gap-5 md:px-10 xl:pl-[max(2.5rem,calc((100vw-1200px)/2+2.5rem))]">
+          <div className="w-[80vw] shrink-0 pr-6 sm:w-[56vw] lg:w-[30vw] lg:max-w-[400px]">{head}</div>
           {doing.map((d, i) => (
-            <Card key={d.code} d={d} i={i} progress={scrollYProgress} total={doing.length} />
+            <Card key={d.code} d={d} i={i} progress={scrollYProgress} />
           ))}
         </motion.div>
 
-        <div className="shell mt-8 flex items-center gap-4 font-mono text-xs text-mute md:mt-12" aria-hidden>
+        <div className="shell mt-10 flex items-center gap-4 font-mono text-[11px] text-mute" aria-hidden>
           <span>01</span>
           <div className="h-px flex-1 bg-line">
-            <motion.div className="h-px origin-left bg-accent" style={{ scaleX: scrollYProgress }} />
+            <motion.div className="h-px origin-left bg-fg" style={{ scaleX: scrollYProgress }} />
           </div>
           <span>0{doing.length}</span>
         </div>

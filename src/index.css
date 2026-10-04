@@ -2,40 +2,37 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* Light: warm paper + ink. Dark: near-black + lime. `--accent` is for text,
-   `--lime` for fills (always paired with `--on-lime`). */
+/* Near-monochrome palette with one muted accent, used sparingly.
+   `--ink` is the solid fill for buttons and highlights (always paired
+   with `--on-ink`); `--accent` is for small details like indices and lines. */
 :root {
   color-scheme: light;
-  --bg: #f3f1ea;
+  --bg: #fafaf9;
   --surface: #ffffff;
-  --surface-2: #e8e5da;
-  --fg: #111214;
-  --mute: #5a5f68;
-  --line: rgb(17 18 20 / 0.12);
-  --accent: #3b6d00;
-  --lime: #c6f24e;
-  --on-lime: #111214;
-  --violet: #5b4bf0;
-  --on-violet: #ffffff;
-  --grid: rgb(17 18 20 / 0.055);
-  --glow: rgb(198 242 78 / 0.55);
+  --surface-2: #f2f2f0;
+  --fg: #18181b;
+  --mute: #5f6168;
+  --line: rgb(24 24 27 / 0.1);
+  --ink: #18181b;
+  --on-ink: #fafaf9;
+  --accent: #3b5bdb;
+  --grid: rgb(24 24 27 / 0.04);
+  --glow: rgb(59 91 219 / 0.08);
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0a0b0d;
-  --surface: #121418;
-  --surface-2: #1b1e24;
-  --fg: #eceef1;
-  --mute: #9aa1ab;
-  --line: rgb(255 255 255 / 0.1);
-  --accent: #c6f24e;
-  --lime: #c6f24e;
-  --on-lime: #0a0b0d;
-  --violet: #8b7dff;
-  --on-violet: #0a0b0d;
-  --grid: rgb(255 255 255 / 0.045);
-  --glow: rgb(198 242 78 / 0.14);
+  --bg: #0c0c0d;
+  --surface: #141416;
+  --surface-2: #1b1b1e;
+  --fg: #ececee;
+  --mute: #9a9ba3;
+  --line: rgb(255 255 255 / 0.09);
+  --ink: #ececee;
+  --on-ink: #0c0c0d;
+  --accent: #8ea6ff;
+  --grid: rgb(255 255 255 / 0.035);
+  --glow: rgb(142 166 255 / 0.07);
 }
 
 @theme inline {
@@ -45,12 +42,10 @@
   --color-fg: var(--fg);
   --color-mute: var(--mute);
   --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-on-ink: var(--on-ink);
   --color-accent: var(--accent);
-  --color-lime: var(--lime);
-  --color-on-lime: var(--on-lime);
-  --color-violet: var(--violet);
-  --color-on-violet: var(--on-violet);
-  --font-display: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
 }
@@ -58,21 +53,22 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 88px;
+    scroll-padding-top: 80px;
   }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--fg);
     font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     transition: background-color 0.4s ease, color 0.4s ease;
     overflow-x: clip;
   }
   ::selection {
-    background: var(--lime);
-    color: var(--on-lime);
+    background: var(--ink);
+    color: var(--on-ink);
   }
   a,
   button {
@@ -93,16 +89,16 @@
     background-image:
       linear-gradient(var(--grid) 1px, transparent 1px),
       linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 72px 72px;
+    background-size: 64px 64px;
   }
   .outline-text {
     color: transparent;
-    -webkit-text-stroke: 1.5px var(--fg);
+    -webkit-text-stroke: 1px var(--mute);
   }
   .shell {
     margin-inline: auto;
     width: 100%;
-    max-width: 1400px;
+    max-width: 1200px;
     padding-inline: 1.25rem;
   }
   @media (min-width: 768px) {
@@ -112,8 +108,42 @@
   }
 }
 
+/* Lenis drives scrolling itself; native smooth scrolling would fight it. */
+html.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+/* Rolling link label: on hover the text slides up and an identical copy
+   rolls in from below. Markup comes from <Roll>. */
+.roll {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.roll-in {
+  position: relative;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.roll-in > span {
+  position: absolute;
+  left: 0;
+  top: 100%;
+}
+:is(a, button):hover .roll-in,
+:is(a, button):focus-visible .roll-in {
+  transform: translateY(-100%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .roll-in {
+    transition: none;
+  }
+  :is(a, button):hover .roll-in {
+    transform: none;
   }
 }
