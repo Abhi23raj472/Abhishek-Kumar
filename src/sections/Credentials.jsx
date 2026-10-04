@@ -58,7 +58,7 @@ export default function Credentials() {
   const [open, setOpen] = useState(0)
   return (
     <section id="credentials" className="shell py-24 md:py-32">
-      <SectionHead index="07" kicker="Recognition" title="Commendations along the way." highlight={['along', 'the', 'way.']} />
+      <SectionHead index="06" kicker="Recognition" title="Commendations along the way." highlight={['along', 'the', 'way.']} />
 
       <ul className="border-t border-line" onPointerLeave={(e) => e.pointerType === 'mouse' && setOpen(null)}>
         {awards.map((a, i) => (

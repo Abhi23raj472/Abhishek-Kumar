@@ -7,7 +7,6 @@ export const profile = {
   email: 'rajputabhishek677@gmail.com',
   linkedin: 'https://www.linkedin.com/in/abhishek-kumar2301',
   github: 'https://github.com/Abhi23raj472',
-  githubUser: 'Abhi23raj472',
   resume: 'Abhishek_Kumar_Resume.pdf',
 }
 
@@ -17,7 +16,6 @@ export const nav = [
   { id: 'impact', label: 'Impact' },
   { id: 'experience', label: 'Experience' },
   { id: 'skills', label: 'Skills' },
-  { id: 'github', label: 'GitHub' },
   { id: 'credentials', label: 'Awards' },
   { id: 'contact', label: 'Contact' },
 ]

@@ -49,7 +49,7 @@ export default function Contact() {
     <footer id="contact" ref={ref} className="relative overflow-hidden border-t border-line bg-bg/60 pt-24 backdrop-blur-sm md:pt-32">
       <div className="shell">
         <p className={label}>
-          <span className="text-accent">08</span>&nbsp;&nbsp;&nbsp;Contact
+          <span className="text-accent">07</span>&nbsp;&nbsp;&nbsp;Contact
         </p>
 
         <motion.h2

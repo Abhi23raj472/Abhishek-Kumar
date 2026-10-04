@@ -8,7 +8,6 @@ import About from './sections/About'
 import Contact from './sections/Contact'
 import Credentials from './sections/Credentials'
 import Experience from './sections/Experience'
-import GitHub from './sections/GitHub'
 import Hero from './sections/Hero'
 import Impact from './sections/Impact'
 import Skills from './sections/Skills'
@@ -57,7 +56,6 @@ export default function App() {
         <Impact />
         <Experience />
         <Skills />
-        <GitHub />
         <Credentials />
       </main>
       <Contact />

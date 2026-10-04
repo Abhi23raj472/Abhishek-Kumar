@@ -12,7 +12,7 @@ The site is a flight from Earth orbit into deep space:
 - **Impact**: results arrive as downlink packets with live signal traces.
 - **Experience**: a constellation; select a star to open that role's mission log.
 - **Skills**: a draggable 3D sphere of tags with category filters, beside proficiency gauges.
-- **GitHub, Awards, Contact**: live contribution graph, expanding award rows and certifications.
+- **Awards & Contact**: expanding award rows, certifications and a contact footer.
 - **Throughout**: Lenis smooth scrolling, a targeting-reticle cursor that snaps onto links, and rolling link labels.
 
 The three.js scene loads in its own chunk so the page renders straight away. With reduced motion turned on, the intro, flight, smooth scrolling and cursor are off and the sky holds a single still frame.
