@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
-/* Deep-space theme: near-black sky, starlight text, one cool accent for
-   instrument details and one warm signal colour used very sparingly.
-   Secondary text stays at 8:1 or better against the sky. */
-:root {
+/* Two themes. Dark (default): near-black sky, starlight text, one cool
+   accent and one warm signal colour used sparingly. Light: a cool grey
+   daytime sky with ink text. Secondary text stays at 6.5:1 or better in
+   both. Toggled by data-theme on <html>; the choice is remembered. */
+:root,
+:root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #03050a;
   --surface: rgb(160 190 255 / 0.04);
@@ -15,6 +17,34 @@
   --on-ink: #03050a;
   --accent: #8fc4ff;
   --signal: #f2c27b;
+  --panel: rgb(8 12 24 / 0.72);
+  --stage: rgb(8 12 24 / 0.45);
+  --star: #ffffff;
+  --halo: 0 1px 14px rgb(3 5 10 / 0.9), 0 0 2px rgb(3 5 10 / 0.6);
+  --sky-top: #0b1b3a;
+  --sky: #03050a;
+  --vignette: rgb(0 0 0 / 0.55);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #eef1f5;
+  --surface: rgb(16 30 60 / 0.04);
+  --surface-2: rgb(16 30 60 / 0.07);
+  --fg: #101726;
+  --mute: #4a5467;
+  --line: rgb(16 23 38 / 0.14);
+  --ink: #101726;
+  --on-ink: #f5f7fa;
+  --accent: #2456c4;
+  --signal: #9a5208;
+  --panel: rgb(255 255 255 / 0.78);
+  --stage: rgb(255 255 255 / 0.5);
+  --star: #2456c4;
+  --halo: 0 1px 12px rgb(238 241 245 / 0.9), 0 0 2px rgb(238 241 245 / 0.7);
+  --sky-top: #ffffff;
+  --sky: #e3e8ef;
+  --vignette: rgb(196 205 218 / 0.4);
 }
 
 @theme inline {
@@ -52,9 +82,25 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: clip;
-  /* A soft dark halo keeps text legible when a planet or the Earth's
-     bright limb drifts behind it. */
-  text-shadow: 0 1px 14px rgb(3 5 10 / 0.9), 0 0 2px rgb(3 5 10 / 0.6);
+  /* A soft halo in the background colour keeps text legible when a planet
+     or the Earth's limb drifts behind it. */
+  text-shadow: var(--halo);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Sky colours behind the 3D canvas (and in place of it without WebGL). */
+.sky-fallback {
+  background: radial-gradient(ellipse at 50% 120%, var(--sky-top), var(--sky) 60%);
+}
+.sky-vignette {
+  background: radial-gradient(ellipse at center, transparent 55%, var(--vignette));
+}
+.preloader-bg {
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--bg) 92%, transparent),
+    color-mix(in srgb, var(--bg) 35%, transparent)
+  );
 }
 
 @layer base {
@@ -96,7 +142,7 @@ body {
   /* Glass panel for content that sits over the sky. */
   .panel {
     border: 1px solid var(--line);
-    background: rgb(8 12 24 / 0.72);
+    background: var(--panel);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }

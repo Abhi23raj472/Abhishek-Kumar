@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from 'framer-motion'
-import { X } from 'lucide-react'
+import { Moon, Sun, X } from 'lucide-react'
 import { nav, profile } from '../data'
 import { Roll, ease } from '../lib/motion'
 import { lockScroll } from '../lib/smoothScroll'
@@ -22,6 +22,47 @@ function useActiveSection() {
     return () => obs.disconnect()
   }, [])
   return active
+}
+
+const THEME_KEY = 'ak-portfolio-theme'
+
+/** Switches between the dark space theme and the light grey one, and remembers it. */
+function ThemeToggle() {
+  const [light, setLight] = useState(() => document.documentElement.dataset.theme === 'light')
+  const toggle = () => {
+    const next = light ? 'dark' : 'light'
+    document.documentElement.dataset.theme = next
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'light' ? '#eef1f5' : '#03050a')
+    try {
+      localStorage.setItem(THEME_KEY, next)
+    } catch {
+      /* storage blocked: the theme still applies for this visit */
+    }
+    setLight(!light)
+  }
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      role="switch"
+      aria-checked={light}
+      aria-label="Light theme"
+      title={light ? 'Switch to dark theme' : 'Switch to light theme'}
+      className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-full border border-line text-fg transition-colors hover:border-accent"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={light ? 'sun' : 'moon'}
+          initial={{ y: 14, rotate: -90, opacity: 0 }}
+          animate={{ y: 0, rotate: 0, opacity: 1 }}
+          exit={{ y: -14, rotate: 90, opacity: 0 }}
+          transition={{ duration: 0.3, ease }}
+        >
+          {light ? <Sun size={15} /> : <Moon size={15} />}
+        </motion.span>
+      </AnimatePresence>
+    </button>
+  )
 }
 
 export default function Nav() {
@@ -89,6 +130,7 @@ export default function Nav() {
           </nav>
 
           <div className="ml-auto flex items-center gap-2 xl:ml-3">
+            <ThemeToggle />
             <a
               href={resume}
               download

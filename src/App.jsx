@@ -42,7 +42,7 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div aria-hidden className="fixed inset-0 -z-30 bg-[radial-gradient(ellipse_at_50%_120%,#0b1b3a,#03050a_60%)]" />
+      <div aria-hidden className="sky-fallback fixed inset-0 -z-30" />
       <Suspense fallback={null}>
         <SpaceScene launched={!loading} />
       </Suspense>

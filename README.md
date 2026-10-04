@@ -15,6 +15,8 @@ The site is a flight from Earth orbit into deep space:
 - **Awards & Contact**: expanding award rows, certifications and a contact footer.
 - **Throughout**: Lenis smooth scrolling, a targeting-reticle cursor that snaps onto links, and rolling link labels.
 
+There are two themes, switched from the sun/moon button in the top bar and remembered for next time: the dark space theme (default) and a light grey daytime theme, where the sky turns pale and Earth stays in view.
+
 The three.js scene loads in its own chunk so the page renders straight away. With reduced motion turned on, the intro, flight, smooth scrolling and cursor are off and the sky holds a single still frame.
 
 ## Run locally

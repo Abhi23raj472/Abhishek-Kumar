@@ -32,7 +32,7 @@ export default function Preloader({ onDone }) {
     <motion.div
       role="status"
       aria-label="Loading"
-      className="fixed inset-0 z-[100] flex items-end bg-[linear-gradient(to_top,rgb(3_5_10/0.92),rgb(3_5_10/0.35))] p-6 md:p-10"
+      className="preloader-bg fixed inset-0 z-[100] flex items-end p-6 md:p-10"
       exit={{ opacity: 0, y: -40 }}
       transition={{ duration: 0.9, ease }}
     >

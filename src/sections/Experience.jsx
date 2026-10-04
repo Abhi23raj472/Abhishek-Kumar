@@ -73,7 +73,7 @@ export default function Experience() {
           if (ev.key === 'ArrowRight') go(1)
           if (ev.key === 'ArrowLeft') go(-1)
         }}
-        className="relative rounded-2xl border border-line bg-[rgb(8_12_24/0.45)] focus-visible:outline-accent"
+        className="relative rounded-2xl border border-line bg-[var(--stage)] focus-visible:outline-accent"
       >
         <svg viewBox="0 0 100 56" className="block h-auto w-full" aria-hidden>
           {minor.map(([x, y], i) => (
@@ -126,7 +126,7 @@ export default function Experience() {
                   animate={{ scale: active ? [1, 1.5, 1] : 1, opacity: active ? 1 : 0.4 }}
                   transition={{ duration: 2.4, repeat: active ? Infinity : 0 }}
                 />
-                <span className={`relative h-2.5 w-2.5 rounded-full ${active ? 'bg-white' : 'bg-accent'} shadow-[0_0_12px_var(--accent)]`} />
+                <span className={`relative h-2.5 w-2.5 rounded-full ${active ? 'bg-[var(--star)]' : 'bg-accent'} shadow-[0_0_12px_var(--accent)]`} />
               </span>
               <span
                 className={`absolute top-full whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.14em] transition-colors ${

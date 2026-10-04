@@ -190,12 +190,15 @@ void main(){
 }
 `
 const STAR_FRAG = /* glsl */ `
+uniform float uLight;
 varying vec3 vColor;
 varying float vAlpha;
 void main(){
   float d = length(gl_PointCoord - 0.5);
   float a = smoothstep(0.5, 0.0, d);
-  gl_FragColor = vec4(vColor, a * a * vAlpha);
+  // In the light theme stars become slate specks on the grey daytime sky.
+  vec3 c = mix(vColor, vec3(0.22, 0.28, 0.4), uLight);
+  gl_FragColor = vec4(c, a * a * vAlpha * (1.0 - uLight * 0.35));
 }
 `
 
@@ -295,7 +298,7 @@ export default function SpaceScene({ launched }) {
     const starMat = new THREE.ShaderMaterial({
       vertexShader: STAR_VERT,
       fragmentShader: STAR_FRAG,
-      uniforms: { uTime: { value: 0 }, uPixelRatio: { value: renderer.getPixelRatio() } },
+      uniforms: { uTime: { value: 0 }, uPixelRatio: { value: renderer.getPixelRatio() }, uLight: { value: 0 } },
       transparent: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
@@ -304,6 +307,7 @@ export default function SpaceScene({ launched }) {
 
     // Faint nebulae at a few depths
     const glow = glowTexture()
+    const nebulae = []
     ;[
       [-420, 160, -380, 900, 0x3b5bdb, 0.1],
       [520, -120, -950, 1300, 0x6d4bd8, 0.08],
@@ -315,6 +319,8 @@ export default function SpaceScene({ launched }) {
       )
       sp.position.set(x, y, z)
       sp.scale.set(s, s, 1)
+      sp.userData.opacity = opacity
+      nebulae.push(sp)
       scene.add(sp)
     })
 
@@ -445,9 +451,10 @@ export default function SpaceScene({ launched }) {
       earth.material.uniforms.uTime.value = t
       earth.rotation.y = t * 0.012
       // Planets fade up only as the camera closes in, so the hero stays clear.
+      // In daylight their night sides read as flat grey discs, so they stay hidden.
       for (const pl of [giant, red, ice]) {
         const d = camera.position.z - pl.position.z
-        pl.material.uniforms.uFade.value = Math.min(0.8, Math.max(0, (720 - d) / 320))
+        pl.material.uniforms.uFade.value = lightTheme ? 0 : Math.min(0.8, Math.max(0, (720 - d) / 320))
         pl.visible = pl.material.uniforms.uFade.value > 0.001
       }
       ring.material.uniforms.uFade.value = giant.material.uniforms.uFade.value
@@ -475,6 +482,31 @@ export default function SpaceScene({ launched }) {
       renderer.render(scene, camera)
     }
 
+    // Dark: additive glow on a black sky. Light: a grey daytime sky, where
+    // additive light would vanish, so glows switch to normal blending.
+    let lightTheme = false
+    const applyTheme = () => {
+      const light = document.documentElement.dataset.theme === 'light'
+      lightTheme = light
+      const blend = light ? THREE.NormalBlending : THREE.AdditiveBlending
+      renderer.setClearColor(light ? 0xe3e8ef : 0x03050a, 1)
+      starMat.uniforms.uLight.value = light ? 1 : 0
+      starMat.blending = blend
+      for (const sp of nebulae) {
+        sp.material.blending = blend
+        sp.material.opacity = sp.userData.opacity * (light ? 1.4 : 1)
+        sp.material.needsUpdate = true
+      }
+      atmo.material.blending = blend
+      meteorMat.blending = blend
+      meteorMat.color.set(light ? 0x2a3b5c : 0xcfe1ff)
+      for (const mat of [starMat, atmo.material, meteorMat]) mat.needsUpdate = true
+      if (reduce) renderer.render(scene, camera)
+    }
+    applyTheme()
+    const themeWatch = new MutationObserver(applyTheme)
+    themeWatch.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+
     if (reduce) {
       camera.position.copy(base)
       camera.lookAt(0, 0, base.z - 120)
@@ -482,6 +514,7 @@ export default function SpaceScene({ launched }) {
       still()
       window.addEventListener('resize', still)
       return () => {
+        themeWatch.disconnect()
         window.removeEventListener('resize', still)
         window.removeEventListener('resize', resize)
         window.removeEventListener('pointermove', onMove)
@@ -491,6 +524,7 @@ export default function SpaceScene({ launched }) {
     frame()
 
     return () => {
+      themeWatch.disconnect()
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', resize)
       window.removeEventListener('pointermove', onMove)
@@ -505,10 +539,10 @@ export default function SpaceScene({ launched }) {
 
   return (
     <>
-      <div aria-hidden className="fixed inset-0 -z-20 bg-[radial-gradient(ellipse_at_50%_120%,#0b1b3a,#03050a_60%)]" />
+      <div aria-hidden className="sky-fallback fixed inset-0 -z-20" />
       <canvas ref={canvasRef} aria-hidden className="fixed inset-0 -z-10 h-full w-full" />
-      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgb(0_0_0/0.55))]" />
-      <motion.div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-[#03050a]" style={{ opacity: scrim }} />
+      <div aria-hidden className="sky-vignette pointer-events-none fixed inset-0 -z-10" />
+      <motion.div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-bg" style={{ opacity: scrim }} />
     </>
   )
 }

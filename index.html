@@ -11,6 +11,16 @@
     <meta property="og:description" content="Test automation specialist: Tricentis Tosca, API validation and CI/CD quality gates." />
     <meta property="og:type" content="profile" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <script>
+      // Apply the remembered theme before first paint. Dark is the default.
+      (function () {
+        var t
+        try { t = localStorage.getItem('ak-portfolio-theme') } catch (e) {}
+        t = t === 'light' ? 'light' : 'dark'
+        document.documentElement.dataset.theme = t
+        if (t === 'light') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#eef1f5')
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

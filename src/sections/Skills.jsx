@@ -89,7 +89,7 @@ function TagSphere({ filter }) {
         const scale = 0.62 + depth * 0.55
         const match = f === 'all' || node.dataset.cat === f
         node.style.transform = `translate(-50%, -50%) translate3d(${(x1 * radius).toFixed(1)}px, ${(y2 * radius).toFixed(1)}px, 0) scale(${scale.toFixed(3)})`
-        node.style.opacity = ((0.56 + depth * 0.44) * (match ? 1 : 0.35)).toFixed(3)
+        node.style.opacity = ((0.64 + depth * 0.36) * (match ? 1 : 0.35)).toFixed(3)
         node.style.zIndex = String(Math.round(depth * 100))
       })
     }
