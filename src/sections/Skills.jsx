@@ -1,9 +1,69 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { proficiency, skillCats, skillCloud } from '../data'
-import { Counter, SectionHead, ease } from '../lib/motion'
+import { SectionHead } from '../lib/motion'
 
 const sizes = { 1: 'text-[13px]', 2: 'text-[15px]', 3: 'text-lg font-medium' }
+
+// Proficiency reads as a rank and a charge meter instead of a percentage.
+const RANKS = { expert: 3, advanced: 2, proficient: 1 }
+const SEGMENTS = 20
+
+/** Up to three chevrons, like rank insignia: filled ones mark the level. */
+function Rank({ level }) {
+  const n = RANKS[level] ?? 1
+  return (
+    <span className="flex items-center gap-2" aria-hidden>
+      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-mute">{level}</span>
+      <span className="flex flex-col-reverse gap-[2px]">
+        {[1, 2, 3].map((k) => (
+          <svg key={k} viewBox="0 0 12 5" className={`h-[6px] w-3.5 ${k <= n ? 'text-accent' : 'text-line'}`}>
+            <path d="M1 4.5 6 1l5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        ))}
+      </span>
+    </span>
+  )
+}
+
+/** A segmented charge meter that powers up segment by segment, its top segment pulsing like a live reading. */
+function Meter({ pct, delay }) {
+  const lit = Math.round((pct / 100) * SEGMENTS)
+  return (
+    <motion.div
+      className="mt-2.5 flex gap-[3px]"
+      aria-hidden
+      initial="off"
+      whileInView="on"
+      viewport={{ once: true, margin: '-40px' }}
+      variants={{ off: {}, on: { transition: { staggerChildren: 0.035, delayChildren: delay } } }}
+    >
+      {Array.from({ length: SEGMENTS }, (_, k) => {
+        const on = k < lit
+        const head = k === lit - 1
+        return (
+          <motion.span
+            key={k}
+            className={`h-2.5 flex-1 rounded-[2px] ${on ? 'bg-accent' : 'bg-line'}`}
+            variants={{
+              off: { opacity: 0.15, scaleY: 0.4 },
+              on: { opacity: 1, scaleY: 1, transition: { duration: 0.25 } },
+            }}
+            style={on ? { boxShadow: '0 0 8px color-mix(in srgb, var(--accent) 55%, transparent)' } : undefined}
+          >
+            {head && (
+              <motion.span
+                className="block h-full w-full rounded-[2px] bg-[var(--star)]"
+                animate={{ opacity: [0, 0.7, 0] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut', delay: delay + 1 }}
+              />
+            )}
+          </motion.span>
+        )
+      })}
+    </motion.div>
+  )
+}
 
 /** Evenly spread points on a unit sphere (Fibonacci lattice). */
 function spherePoints(n) {
@@ -164,25 +224,23 @@ export default function Skills() {
           <p className="label">Proficiency</p>
           <ul className="mt-5 space-y-5">
             {proficiency.map((p, i) => (
-              <li key={p.name}>
-                <div className="flex items-baseline justify-between gap-4 text-sm">
+              <li key={p.name} aria-label={`${p.name}: ${p.level}`}>
+                <div className="flex items-center justify-between gap-4 text-sm">
                   <span>{p.name}</span>
-                  <span className="font-mono text-xs text-mute">
-                    <Counter to={p.pct} suffix="%" />
-                  </span>
+                  <Rank level={p.level} />
                 </div>
-                <div className="mt-2 h-px bg-line" role="presentation">
-                  <motion.div
-                    className="h-px origin-left bg-accent shadow-[0_0_8px_var(--accent)]"
-                    initial={{ scaleX: 0 }}
-                    whileInView={{ scaleX: p.pct / 100 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1.4, ease, delay: 0.1 + i * 0.1 }}
-                  />
-                </div>
+                <Meter pct={p.pct} delay={0.1 + i * 0.12} />
               </li>
             ))}
           </ul>
+          <p className="mt-6 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-4 font-mono text-[10px] uppercase tracking-[0.14em] text-mute">
+            {Object.entries(RANKS).map(([lvl, n]) => (
+              <span key={lvl} className="inline-flex items-center gap-1.5">
+                <span className="text-accent">{'▲'.repeat(n)}</span>
+                {lvl}
+              </span>
+            ))}
+          </p>
         </div>
       </div>
     </section>
