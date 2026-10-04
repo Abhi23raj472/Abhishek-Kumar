@@ -15,6 +15,21 @@ const inLastYear = (d) => {
   return t >= Date.now() - 364 * DAY && t <= Date.now()
 }
 
+// Empty days for the last 12 months: the calendar is drawn even before
+// (or without) data, so the graph never collapses into a line of text.
+function blankYear() {
+  const days = []
+  const today = new Date()
+  for (let i = 364; i >= 0; i--) {
+    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i)
+    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    days.push({ date: iso, count: 0, level: 0 })
+  }
+  return days
+}
+
+const CELL = 15 // 12px cell + 3px gap
+
 export default function GitHub() {
   const user = profile.githubUser
   const [u, setU] = useState(null)
@@ -45,7 +60,7 @@ export default function GitHub() {
     [data],
   )
   const days = useMemo(
-    () => (data ? data.contributions.filter((d) => (year === 'last' ? inLastYear(d) : d.date.slice(0, 4) === year)) : []),
+    () => (data ? data.contributions.filter((d) => (year === 'last' ? inLastYear(d) : d.date.slice(0, 4) === year)) : blankYear()),
     [data, year],
   )
   const lastYearTotal = useMemo(
@@ -56,6 +71,13 @@ export default function GitHub() {
   const total = days.reduce((a, d) => a + d.count, 0)
   const pad = days.length ? new Date(days[0].date + 'T00:00:00').getDay() : 0
   const cells = [...Array(pad).fill(null), ...days]
+  // Month labels sit above the column holding each month's first day.
+  const months = []
+  cells.forEach((d, i) => {
+    if (d && d.date.endsWith('-01')) {
+      months.push({ col: Math.floor(i / 7), label: new Date(d.date + 'T00:00:00').toLocaleDateString(undefined, { month: 'short' }) })
+    }
+  })
 
   const tiles = [
     { k: 'public repos', v: u?.public_repos },
@@ -117,35 +139,30 @@ export default function GitHub() {
         </div>
 
         <div className="mt-6 overflow-x-auto pb-2">
-          {failed ? (
-            <p className="py-10 text-center text-sm text-mute">
-              Contribution graph unavailable right now. See{' '}
-              <a className="text-fg underline" href={profile.github} target="_blank" rel="noopener noreferrer">
-                github.com/{user}
-              </a>
-              .
-            </p>
-          ) : !data ? (
-            <div className="grid h-[110px] place-items-center font-mono text-xs text-mute">
-              <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.4 }}>
-                fetching contribution activity…
-              </motion.span>
+          <div className="relative w-max">
+            <div aria-hidden className="relative mb-2 h-4 font-mono text-[10px] text-mute">
+              {months.map((m) => (
+                <span key={`${m.col}-${m.label}`} className="absolute" style={{ left: m.col * CELL }}>
+                  {m.label}
+                </span>
+              ))}
             </div>
-          ) : (
             <AnimatePresence mode="wait">
               <motion.div
-                key={year}
+                key={data ? year : 'blank'}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
+                animate={data || failed ? { opacity: 1 } : { opacity: [0.35, 0.8, 0.35] }}
+                // Own transition: the loading pulse repeats forever and must not apply to the exit.
+                exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                transition={data || failed ? { duration: 0.25 } : { duration: 1.6, repeat: Infinity }}
                 className="grid w-max grid-flow-col grid-rows-7 gap-[3px]"
+                aria-busy={!data && !failed}
               >
                 {cells.map((d, i) =>
                   d ? (
                     <motion.span
                       key={d.date}
-                      title={`${d.count} contribution${d.count === 1 ? '' : 's'} on ${fmt(d.date)}`}
+                      title={data ? `${d.count} contribution${d.count === 1 ? '' : 's'} on ${fmt(d.date)}` : fmt(d.date)}
                       initial={{ scale: 0 }}
                       whileInView={{ scale: 1 }}
                       viewport={{ once: true }}
@@ -158,19 +175,29 @@ export default function GitHub() {
                 )}
               </motion.div>
             </AnimatePresence>
-          )}
+          </div>
         </div>
 
-        {data && days.length > 0 && (
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 font-mono text-[11px] text-mute">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 font-mono text-[11px] text-mute">
+          {data && days.length > 0 ? (
             <span>
               <span className="text-fg">{total.toLocaleString()}</span> contributions · {fmt(days[0].date)} → {fmt(days[days.length - 1].date)}
             </span>
-            <span className="flex items-center gap-1.5">
-              less {levels.map((l) => <span key={l} className={`h-2.5 w-2.5 rounded-[3px] ${l}`} />)} more
+          ) : failed ? (
+            <span>
+              Activity couldn't load here. Live counts are on{' '}
+              <a className="text-fg underline" href={profile.github} target="_blank" rel="noopener noreferrer">
+                github.com/{user}
+              </a>
+              .
             </span>
-          </div>
-        )}
+          ) : (
+            <span>Fetching contribution activity…</span>
+          )}
+          <span className="flex items-center gap-1.5">
+            less {levels.map((l) => <span key={l} className={`h-2.5 w-2.5 rounded-[3px] ${l}`} />)} more
+          </span>
+        </div>
       </div>
 
       <a href={profile.github} target="_blank" rel="noopener noreferrer" className="group mt-5 inline-flex items-center gap-1.5 text-sm font-medium">
