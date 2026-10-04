@@ -146,7 +146,7 @@ export default function About() {
             ))}
           </div>
 
-          <dl className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-4">
+          <dl className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-4">
             {stats.map((s) => (
               <div key={s.k} className="bg-bg/80 p-4">
                 <dd className="font-display text-4xl">

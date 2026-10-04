@@ -30,7 +30,7 @@ function Packet({ it, i }) {
       initial={{ opacity: 0, x: -24 }}
       animate={inView ? { opacity: 1, x: 0 } : undefined}
       transition={{ duration: 0.8, ease, delay: i * 0.08 }}
-      className="grid grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-x-4 gap-y-3 border-b border-line py-5 last:border-0 md:grid-cols-[4.5rem_minmax(0,1fr)_12rem_4rem_6.5rem] md:gap-x-6"
+      className="grid grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-x-4 gap-y-3 border-b border-line py-5 last:border-0 lg:grid-cols-[4.5rem_minmax(0,1fr)_12rem_4rem_6.5rem] lg:gap-x-6"
     >
       <span className="font-mono text-xs text-accent">{it.code}</span>
       <div className="min-w-0">
@@ -38,7 +38,7 @@ function Packet({ it, i }) {
         <p className="mt-1 text-sm leading-relaxed text-mute">{it.body}</p>
       </div>
 
-      <svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden className="col-start-2 h-6 w-full md:col-start-auto">
+      <svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden className="col-start-2 h-6 w-full lg:col-start-auto">
         <motion.path
           d={path}
           fill="none"
@@ -51,7 +51,7 @@ function Packet({ it, i }) {
         />
       </svg>
 
-      <div aria-label={`Signal ${strength} of 5`} className="col-start-2 flex h-5 items-end gap-[3px] md:col-start-auto">
+      <div aria-label={`Signal ${strength} of 5`} className="col-start-2 flex h-5 items-end gap-[3px] lg:col-start-auto">
         {[1, 2, 3, 4, 5].map((b) => (
           <motion.span
             key={b}
@@ -65,7 +65,7 @@ function Packet({ it, i }) {
       </div>
 
       <motion.span
-        className="col-start-2 font-mono text-[11px] uppercase tracking-[0.16em] md:col-start-auto md:text-right"
+        className="col-start-2 font-mono text-[11px] uppercase tracking-[0.16em] lg:col-start-auto lg:text-right"
         initial={{ color: 'var(--mute)' }}
         animate={inView ? { color: 'var(--accent)' } : undefined}
         transition={{ delay: arrive + 0.4 }}
@@ -87,7 +87,7 @@ export default function Impact() {
         sub="Results the suites, frameworks and pipelines sent back."
       />
       <div className="panel rounded-2xl px-5 md:px-8">
-        <div className="hidden grid-cols-[4.5rem_minmax(0,1fr)_12rem_4rem_6.5rem] gap-x-6 border-b border-line py-4 md:grid">
+        <div className="hidden grid-cols-[4.5rem_minmax(0,1fr)_12rem_4rem_6.5rem] gap-x-6 border-b border-line py-4 lg:grid">
           {['Packet', 'Result', 'Trace', 'Signal', 'Status'].map((h, i) => (
             <span key={h} className={`label ${i === 4 ? 'text-right' : ''}`}>{h}</span>
           ))}
