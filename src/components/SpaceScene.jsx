@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import * as THREE from 'three'
 
 /*
@@ -269,6 +270,9 @@ export default function SpaceScene({ launched }) {
   const canvasRef = useRef(null)
   const launchedRef = useRef(launched)
   launchedRef.current = launched
+  // Past the hero, a dark scrim settles over the sky so content reads first.
+  const { scrollY } = useScroll()
+  const scrim = useTransform(scrollY, [0, 700], [0, 0.42])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -443,7 +447,7 @@ export default function SpaceScene({ launched }) {
       // Planets fade up only as the camera closes in, so the hero stays clear.
       for (const pl of [giant, red, ice]) {
         const d = camera.position.z - pl.position.z
-        pl.material.uniforms.uFade.value = Math.min(1, Math.max(0, (720 - d) / 320))
+        pl.material.uniforms.uFade.value = Math.min(0.8, Math.max(0, (720 - d) / 320))
         pl.visible = pl.material.uniforms.uFade.value > 0.001
       }
       ring.material.uniforms.uFade.value = giant.material.uniforms.uFade.value
@@ -504,6 +508,7 @@ export default function SpaceScene({ launched }) {
       <div aria-hidden className="fixed inset-0 -z-20 bg-[radial-gradient(ellipse_at_50%_120%,#0b1b3a,#03050a_60%)]" />
       <canvas ref={canvasRef} aria-hidden className="fixed inset-0 -z-10 h-full w-full" />
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgb(0_0_0/0.55))]" />
+      <motion.div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-[#03050a]" style={{ opacity: scrim }} />
     </>
   )
 }

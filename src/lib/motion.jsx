@@ -64,7 +64,7 @@ const charRise = {
 
 /**
  * Title whose letters rise and untwist one after another as it enters the
- * viewport, and fold away again when it leaves so the reveal replays.
+ * viewport. It plays once and then stays put, so a title never sits hidden.
  */
 export function SplitChars({ text, highlight = [], className = '' }) {
   const words = text.split(' ')
@@ -76,7 +76,7 @@ export function SplitChars({ text, highlight = [], className = '' }) {
         className="block"
         initial="hidden"
         whileInView="show"
-        viewport={{ once: false, margin: '0px 0px -20% 0px' }}
+        viewport={{ once: true, margin: '0px 0px -40px 0px' }}
         variants={{ hidden: {}, show: { transition: { staggerChildren: 0.018 } } }}
       >
         {words.map((w, i) => (
@@ -98,7 +98,7 @@ const wordRise = {
   show: { opacity: 1, y: '0em', transition: { duration: 0.9, ease } },
 }
 
-/** Paragraph whose words rise in with a quick stagger each time it scrolls into view. */
+/** Paragraph whose words rise in with a quick stagger when it scrolls into view. */
 export function RevealWords({ text, className = '', as = 'p', delay = 0 }) {
   const M = motion[as]
   return (
@@ -106,7 +106,7 @@ export function RevealWords({ text, className = '', as = 'p', delay = 0 }) {
       className={className}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: false, margin: '0px 0px -15% 0px' }}
+      viewport={{ once: true, margin: '0px 0px -40px 0px' }}
       variants={{ hidden: {}, show: { transition: { staggerChildren: 0.012, delayChildren: delay } } }}
     >
       <span className="sr-only">{text}</span>

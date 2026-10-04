@@ -1,15 +1,16 @@
 @import "tailwindcss";
 
 /* Deep-space theme: near-black sky, starlight text, one cool accent for
-   instrument details and one warm signal colour used very sparingly. */
+   instrument details and one warm signal colour used very sparingly.
+   Secondary text stays at 8:1 or better against the sky. */
 :root {
   color-scheme: dark;
   --bg: #03050a;
   --surface: rgb(160 190 255 / 0.04);
   --surface-2: rgb(160 190 255 / 0.08);
   --fg: #e6ebf5;
-  --mute: #8d97ab;
-  --line: rgb(170 195 255 / 0.13);
+  --mute: #aab4c8;
+  --line: rgb(170 195 255 / 0.18);
   --ink: #e6ebf5;
   --on-ink: #03050a;
   --accent: #8fc4ff;
@@ -46,6 +47,14 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: clip;
+    /* A soft dark halo keeps text legible when a planet or the Earth's
+       bright limb drifts behind it. */
+    text-shadow: 0 1px 14px rgb(3 5 10 / 0.9), 0 0 2px rgb(3 5 10 / 0.6);
+  }
+  /* Light buttons carry dark text, which needs no halo. */
+  .bg-ink,
+  .bg-ink * {
+    text-shadow: none;
   }
   ::selection {
     background: var(--accent);
@@ -80,7 +89,7 @@
   /* Glass panel for content that sits over the sky. */
   .panel {
     border: 1px solid var(--line);
-    background: rgb(8 12 24 / 0.55);
+    background: rgb(8 12 24 / 0.72);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }

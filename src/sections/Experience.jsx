@@ -73,7 +73,7 @@ export default function Experience() {
           if (ev.key === 'ArrowRight') go(1)
           if (ev.key === 'ArrowLeft') go(-1)
         }}
-        className="relative rounded-2xl border border-line bg-[radial-gradient(ellipse_at_center,rgb(77_141_255/0.06),transparent_70%)] focus-visible:outline-accent"
+        className="relative rounded-2xl border border-line bg-[rgb(8_12_24/0.45)] focus-visible:outline-accent"
       >
         <svg viewBox="0 0 100 56" className="block h-auto w-full" aria-hidden>
           {minor.map(([x, y], i) => (
@@ -129,7 +129,7 @@ export default function Experience() {
                 <span className={`relative h-2.5 w-2.5 rounded-full ${active ? 'bg-white' : 'bg-accent'} shadow-[0_0_12px_var(--accent)]`} />
               </span>
               <span
-                className={`absolute top-full whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] transition-colors ${
+                className={`absolute top-full whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.14em] transition-colors ${
                   i === 0 ? 'left-1' : i === entries.length - 1 ? 'right-1' : 'left-1/2 -translate-x-1/2'
                 } ${active ? 'text-fg' : 'text-mute'}`}
               >
