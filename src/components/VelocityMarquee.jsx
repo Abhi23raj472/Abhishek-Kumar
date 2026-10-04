@@ -25,7 +25,7 @@ function Row({ children, baseVelocity = 2 }) {
   const { scrollY } = useScroll()
   const velocity = useSpring(useVelocity(scrollY), { damping: 50, stiffness: 400 })
   const factor = useTransform(velocity, [0, 1000], [0, 4], { clamp: false })
-  const skewX = useTransform(velocity, [-2000, 2000], [10, -10])
+  const skewX = useTransform(velocity, [-2000, 2000], [6, -6])
   const x = useTransform(baseX, (v) => `${wrap(-25, -50, v)}%`)
   const dir = useRef(1)
 
@@ -56,19 +56,19 @@ export default function VelocityMarquee({ items }) {
   const half = Math.ceil(items.length / 2)
   const rows = [items.slice(0, half), items.slice(half)]
   return (
-    <section aria-label="Tools I work with" className="relative overflow-hidden border-y border-line py-8 md:py-12">
+    <section aria-label="Tools I work with" className="relative space-y-2 overflow-hidden border-y border-line py-6 md:py-8">
       {rows.map((row, r) => (
-        <Row key={r} baseVelocity={r === 0 ? -2 : 2}>
+        <Row key={r} baseVelocity={r === 0 ? -1.5 : 1.5}>
           {row.map((t) => (
             <span key={t} className="flex items-center">
               <span
-                className={`px-5 font-display text-[clamp(2.5rem,7vw,6rem)] font-semibold leading-[1.1] tracking-[-0.04em] md:px-8 ${
-                  r === 1 ? 'outline-text' : ''
+                className={`px-5 text-[clamp(1.25rem,2.4vw,2rem)] font-semibold tracking-[-0.02em] md:px-7 ${
+                  r === 1 ? 'outline-text' : 'text-fg'
                 }`}
               >
                 {t}
               </span>
-              <span className="text-[clamp(1.5rem,3vw,2.5rem)] text-accent">✦</span>
+              <span className="text-mute/60">/</span>
             </span>
           ))}
         </Row>

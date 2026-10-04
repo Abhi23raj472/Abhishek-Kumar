@@ -12,7 +12,7 @@ import {
 export const ease = [0.22, 1, 0.36, 1]
 
 /** Fade + rise into view, once. */
-export function Reveal({ children, delay = 0, y = 32, className = '', as = 'div' }) {
+export function Reveal({ children, delay = 0, y = 24, className = '', as = 'div' }) {
   const M = motion[as]
   return (
     <M
@@ -44,7 +44,7 @@ export function Stagger({ children, className = '', gap = 0.07, delay = 0, as = 
 }
 
 export const rise = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
 }
 
@@ -71,15 +71,15 @@ export function SplitWords({ text, highlight = [], delay = 0, className = '' }) 
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: '-40px' }}
-        variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: delay } } }}
+        variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: delay } } }}
       >
         {words.map((w, i) => (
-          <span key={i} className="-mb-[0.12em] mr-[0.22em] inline-block overflow-hidden pb-[0.12em] align-bottom">
+          <span key={i} className="-mb-[0.12em] mr-[0.24em] inline-block overflow-hidden pb-[0.12em] align-bottom">
             <motion.span
-              className={`inline-block ${highlight.includes(bare(w)) ? 'text-accent' : ''}`}
+              className={`inline-block ${highlight.includes(bare(w)) ? 'text-mute' : ''}`}
               variants={{
-                hidden: { y: '110%', rotate: 4 },
-                show: { y: '0%', rotate: 0, transition: { duration: 0.9, ease } },
+                hidden: { y: '110%' },
+                show: { y: '0%', transition: { duration: 0.8, ease } },
               }}
             >
               {w}
@@ -91,10 +91,10 @@ export function SplitWords({ text, highlight = [], delay = 0, className = '' }) 
   )
 }
 
-function ScrollWord({ children, progress, range, accent }) {
-  const opacity = useTransform(progress, range, [0.14, 1])
+function ScrollWord({ children, progress, range }) {
+  const opacity = useTransform(progress, range, [0.18, 1])
   return (
-    <motion.span style={{ opacity }} className={`mr-[0.25em] inline-block ${accent ? 'text-accent' : ''}`}>
+    <motion.span style={{ opacity }} className="mr-[0.25em] inline-block">
       {children}
     </motion.span>
   )
@@ -104,17 +104,15 @@ function ScrollWord({ children, progress, range, accent }) {
 export function ScrollText({ text, className = '' }) {
   const ref = useRef(null)
   const reduce = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.45'] })
-  const words = text.split(' ')
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.5'] })
+  const words = text.replaceAll('*', '').split(' ')
   return (
     <p ref={ref} className={className}>
-      {words.map((raw, i) => {
-        const accent = raw.startsWith('*')
-        const w = raw.replaceAll('*', '')
-        if (reduce) return <span key={i} className={`mr-[0.25em] inline-block ${accent ? 'text-accent' : ''}`}>{w}</span>
+      {words.map((w, i) => {
+        if (reduce) return <span key={i} className="mr-[0.25em] inline-block">{w}</span>
         const start = i / words.length
         return (
-          <ScrollWord key={i} progress={scrollYProgress} range={[start, start + 1 / words.length]} accent={accent}>
+          <ScrollWord key={i} progress={scrollYProgress} range={[start, start + 1 / words.length]}>
             {w}
           </ScrollWord>
         )
@@ -124,7 +122,7 @@ export function ScrollText({ text, className = '' }) {
 }
 
 /** Leans toward the pointer (mouse only). */
-export function Magnetic({ children, strength = 0.25, className = '' }) {
+export function Magnetic({ children, strength = 0.2, className = '' }) {
   const ref = useRef(null)
   const reduce = useReducedMotion()
   const x = useSpring(0, { stiffness: 220, damping: 16, mass: 0.4 })
@@ -172,9 +170,9 @@ export function Counter({ to, suffix = '', className = '' }) {
 /** Numbered section heading with a line that draws in and a word-by-word title. */
 export function SectionHead({ index, kicker, title, highlight = [], sub, className = '' }) {
   return (
-    <div className={`mb-12 md:mb-20 ${className}`}>
-      <Reveal className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.2em] text-mute">
-        <span className="text-accent">({index})</span>
+    <div className={`mb-10 md:mb-14 ${className}`}>
+      <Reveal className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-mute">
+        <span className="text-accent">{index}</span>
         <span>{kicker}</span>
         <motion.span
           className="h-px flex-1 origin-left bg-line"
@@ -184,12 +182,12 @@ export function SectionHead({ index, kicker, title, highlight = [], sub, classNa
           transition={{ duration: 1.4, ease, delay: 0.2 }}
         />
       </Reveal>
-      <h2 className="mt-6 max-w-5xl font-display text-[clamp(2.6rem,6.4vw,6rem)] font-semibold leading-[0.95] tracking-[-0.045em]">
+      <h2 className="mt-5 max-w-3xl text-[clamp(1.875rem,3.4vw,3rem)] font-semibold leading-[1.1] tracking-[-0.03em]">
         <SplitWords text={title} highlight={highlight} />
       </h2>
       {sub && (
         <Reveal delay={0.15}>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-mute">{sub}</p>
+          <p className="mt-4 max-w-xl text-base leading-relaxed text-mute">{sub}</p>
         </Reveal>
       )}
     </div>

@@ -10,10 +10,10 @@ export default function Preloader({ onDone }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     const c = animate(0, 100, {
-      duration: 1.5,
+      duration: 1.4,
       ease: [0.65, 0, 0.35, 1],
       onUpdate: (v) => setPct(Math.round(v)),
-      onComplete: () => setTimeout(onDone, 250),
+      onComplete: () => setTimeout(onDone, 200),
     })
     return () => {
       c.stop()
@@ -27,27 +27,27 @@ export default function Preloader({ onDone }) {
     <motion.div
       role="status"
       aria-label="Loading"
-      className="fixed inset-0 z-[100] flex flex-col justify-between bg-[#0a0b0d] p-6 text-[#eceef1] md:p-10"
-      exit={{ y: '-100%', borderBottomLeftRadius: '50% 12%', borderBottomRightRadius: '50% 12%' }}
-      transition={{ duration: 0.9, ease }}
+      className="fixed inset-0 z-[100] flex flex-col justify-between bg-[#0c0c0d] p-6 text-[#ececee] md:p-10"
+      exit={{ y: '-100%' }}
+      transition={{ duration: 0.8, ease }}
     >
-      <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] opacity-70">
+      <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.18em] text-white/50">
         <span>Abhishek Kumar</span>
         <span>Quality Engineer</span>
       </div>
       <div>
-        <div className="h-6 overflow-hidden font-mono text-sm">
-          <motion.div key={step} initial={{ y: 24 }} animate={{ y: 0 }} transition={{ duration: 0.35, ease }}>
-            <span className={pct === 100 ? 'text-lime' : ''}>{pct === 100 ? '✓' : '›'}</span> {checks[step]}
+        <div className="h-5 overflow-hidden font-mono text-xs text-white/70">
+          <motion.div key={step} initial={{ y: 20 }} animate={{ y: 0 }} transition={{ duration: 0.35, ease }}>
+            {pct === 100 ? '✓' : '›'} {checks[step]}
           </motion.div>
         </div>
         <div className="mt-4 flex items-end justify-between gap-6">
-          <div className="h-[2px] flex-1 overflow-hidden bg-white/15">
-            <div className="h-full origin-left bg-lime" style={{ transform: `scaleX(${pct / 100})` }} />
+          <div className="h-px flex-1 overflow-hidden bg-white/15">
+            <div className="h-full origin-left bg-white" style={{ transform: `scaleX(${pct / 100})` }} />
           </div>
-          <span className="font-display text-[clamp(4rem,14vw,10rem)] font-semibold leading-[0.8] tracking-[-0.05em] tabular-nums">
+          <span className="text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-none tracking-[-0.04em] tabular-nums">
             {pct}
-            <span className="text-lime">%</span>
+            <span className="text-white/40">%</span>
           </span>
         </div>
       </div>

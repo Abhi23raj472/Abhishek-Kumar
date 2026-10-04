@@ -2,7 +2,7 @@
 
 Personal portfolio built with React, Vite, Tailwind CSS and Framer Motion.
 
-An editorial, type-led design with scroll-driven Framer Motion effects:
+A clean, minimal design (Inter, near-monochrome palette with one muted accent) with scroll-driven Framer Motion effects:
 
 - **Intro**: a short "test run" preloader (once per session), then the name rises in letter by letter.
 - **Hero**: cursor-following glow, name lines that split apart on scroll, a rotating role ticker and a circular badge that spins with the scroll.

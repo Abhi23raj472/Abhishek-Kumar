@@ -6,7 +6,7 @@ import { Counter, SectionHead, Stagger, StaggerItem } from '../lib/motion'
 
 const API = 'https://api.github.com'
 const CONTRIB = 'https://github-contributions-api.jogruber.de/v4/'
-const levels = ['bg-fg/[0.07]', 'bg-accent/30', 'bg-accent/55', 'bg-accent/80', 'bg-accent']
+const levels = ['bg-fg/[0.06]', 'bg-fg/25', 'bg-fg/45', 'bg-fg/70', 'bg-fg']
 const DAY = 864e5
 
 const fmt = (d) => new Date(d + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
@@ -65,37 +65,37 @@ export default function GitHub() {
   ]
 
   return (
-    <section id="github" className="shell py-24 md:py-40">
+    <section id="github" className="shell py-24 md:py-32">
       <SectionHead
         index="06"
         kicker="GitHub"
         title="Building in the open."
-        highlight={['open.']}
+        highlight={['in', 'the', 'open.']}
         sub={
           <>
             Live from{' '}
-            <a className="text-fg underline decoration-accent underline-offset-4" href={profile.github} target="_blank" rel="noopener noreferrer">
+            <a className="text-fg underline decoration-line underline-offset-4 hover:decoration-fg" href={profile.github} target="_blank" rel="noopener noreferrer">
               @{user}
-            </a>{' '}
-            — refreshed on every visit.
+            </a>
+            , refreshed on every visit.
           </>
         }
       />
 
       <Stagger className="grid grid-cols-2 border-l border-t border-line md:grid-cols-4">
         {tiles.map((t) => (
-          <StaggerItem key={t.k} className="border-b border-r border-line p-6 md:p-8">
-            <div className="font-display text-[clamp(2.5rem,5vw,4.5rem)] font-semibold leading-none tracking-[-0.04em]">
+          <StaggerItem key={t.k} className="border-b border-r border-line p-5 md:p-6">
+            <div className="text-[clamp(1.75rem,2.6vw,2.25rem)] font-semibold leading-none tracking-[-0.03em]">
               <Counter to={t.v ?? null} />
             </div>
-            <div className="mt-3 text-sm text-mute">{t.k}</div>
+            <div className="mt-2 text-[13px] text-mute">{t.k}</div>
           </StaggerItem>
         ))}
       </Stagger>
 
-      <div className="mt-6 rounded-[1.5rem] border border-line bg-surface p-6 md:p-8">
+      <div className="mt-5 rounded-2xl border border-line bg-surface p-5 md:p-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <span className="font-mono text-xs uppercase tracking-[0.2em] text-mute">Contribution graph</span>
+          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-mute">Contribution graph</span>
           {!!years.length && (
             <div className="flex flex-wrap gap-1 rounded-full border border-line p-1">
               {[{ y: 'last', t: 'last 12 mo' }, ...years.map((y) => ({ y, t: y }))].map((b) => (
@@ -104,10 +104,10 @@ export default function GitHub() {
                   type="button"
                   onClick={() => setYear(b.y)}
                   aria-pressed={year === b.y}
-                  className={`relative rounded-full px-3 py-1.5 font-mono text-xs transition-colors ${year === b.y ? 'text-on-lime' : 'text-mute hover:text-fg'}`}
+                  className={`relative rounded-full px-3 py-1 font-mono text-[11px] transition-colors ${year === b.y ? 'text-on-ink' : 'text-mute hover:text-fg'}`}
                 >
                   {year === b.y && (
-                    <motion.span layoutId="gh-year" className="absolute inset-0 rounded-full bg-lime" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
+                    <motion.span layoutId="gh-year" className="absolute inset-0 rounded-full bg-ink" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
                   )}
                   <span className="relative">{b.t}</span>
                 </button>
@@ -118,7 +118,7 @@ export default function GitHub() {
 
         <div className="mt-6 overflow-x-auto pb-2">
           {failed ? (
-            <p className="py-10 text-center text-mute">
+            <p className="py-10 text-center text-sm text-mute">
               Contribution graph unavailable right now. See{' '}
               <a className="text-fg underline" href={profile.github} target="_blank" rel="noopener noreferrer">
                 github.com/{user}
@@ -126,7 +126,7 @@ export default function GitHub() {
               .
             </p>
           ) : !data ? (
-            <div className="grid h-[118px] place-items-center font-mono text-sm text-mute">
+            <div className="grid h-[110px] place-items-center font-mono text-xs text-mute">
               <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.4 }}>
                 fetching contribution activity…
               </motion.span>
@@ -150,10 +150,10 @@ export default function GitHub() {
                       whileInView={{ scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: Math.floor(i / 7) * 0.012, duration: 0.25 }}
-                      className={`h-[13px] w-[13px] rounded-[3px] ${levels[d.level]}`}
+                      className={`h-3 w-3 rounded-[3px] ${levels[d.level]}`}
                     />
                   ) : (
-                    <span key={`p${i}`} className="h-[13px] w-[13px]" />
+                    <span key={`p${i}`} className="h-3 w-3" />
                   ),
                 )}
               </motion.div>
@@ -162,25 +162,20 @@ export default function GitHub() {
         </div>
 
         {data && days.length > 0 && (
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 font-mono text-xs text-mute">
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 font-mono text-[11px] text-mute">
             <span>
               <span className="text-fg">{total.toLocaleString()}</span> contributions · {fmt(days[0].date)} → {fmt(days[days.length - 1].date)}
             </span>
             <span className="flex items-center gap-1.5">
-              less {levels.map((l) => <span key={l} className={`h-[11px] w-[11px] rounded-[3px] ${l}`} />)} more
+              less {levels.map((l) => <span key={l} className={`h-2.5 w-2.5 rounded-[3px] ${l}`} />)} more
             </span>
           </div>
         )}
       </div>
 
-      <a
-        href={profile.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group mt-6 inline-flex items-center gap-2 font-semibold"
-      >
+      <a href={profile.github} target="_blank" rel="noopener noreferrer" className="group mt-5 inline-flex items-center gap-1.5 text-sm font-medium">
         View profile on GitHub
-        <ArrowUpRight size={18} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+        <ArrowUpRight size={15} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       </a>
     </section>
   )

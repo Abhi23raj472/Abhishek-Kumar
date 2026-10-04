@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion'
 
 /**
- * A soft ring that trails the mouse and swells over links and buttons.
+ * A thin ring that trails the mouse and swells over links and buttons.
  * The native cursor stays visible; this only renders for fine pointers.
  */
 export default function Cursor() {
@@ -16,8 +16,7 @@ export default function Cursor() {
   const sy = useSpring(y, { stiffness: 500, damping: 40, mass: 0.5 })
 
   useEffect(() => {
-    const mq = window.matchMedia('(pointer: fine)')
-    setEnabled(mq.matches && !reduce)
+    setEnabled(window.matchMedia('(pointer: fine)').matches && !reduce)
   }, [reduce])
 
   useEffect(() => {
@@ -40,17 +39,17 @@ export default function Cursor() {
   }, [enabled, x, y])
 
   if (!enabled) return null
+  // White + difference blending reads as an inverted ring on any background.
   return (
     <motion.div
       aria-hidden
-      className="pointer-events-none fixed left-0 top-0 z-[90] rounded-full border border-fg/60 mix-blend-difference"
+      className="pointer-events-none fixed left-0 top-0 z-[90] rounded-full border border-white mix-blend-difference"
       style={{ x: sx, y: sy, translateX: '-50%', translateY: '-50%' }}
       animate={{
-        width: hovering ? 56 : 28,
-        height: hovering ? 56 : 28,
-        opacity: visible ? 1 : 0,
-        backgroundColor: hovering ? 'rgba(198,242,78,0.9)' : 'rgba(198,242,78,0)',
-        borderColor: hovering ? 'rgba(198,242,78,0)' : 'rgba(198,242,78,0.9)',
+        width: hovering ? 44 : 24,
+        height: hovering ? 44 : 24,
+        opacity: visible ? 0.9 : 0,
+        backgroundColor: hovering ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,0)',
       }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
     />
