@@ -1,20 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useInView, useReducedMotion } from 'framer-motion'
 import { proficiency, skillCats, skillCloud } from '../data'
-import { SectionHead } from '../lib/motion'
+import { SectionHead, ease } from '../lib/motion'
 
 const sizes = { 1: 'text-[13px]', 2: 'text-[15px]', 3: 'text-lg font-medium' }
 
-// Proficiency reads as a rank and a charge meter instead of a percentage.
+// Proficiency reads as cockpit dials and rank chevrons instead of a percentage.
 const RANKS = { expert: 3, advanced: 2, proficient: 1 }
-const SEGMENTS = 20
+const START = -135 // dial sweep, in degrees clockwise from 12 o'clock
+const SWEEP = 270
 
 /** Up to three chevrons, like rank insignia: filled ones mark the level. */
-function Rank({ level }) {
+function Rank({ level, chevronsOnly = false }) {
   const n = RANKS[level] ?? 1
   return (
     <span className="flex items-center gap-2" aria-hidden>
-      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-mute">{level}</span>
+      {!chevronsOnly && <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-mute">{level}</span>}
       <span className="flex flex-col-reverse gap-[2px]">
         {[1, 2, 3].map((k) => (
           <svg key={k} viewBox="0 0 12 5" className={`h-[6px] w-3.5 ${k <= n ? 'text-accent' : 'text-line'}`}>
@@ -26,42 +27,93 @@ function Rank({ level }) {
   )
 }
 
-/** A segmented charge meter that powers up segment by segment, its top segment pulsing like a live reading. */
-function Meter({ pct, delay }) {
-  const lit = Math.round((pct / 100) * SEGMENTS)
+const polar = (deg, r) => {
+  const a = (deg * Math.PI) / 180
+  return [60 + r * Math.sin(a), 60 - r * Math.cos(a)]
+}
+const arc = (r, from, to) => {
+  const [x0, y0] = polar(from, r)
+  const [x1, y1] = polar(to, r)
+  return `M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`
+}
+const TICKS = Array.from({ length: 28 }, (_, k) => START + (SWEEP / 27) * k)
+
+/**
+ * A cockpit dial: the arc sweeps up to the reading, ticks light in sequence,
+ * and the needle swings over with a little overshoot, then keeps a faint
+ * live tremor.
+ */
+function Dial({ p, i }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-60px' })
+  const reduce = useReducedMotion()
+  const reading = START + (SWEEP * p.pct) / 100
+  const delay = 0.15 + i * 0.12
+  const on = reduce || inView
+
   return (
-    <motion.div
-      className="mt-2.5 flex gap-[3px]"
-      aria-hidden
-      initial="off"
-      whileInView="on"
-      viewport={{ once: true, margin: '-40px' }}
-      variants={{ off: {}, on: { transition: { staggerChildren: 0.035, delayChildren: delay } } }}
-    >
-      {Array.from({ length: SEGMENTS }, (_, k) => {
-        const on = k < lit
-        const head = k === lit - 1
-        return (
-          <motion.span
-            key={k}
-            className={`h-2.5 flex-1 rounded-[2px] ${on ? 'bg-accent' : 'bg-line'}`}
-            variants={{
-              off: { opacity: 0.15, scaleY: 0.4 },
-              on: { opacity: 1, scaleY: 1, transition: { duration: 0.25 } },
-            }}
-            style={on ? { boxShadow: '0 0 8px color-mix(in srgb, var(--accent) 55%, transparent)' } : undefined}
+    <div ref={ref} className="flex flex-col items-center text-center" aria-label={`${p.name}: ${p.level}`} role="img">
+      <svg viewBox="0 0 120 120" className="w-full max-w-[150px] overflow-visible" aria-hidden>
+        {/* bezel */}
+        <circle cx="60" cy="60" r="56" fill="var(--stage)" stroke="var(--line)" strokeWidth="1" />
+        <circle cx="60" cy="60" r="30" fill="none" stroke="var(--line)" strokeWidth="0.6" strokeDasharray="1 2.5" />
+        {/* ticks */}
+        {TICKS.map((deg, k) => {
+          const major = k % 9 === 0
+          const [x0, y0] = polar(deg, major ? 37 : 39.5)
+          const [x1, y1] = polar(deg, 43)
+          const lit = deg <= reading + 0.01
+          return (
+            <motion.line
+              key={k}
+              x1={x0} y1={y0} x2={x1} y2={y1}
+              strokeWidth={major ? 1.6 : 1}
+              strokeLinecap="round"
+              initial={{ stroke: 'var(--line)' }}
+              animate={on && lit ? { stroke: 'var(--accent)' } : undefined}
+              transition={{ duration: 0.2, delay: reduce ? 0 : delay + 0.25 + (k / 27) * 1.1 }}
+            />
+          )
+        })}
+        {/* track and value arc */}
+        <path d={arc(49, START, START + SWEEP)} fill="none" stroke="var(--line)" strokeWidth="2.5" strokeLinecap="round" />
+        <motion.path
+          d={arc(49, START, START + SWEEP)}
+          fill="none"
+          stroke="var(--accent)"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          style={{ filter: 'drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 70%, transparent))' }}
+          initial={{ pathLength: reduce ? p.pct / 100 : 0 }}
+          animate={on ? { pathLength: p.pct / 100 } : undefined}
+          transition={{ duration: 1.4, ease, delay: delay + 0.2 }}
+        />
+        {/* needle: the invisible circle centres the group's box on the hub, so it pivots there */}
+        <motion.g
+          initial={{ rotate: reduce ? reading : START }}
+          animate={on ? { rotate: reading } : undefined}
+          transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 55, damping: 7, delay: delay + 0.2 }}
+        >
+          <motion.g
+            animate={on && !reduce ? { rotate: [0, 1.4, -0.8, 0.6, 0] } : undefined}
+            transition={{ duration: 3.2, repeat: Infinity, repeatDelay: 0.6, delay: delay + 2.4, ease: 'easeInOut' }}
           >
-            {head && (
-              <motion.span
-                className="block h-full w-full rounded-[2px] bg-[var(--star)]"
-                animate={{ opacity: [0, 0.7, 0] }}
-                transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut', delay: delay + 1 }}
-              />
-            )}
-          </motion.span>
-        )
-      })}
-    </motion.div>
+            <circle cx="60" cy="60" r="44" fill="none" />
+            <line x1="60" y1="66" x2="60" y2="21" stroke="var(--fg)" strokeWidth="1.6" strokeLinecap="round" />
+            <circle cx="60" cy="21" r="1.6" fill="var(--accent)" />
+          </motion.g>
+        </motion.g>
+        <circle cx="60" cy="60" r="5" fill="var(--bg)" stroke="var(--accent)" strokeWidth="1.4" />
+        {/* readout */}
+        <text x="60" y="86" textAnchor="middle" className="fill-mute font-mono text-[6.5px] uppercase" letterSpacing="1.2">
+          {p.level}
+        </text>
+      </svg>
+      <p className="mt-3 text-sm leading-snug">{p.name}</p>
+      <div className="mt-1.5">
+        <Rank level={p.level} chevronsOnly />
+      </div>
+    </div>
   )
 }
 
@@ -214,26 +266,15 @@ export default function Skills() {
         ))}
       </div>
 
-      <div className="mt-6 grid items-center gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
-        <div>
-          <TagSphere filter={filter} />
-          <p className="label mt-2 text-center">Drag to spin</p>
-        </div>
+      <div className="mt-6">
+        <TagSphere filter={filter} />
+        <p className="label mt-2 text-center">Drag to spin</p>
+      </div>
 
-        <div className="panel rounded-2xl p-6">
-          <p className="label">Proficiency</p>
-          <ul className="mt-5 space-y-5">
-            {proficiency.map((p, i) => (
-              <li key={p.name} aria-label={`${p.name}: ${p.level}`}>
-                <div className="flex items-center justify-between gap-4 text-sm">
-                  <span>{p.name}</span>
-                  <Rank level={p.level} />
-                </div>
-                <Meter pct={p.pct} delay={0.1 + i * 0.12} />
-              </li>
-            ))}
-          </ul>
-          <p className="mt-6 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-4 font-mono text-[10px] uppercase tracking-[0.14em] text-mute">
+      <div className="panel mt-12 rounded-2xl p-6 md:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="label">Flight instruments · proficiency</p>
+          <p className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-[0.14em] text-mute">
             {Object.entries(RANKS).map(([lvl, n]) => (
               <span key={lvl} className="inline-flex items-center gap-1.5">
                 <span className="text-accent">{'▲'.repeat(n)}</span>
@@ -241,6 +282,11 @@ export default function Skills() {
               </span>
             ))}
           </p>
+        </div>
+        <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-5 [&>*:last-child]:col-span-2 sm:[&>*:last-child]:col-span-1">
+          {proficiency.map((p, i) => (
+            <Dial key={p.name} p={p} i={i} />
+          ))}
         </div>
       </div>
     </section>
