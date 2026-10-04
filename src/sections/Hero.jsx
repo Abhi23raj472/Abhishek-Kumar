@@ -123,11 +123,8 @@ export default function Hero({ ready }) {
     <section ref={ref} id="top" className="relative flex min-h-svh flex-col pb-[22svh] pt-28">
       <motion.div style={reduce ? undefined : { y: lift, opacity: fade }} className="shell flex flex-1 flex-col items-center justify-center text-center">
         <motion.p {...show(1.6)} className="label inline-flex items-center gap-2.5">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-60 motion-reduce:animate-none" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-signal" />
-          </span>
-          Open to new roles · {profile.location}
+          <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
+          {profile.company} · {profile.location}
         </motion.p>
 
         <div className="relative mt-6 isolate">

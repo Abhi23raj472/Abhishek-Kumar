@@ -61,7 +61,7 @@ export default function Contact() {
 
         <div className="mt-10 grid gap-8 md:grid-cols-12 md:items-end">
           <RevealWords
-            text="Open to Quality Engineering and Test Automation roles. Tell me about your release pipeline and I'll help it ship faster, with confidence."
+            text="Have a quality engineering challenge or want to talk test automation? Tell me about your release pipeline and how it ships."
             className="max-w-md text-base leading-relaxed text-mute md:col-span-6"
           />
           <div className="flex flex-wrap items-center gap-3 md:col-span-6 md:justify-end">

@@ -115,7 +115,7 @@ export default function About() {
               {record.map(([k, v], i) => (
                 <div key={k} className="grid grid-cols-[7.5rem_1fr] gap-3 sm:grid-cols-[9rem_1fr]">
                   <dt className="text-mute">{k}</dt>
-                  <dd className={k === 'Status' ? 'text-signal' : 'text-fg'}>
+                  <dd className="text-fg">
                     <TypeOut text={v} delay={0.15 + i * 0.25} />
                   </dd>
                 </div>

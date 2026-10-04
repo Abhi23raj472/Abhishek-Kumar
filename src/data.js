@@ -141,7 +141,6 @@ export const record = [
   ['Base', 'India'],
   ['Experience', '5+ years in quality engineering'],
   ['Specialty', 'Tricentis Tosca, API validation, CI/CD'],
-  ['Status', 'Open to new roles'],
 ]
 
 // Skills sphere. Weight 1-3 sets the size of each tag.
