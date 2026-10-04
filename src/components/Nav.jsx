@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from 'framer-motion'
 import { Moon, Sun, X } from 'lucide-react'
 import { nav, profile } from '../data'
-import { ease } from '../lib/motion'
+import { Roll, ease } from '../lib/motion'
+import { lockScroll } from '../lib/smoothScroll'
 
 const ids = nav.map((n) => n.id)
 const resume = `${import.meta.env.BASE_URL}${profile.resume}`
@@ -74,7 +75,7 @@ export default function Nav() {
   })
 
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : ''
+    lockScroll(open)
     const onKey = (e) => e.key === 'Escape' && setOpen(false)
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -106,7 +107,7 @@ export default function Nav() {
                     aria-current={active === n.id ? 'true' : undefined}
                     className={`relative block px-3 py-2 text-[13px] transition-colors ${active === n.id ? 'text-fg' : 'text-mute hover:text-fg'}`}
                   >
-                    {n.label}
+                    <Roll>{n.label}</Roll>
                     {active === n.id && (
                       <motion.span
                         layoutId="nav-underline"
@@ -127,7 +128,7 @@ export default function Nav() {
               download
               className="hidden h-9 items-center rounded-full bg-ink px-4 text-[13px] font-medium text-on-ink transition-opacity hover:opacity-85 sm:inline-flex"
             >
-              Résumé
+              <Roll>Résumé</Roll>
             </a>
             <button
               type="button"
@@ -175,7 +176,7 @@ export default function Nav() {
               {nav.map((n, i) => (
                 <motion.li key={n.id} className="overflow-hidden border-b border-line" variants={{ h: { y: '100%' }, s: { y: '0%', transition: { duration: 0.5, ease } } }}>
                   <a href={`#${n.id}`} onClick={() => setOpen(false)} className="flex items-baseline justify-between py-3.5">
-                    <span className="text-2xl font-medium tracking-tight">{n.label}</span>
+                    <span className="text-2xl font-medium tracking-tight"><Roll>{n.label}</Roll></span>
                     <span className="font-mono text-[11px] text-mute">0{i + 1}</span>
                   </a>
                 </motion.li>

@@ -1,19 +1,18 @@
-import { useEffect, useState } from 'react'
-import { motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useAnimationFrame, useMotionValue, useReducedMotion } from 'framer-motion'
 
 /**
- * A thin ring that trails the mouse and swells over links and buttons.
- * The native cursor stays visible; this only renders for fine pointers.
+ * A soft blob that trails the mouse with a little lag and inverts whatever
+ * it passes over. It shrinks away over links and buttons, which have their own
+ * hover effects. The native cursor stays visible; fine pointers only.
  */
 export default function Cursor() {
   const reduce = useReducedMotion()
   const [enabled, setEnabled] = useState(false)
-  const [hovering, setHovering] = useState(false)
-  const [visible, setVisible] = useState(false)
+  const [hidden, setHidden] = useState(true)
+  const target = useRef({ x: -100, y: -100 })
   const x = useMotionValue(-100)
   const y = useMotionValue(-100)
-  const sx = useSpring(x, { stiffness: 500, damping: 40, mass: 0.5 })
-  const sy = useSpring(y, { stiffness: 500, damping: 40, mass: 0.5 })
 
   useEffect(() => {
     setEnabled(window.matchMedia('(pointer: fine)').matches && !reduce)
@@ -21,13 +20,17 @@ export default function Cursor() {
 
   useEffect(() => {
     if (!enabled) return
+    let first = true
     const move = (e) => {
-      x.set(e.clientX)
-      y.set(e.clientY)
-      setVisible(true)
+      target.current = { x: e.clientX, y: e.clientY }
+      if (first) {
+        x.set(e.clientX)
+        y.set(e.clientY)
+        first = false
+      }
     }
-    const over = (e) => setHovering(!!e.target.closest('a, button, [data-cursor]'))
-    const leave = () => setVisible(false)
+    const over = (e) => setHidden(!!e.target.closest('a, button, input, textarea'))
+    const leave = () => setHidden(true)
     window.addEventListener('pointermove', move)
     window.addEventListener('pointerover', over)
     document.documentElement.addEventListener('pointerleave', leave)
@@ -38,20 +41,22 @@ export default function Cursor() {
     }
   }, [enabled, x, y])
 
+  // Ease a fraction of the remaining distance each frame (frame-rate independent).
+  useAnimationFrame((_, delta) => {
+    if (!enabled) return
+    const k = 1 - Math.pow(1 - 1 / 6, delta / 16.7)
+    x.set(x.get() + (target.current.x - x.get()) * k)
+    y.set(y.get() + (target.current.y - y.get()) * k)
+  })
+
   if (!enabled) return null
-  // White + difference blending reads as an inverted ring on any background.
   return (
     <motion.div
       aria-hidden
-      className="pointer-events-none fixed left-0 top-0 z-[90] rounded-full border border-white mix-blend-difference"
-      style={{ x: sx, y: sy, translateX: '-50%', translateY: '-50%' }}
-      animate={{
-        width: hovering ? 44 : 24,
-        height: hovering ? 44 : 24,
-        opacity: visible ? 0.9 : 0,
-        backgroundColor: hovering ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,0)',
-      }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
+      className="pointer-events-none fixed left-0 top-0 z-[90] h-10 w-10 rounded-full bg-white mix-blend-difference"
+      style={{ x, y, translateX: '-50%', translateY: '-50%' }}
+      animate={{ scale: hidden ? 0 : 1 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
     />
   )
 }

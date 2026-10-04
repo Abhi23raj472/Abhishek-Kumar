@@ -108,8 +108,42 @@
   }
 }
 
+/* Lenis drives scrolling itself; native smooth scrolling would fight it. */
+html.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+/* Rolling link label: on hover the text slides up and an identical copy
+   rolls in from below. Markup comes from <Roll>. */
+.roll {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.roll-in {
+  position: relative;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.roll-in > span {
+  position: absolute;
+  left: 0;
+  top: 100%;
+}
+:is(a, button):hover .roll-in,
+:is(a, button):focus-visible .roll-in {
+  transform: translateY(-100%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .roll-in {
+    transition: none;
+  }
+  :is(a, button):hover .roll-in {
+    transform: none;
   }
 }

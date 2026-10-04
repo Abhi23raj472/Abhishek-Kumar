@@ -35,6 +35,19 @@ export default function Preloader({ onDone }) {
         <span>Abhishek Kumar</span>
         <span>Quality Engineer</span>
       </div>
+      <div aria-hidden className="-mx-6 overflow-hidden whitespace-nowrap md:-mx-10">
+        <motion.div
+          className="flex w-max text-[clamp(2rem,6vw,4.5rem)] font-semibold tracking-[-0.03em] text-white/10"
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ duration: 14, ease: 'linear', repeat: Infinity }}
+        >
+          {[0, 1].map((k) => (
+            <span key={k} className="pr-8">
+              Quality Engineer — Test Automation — Tricentis Tosca — API Validation —&nbsp;
+            </span>
+          ))}
+        </motion.div>
+      </div>
       <div>
         <div className="h-5 overflow-hidden font-mono text-xs text-white/70">
           <motion.div key={step} initial={{ y: 20 }} animate={{ y: 0 }} transition={{ duration: 0.35, ease }}>

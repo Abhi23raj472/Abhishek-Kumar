@@ -59,8 +59,16 @@ export function StaggerItem({ children, className = '', as = 'div', variants = r
 
 const bare = (w) => w.replace(/[.,!?;:—]/g, '')
 
-/** Words rise out of a mask one after another. Screen readers get the plain text. */
-export function SplitWords({ text, highlight = [], delay = 0, className = '' }) {
+const charRise = {
+  hidden: { opacity: 0, y: '0.7em', rotate: 10, transition: { duration: 0.3 } },
+  show: { opacity: 1, y: '0em', rotate: 0, transition: { duration: 0.8, ease: [0.65, 0, 0.35, 1] } },
+}
+
+/**
+ * Title whose letters rise and untwist one after another as it enters the
+ * viewport, and fold away again when it leaves so the reveal replays.
+ */
+export function SplitChars({ text, highlight = [], className = '' }) {
   const words = text.split(' ')
   return (
     <span className={className}>
@@ -70,23 +78,57 @@ export function SplitWords({ text, highlight = [], delay = 0, className = '' }) 
         className="block"
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, margin: '-40px' }}
-        variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: delay } } }}
+        viewport={{ once: false, margin: '0px 0px -20% 0px' }}
+        variants={{ hidden: {}, show: { transition: { staggerChildren: 0.018 } } }}
       >
         {words.map((w, i) => (
-          <span key={i} className="-mb-[0.12em] mr-[0.24em] inline-block overflow-hidden pb-[0.12em] align-bottom">
-            <motion.span
-              className={`inline-block ${highlight.includes(bare(w)) ? 'text-mute' : ''}`}
-              variants={{
-                hidden: { y: '110%' },
-                show: { y: '0%', transition: { duration: 0.8, ease } },
-              }}
-            >
-              {w}
-            </motion.span>
+          <span key={i} className={`mr-[0.24em] inline-block whitespace-nowrap ${highlight.includes(bare(w)) ? 'text-mute' : ''}`}>
+            {[...w].map((ch, j) => (
+              <motion.span key={j} className="inline-block origin-bottom-left" variants={charRise}>
+                {ch}
+              </motion.span>
+            ))}
           </span>
         ))}
       </motion.span>
+    </span>
+  )
+}
+
+const wordRise = {
+  hidden: { opacity: 0, y: '1.2em', transition: { duration: 0.3 } },
+  show: { opacity: 1, y: '0em', transition: { duration: 0.9, ease } },
+}
+
+/** Paragraph whose words rise in with a quick stagger each time it scrolls into view. */
+export function RevealWords({ text, className = '', as = 'p', delay = 0 }) {
+  const M = motion[as]
+  return (
+    <M
+      className={className}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: false, margin: '0px 0px -15% 0px' }}
+      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.012, delayChildren: delay } } }}
+    >
+      <span className="sr-only">{text}</span>
+      {text.split(' ').map((w, i) => (
+        <motion.span key={i} aria-hidden className="mr-[0.26em] inline-block" variants={wordRise}>
+          {w}
+        </motion.span>
+      ))}
+    </M>
+  )
+}
+
+/** Link label that rolls up to an identical copy on hover (styles in index.css). */
+export function Roll({ children }) {
+  return (
+    <span className="roll">
+      <span className="roll-in">
+        {children}
+        <span aria-hidden>{children}</span>
+      </span>
     </span>
   )
 }
@@ -183,12 +225,16 @@ export function SectionHead({ index, kicker, title, highlight = [], sub, classNa
         />
       </Reveal>
       <h2 className="mt-5 max-w-3xl text-[clamp(1.875rem,3.4vw,3rem)] font-semibold leading-[1.1] tracking-[-0.03em]">
-        <SplitWords text={title} highlight={highlight} />
+        <SplitChars text={title} highlight={highlight} />
       </h2>
-      {sub && (
-        <Reveal delay={0.15}>
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-mute">{sub}</p>
-        </Reveal>
+      {typeof sub === 'string' ? (
+        <RevealWords text={sub} delay={0.2} className="mt-4 max-w-xl text-base leading-relaxed text-mute" />
+      ) : (
+        sub && (
+          <Reveal delay={0.15}>
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-mute">{sub}</p>
+          </Reveal>
+        )
       )}
     </div>
   )

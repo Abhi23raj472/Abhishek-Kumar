@@ -5,6 +5,7 @@ import Nav from './components/Nav'
 import Preloader from './components/Preloader'
 import VelocityMarquee from './components/VelocityMarquee'
 import { marquee } from './data'
+import { useSmoothScroll } from './lib/smoothScroll'
 import About from './sections/About'
 import Contact from './sections/Contact'
 import Credentials from './sections/Credentials'
@@ -37,6 +38,7 @@ export default function App() {
     }
     setLoading(false)
   }, [])
+  useSmoothScroll(loading)
 
   return (
     <MotionConfig reducedMotion="user">

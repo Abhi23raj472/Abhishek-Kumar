@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUp, ArrowUpRight, Check, Copy } from 'lucide-react'
 import { nav, profile } from '../data'
-import { Magnetic, ease } from '../lib/motion'
+import { Magnetic, RevealWords, Roll, ease } from '../lib/motion'
 
 const resume = `${import.meta.env.BASE_URL}${profile.resume}`
 const socials = [
@@ -60,14 +60,14 @@ export default function Contact() {
         </motion.h2>
 
         <div className="mt-10 grid gap-8 md:grid-cols-12 md:items-end">
-          <p className="max-w-md text-base leading-relaxed text-mute md:col-span-6">
-            Open to Quality Engineering and Test Automation roles. Tell me about your release pipeline and I'll help it ship
-            faster, with confidence.
-          </p>
+          <RevealWords
+            text="Open to Quality Engineering and Test Automation roles. Tell me about your release pipeline and I'll help it ship faster, with confidence."
+            className="max-w-md text-base leading-relaxed text-mute md:col-span-6"
+          />
           <div className="flex flex-wrap items-center gap-3 md:col-span-6 md:justify-end">
             <Magnetic>
               <a href={`mailto:${profile.email}`} className="group inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">
-                Get in touch
+                <Roll>Get in touch</Roll>
                 <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:rotate-45" />
               </a>
             </Magnetic>
@@ -104,7 +104,7 @@ export default function Contact() {
                     {...(s.download ? { download: true } : { target: '_blank', rel: 'noopener noreferrer' })}
                     className="group inline-flex items-center gap-1 text-mute hover:text-fg"
                   >
-                    {s.k}
+                    <Roll>{s.k}</Roll>
                     <ArrowUpRight size={13} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </a>
                 </li>
@@ -116,7 +116,7 @@ export default function Contact() {
             <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
               {nav.slice(0, -1).map((n) => (
                 <li key={n.id}>
-                  <a href={`#${n.id}`} className="text-mute hover:text-fg">{n.label}</a>
+                  <a href={`#${n.id}`} className="text-mute hover:text-fg"><Roll>{n.label}</Roll></a>
                 </li>
               ))}
             </ul>
@@ -127,7 +127,7 @@ export default function Contact() {
               {time} <span className="text-xs text-mute">IST</span>
             </p>
             <a href="#top" className="group mt-4 inline-flex items-center gap-1.5 text-mute hover:text-fg">
-              Back to top <ArrowUp size={14} className="transition-transform group-hover:-translate-y-0.5" />
+              <Roll>Back to top</Roll> <ArrowUp size={14} className="transition-transform group-hover:-translate-y-0.5" />
             </a>
           </div>
         </div>

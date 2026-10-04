@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { profile } from '../data'
-import { Counter, SectionHead, Stagger, StaggerItem } from '../lib/motion'
+import { Counter, Roll, SectionHead, Stagger, StaggerItem } from '../lib/motion'
 
 const API = 'https://api.github.com'
 const CONTRIB = 'https://github-contributions-api.jogruber.de/v4/'
@@ -174,7 +174,7 @@ export default function GitHub() {
       </div>
 
       <a href={profile.github} target="_blank" rel="noopener noreferrer" className="group mt-5 inline-flex items-center gap-1.5 text-sm font-medium">
-        View profile on GitHub
+        <Roll>View profile on GitHub</Roll>
         <ArrowUpRight size={15} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       </a>
     </section>

@@ -12,20 +12,23 @@ import {
 } from 'framer-motion'
 import { ArrowDown, ArrowUpRight, Download } from 'lucide-react'
 import { profile, roles } from '../data'
-import { Magnetic, ease } from '../lib/motion'
+import { Magnetic, Roll, ease } from '../lib/motion'
 
 const resume = `${import.meta.env.BASE_URL}${profile.resume}`
 
+const inOut = [0.65, 0, 0.35, 1]
+
+/** Letters drift up out of a blur, one after another. */
 function Letters({ text, ready, delay = 0 }) {
   return (
-    <span aria-hidden className="-mb-[0.1em] inline-flex overflow-hidden pb-[0.1em]">
+    <span aria-hidden className="inline-flex">
       {[...text].map((ch, i) => (
         <motion.span
           key={i}
           className="inline-block"
-          initial={{ y: '110%' }}
-          animate={ready ? { y: '0%' } : undefined}
-          transition={{ duration: 1, ease, delay: delay + i * 0.035 }}
+          initial={{ opacity: 0, y: '0.5em', filter: 'blur(8px)' }}
+          animate={ready ? { opacity: 1, y: '0em', filter: 'blur(0px)' } : undefined}
+          transition={{ duration: 1.2, ease: inOut, delay: delay + i * 0.03 }}
         >
           {ch === ' ' ? ' ' : ch}
         </motion.span>
@@ -34,29 +37,43 @@ function Letters({ text, ready, delay = 0 }) {
   )
 }
 
+const swap = {
+  hidden: { y: '110%' },
+  show: { y: '0%', transition: { duration: 0.7, ease: inOut } },
+  exit: { y: '-110%', transition: { duration: 0.7, ease: inOut } },
+}
+
+/** Each role rolls out letter by letter while the next rolls in behind it. */
 function RoleRotator() {
   const [i, setI] = useState(0)
   useEffect(() => {
-    const t = setInterval(() => setI((v) => (v + 1) % roles.length), 2400)
+    const t = setInterval(() => setI((v) => (v + 1) % roles.length), 3200)
     return () => clearInterval(t)
   }, [])
   return (
     <span aria-hidden className="relative block h-[1.4em] overflow-hidden">
-      <AnimatePresence mode="popLayout" initial={false}>
+      <AnimatePresence initial={false}>
         <motion.span
           key={i}
           className="absolute inset-x-0 top-0 whitespace-nowrap"
-          initial={{ y: '100%' }}
-          animate={{ y: '0%' }}
-          exit={{ y: '-100%' }}
-          transition={{ duration: 0.6, ease }}
+          initial="hidden"
+          animate="show"
+          exit="exit"
+          variants={{ show: { transition: { staggerChildren: 0.025 } }, exit: { transition: { staggerChildren: 0.025 } } }}
         >
-          {roles[i]}
+          {[...roles[i]].map((ch, j) => (
+            <motion.span key={j} className="inline-block" variants={swap}>
+              {ch === ' ' ? ' ' : ch}
+            </motion.span>
+          ))}
         </motion.span>
       </AnimatePresence>
     </span>
   )
 }
+
+const lede =
+  'building scalable test automation for web, desktop and API experiences, so teams release with speed and confidence.'
 
 /** Circular text badge: spins slowly, and faster as you scroll. */
 function Badge({ reduce }) {
@@ -145,9 +162,23 @@ export default function Hero({ ready }) {
               <Letters text="Kumar." ready={ready} delay={0.3} />
             </motion.span>
           </h1>
-          <motion.p {...show(0.55)} className="mt-6 max-w-xl text-base leading-relaxed text-mute md:text-lg">
-            <span className="text-fg">Quality Engineer</span> building scalable test automation for web, desktop and API
-            experiences, so teams release with speed and confidence.
+          <motion.p
+            className="mt-6 max-w-xl text-base leading-relaxed text-mute md:text-lg"
+            initial="hidden"
+            animate={ready ? 'show' : 'hidden'}
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.02, delayChildren: 0.6 } } }}
+          >
+            <span className="sr-only">Quality Engineer {lede}</span>
+            {['Quality', 'Engineer', ...lede.split(' ')].map((w, i) => (
+              <motion.span
+                key={i}
+                aria-hidden
+                className={`mr-[0.26em] inline-block ${i < 2 ? 'text-fg' : ''}`}
+                variants={{ hidden: { opacity: 0, y: '1em' }, show: { opacity: 1, y: '0em', transition: { duration: 0.9, ease } } }}
+              >
+                {w}
+              </motion.span>
+            ))}
           </motion.p>
         </div>
 
@@ -155,13 +186,13 @@ export default function Hero({ ready }) {
           <motion.div {...show(0.7)} className="flex flex-wrap items-center gap-3">
             <Magnetic>
               <a href="#work" className="group inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">
-                See my work
+                <Roll>See my work</Roll>
                 <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:rotate-45" />
               </a>
             </Magnetic>
             <Magnetic>
               <a href={resume} download className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-medium transition-colors hover:bg-fg/5">
-                Résumé <Download size={15} />
+                <Roll>Résumé</Roll> <Download size={15} />
               </a>
             </Magnetic>
           </motion.div>
