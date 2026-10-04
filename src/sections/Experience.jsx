@@ -151,14 +151,33 @@ export default function Experience() {
               type="button"
               onClick={() => setSel(i)}
               aria-label={`Show ${en.role}`}
-              className={`h-1.5 rounded-full transition-all ${i === sel ? 'w-6 bg-accent' : 'w-1.5 bg-line'}`}
-            />
+              className="grid h-8 min-w-8 place-items-center px-1"
+            >
+              <span className={`block h-1.5 rounded-full transition-all ${i === sel ? 'w-6 bg-accent' : 'w-1.5 bg-line'}`} />
+            </button>
           ))}
         </div>
         <button type="button" onClick={() => go(1)} aria-label="Next stop" className="grid h-9 w-9 place-items-center rounded-full border border-line hover:border-accent">
           <ArrowRight size={15} />
         </button>
       </div>
+
+      {/* Every role in plain text, for screen readers and search engines; the panel below shows one at a time. */}
+      <ol className="sr-only" aria-label="All roles">
+        {[...entries].reverse().map((en) => (
+          <li key={en.id}>
+            <h3>{en.role}</h3>
+            <p>
+              {en.org}, {en.period}
+            </p>
+            <ul>
+              {en.points.map((pt) => (
+                <li key={pt}>{pt}</li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
 
       <div className="panel mt-6 overflow-hidden rounded-2xl" aria-live="polite">
         <AnimatePresence mode="wait">

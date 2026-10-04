@@ -7,4 +7,6 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   base: './',
   plugins: [react(), tailwindcss()],
+  // Lenis ships a CSS file, which Node can't import; bundle it for the build-time prerender.
+  ssr: { noExternal: ['lenis'] },
 })

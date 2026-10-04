@@ -18,6 +18,7 @@ const SpaceScene = lazy(() => import('./components/SpaceScene'))
 
 // The intro plays once per browser session, and never with reduced motion.
 function shouldShowIntro() {
+  if (typeof window === 'undefined') return false // pre-rendering at build time
   try {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false
     if (window.location.hash) return false

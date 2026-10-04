@@ -96,13 +96,13 @@ export default function Contact() {
         <div className="mt-20 grid gap-10 border-t border-line py-10 text-sm sm:grid-cols-3">
           <div>
             <p className={label}>Elsewhere</p>
-            <ul className="mt-4 space-y-2">
+            <ul className="mt-3 space-y-0.5">
               {socials.map((s) => (
                 <li key={s.k}>
                   <a
                     href={s.href}
                     {...(s.download ? { download: true } : { target: '_blank', rel: 'noopener noreferrer' })}
-                    className="group inline-flex items-center gap-1 text-mute hover:text-fg"
+                    className="group inline-flex items-center gap-1 py-1.5 text-mute hover:text-fg"
                   >
                     <Roll>{s.k}</Roll>
                     <ArrowUpRight size={13} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -113,10 +113,10 @@ export default function Contact() {
           </div>
           <div>
             <p className={label}>Sections</p>
-            <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
+            <ul className="mt-3 grid grid-cols-2 gap-x-4">
               {nav.slice(0, -1).map((n) => (
                 <li key={n.id}>
-                  <a href={`#${n.id}`} className="text-mute hover:text-fg"><Roll>{n.label}</Roll></a>
+                  <a href={`#${n.id}`} className="inline-block py-1.5 text-mute hover:text-fg"><Roll>{n.label}</Roll></a>
                 </li>
               ))}
             </ul>
@@ -126,7 +126,7 @@ export default function Contact() {
             <p className="mt-4 text-lg tabular-nums">
               {time} <span className="text-xs text-mute">IST</span>
             </p>
-            <a href="#top" className="group mt-4 inline-flex items-center gap-1.5 text-mute hover:text-fg">
+            <a href="#top" className="group mt-3 inline-flex items-center gap-1.5 py-1.5 text-mute hover:text-fg">
               <Roll>Back to top</Roll> <ArrowUp size={14} className="transition-transform group-hover:-translate-y-0.5" />
             </a>
           </div>

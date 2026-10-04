@@ -28,7 +28,7 @@ const THEME_KEY = 'ak-portfolio-theme'
 
 /** Switches between the dark space theme and the light grey one, and remembers it. */
 function ThemeToggle() {
-  const [light, setLight] = useState(() => document.documentElement.dataset.theme === 'light')
+  const [light, setLight] = useState(() => typeof document !== 'undefined' && document.documentElement.dataset.theme === 'light')
   const toggle = () => {
     const next = light ? 'dark' : 'light'
     document.documentElement.dataset.theme = next

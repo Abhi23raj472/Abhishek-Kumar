@@ -79,13 +79,17 @@ export function SplitChars({ text, highlight = [], className = '' }) {
         viewport={{ once: true, margin: '0px 0px -40px 0px' }}
         variants={{ hidden: {}, show: { transition: { staggerChildren: 0.018 } } }}
       >
+        {/* Real spaces between words keep the page text readable for search engines. */}
         {words.map((w, i) => (
-          <span key={i} className={`mr-[0.24em] inline-block whitespace-nowrap ${highlight.includes(bare(w)) ? 'italic text-accent' : ''}`}>
-            {[...w].map((ch, j) => (
-              <motion.span key={j} className="inline-block origin-bottom-left" variants={charRise}>
-                {ch}
-              </motion.span>
-            ))}
+          <span key={i}>
+            <span className={`inline-block whitespace-nowrap ${highlight.includes(bare(w)) ? 'italic text-accent' : ''}`}>
+              {[...w].map((ch, j) => (
+                <motion.span key={j} className="inline-block origin-bottom-left" variants={charRise}>
+                  {ch}
+                </motion.span>
+              ))}
+            </span>
+            {i < words.length - 1 && ' '}
           </span>
         ))}
       </motion.span>
@@ -111,9 +115,11 @@ export function RevealWords({ text, className = '', as = 'p', delay = 0 }) {
     >
       <span className="sr-only">{text}</span>
       {text.split(' ').map((w, i) => (
-        <motion.span key={i} aria-hidden className="mr-[0.26em] inline-block" variants={wordRise}>
-          {w}
-        </motion.span>
+        <span key={i} aria-hidden>
+          <motion.span className="inline-block" variants={wordRise}>
+            {w}
+          </motion.span>{' '}
+        </span>
       ))}
     </M>
   )
