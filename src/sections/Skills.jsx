@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { motion, useInView, useReducedMotion } from 'framer-motion'
+import { motion, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useTransform } from 'framer-motion'
 import { proficiency, skillCats, skillCloud } from '../data'
-import { SectionHead, ease } from '../lib/motion'
+import { SectionHead } from '../lib/motion'
 
 const sizes = { 1: 'text-[13px]', 2: 'text-[15px]', 3: 'text-lg font-medium' }
 
-// Proficiency reads as cockpit dials and rank chevrons instead of a percentage.
+// Proficiency reads as a radar scope and rank chevrons instead of a percentage.
 const RANKS = { expert: 3, advanced: 2, proficient: 1 }
-const START = -135 // dial sweep, in degrees clockwise from 12 o'clock
-const SWEEP = 270
+const C = 200 // radar centre in the 400 x 400 viewBox
+const R = 150 // outer ring radius
 
 /** Up to three chevrons, like rank insignia: filled ones mark the level. */
 function Rank({ level, chevronsOnly = false }) {
@@ -27,93 +27,161 @@ function Rank({ level, chevronsOnly = false }) {
   )
 }
 
-const polar = (deg, r) => {
+// Axis k points up first and runs clockwise.
+const axisDeg = (k, n) => (360 / n) * k
+const point = (deg, r) => {
   const a = (deg * Math.PI) / 180
-  return [60 + r * Math.sin(a), 60 - r * Math.cos(a)]
+  return [C + r * Math.sin(a), C - r * Math.cos(a)]
 }
-const arc = (r, from, to) => {
-  const [x0, y0] = polar(from, r)
-  const [x1, y1] = polar(to, r)
-  return `M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`
+const ring = (n, r) => Array.from({ length: n }, (_, k) => point(axisDeg(k, n), r).join(',')).join(' ')
+
+/** One skill's vertex: it flares as the scan line sweeps over it. Its hit circle centres the scale-in on the vertex. */
+function Blip({ x, y, deg, sweep, active, delay, on, onHover }) {
+  // Angular distance from the beam's leading edge to this axis, in degrees.
+  const flare = useTransform(sweep, (s) => {
+    const behind = (((s - deg) % 360) + 360) % 360
+    return behind < 50 ? 1 - behind / 50 : 0
+  })
+  const glow = useTransform(flare, (f) => 6 + f * 14)
+  const halo = useTransform(flare, (f) => 0.15 + f * 0.6)
+  return (
+    <motion.g
+      initial={{ opacity: 0, scale: 0 }}
+      animate={on ? { opacity: 1, scale: 1 } : undefined}
+      transition={{ type: 'spring', stiffness: 260, damping: 14, delay }}
+      onPointerEnter={onHover}
+      className="cursor-pointer"
+    >
+      <circle cx={x} cy={y} r="18" fill="transparent" />
+      <motion.circle cx={x} cy={y} r={glow} fill="var(--accent)" style={{ opacity: halo }} />
+      <circle cx={x} cy={y} r={active ? 6.5 : 4.5} fill="var(--bg)" stroke="var(--accent)" strokeWidth="2" />
+      <circle cx={x} cy={y} r={active ? 2.6 : 1.8} fill="var(--accent)" />
+    </motion.g>
+  )
 }
-const TICKS = Array.from({ length: 28 }, (_, k) => START + (SWEEP / 27) * k)
 
 /**
- * A cockpit dial: the arc sweeps up to the reading, ticks light in sequence,
- * and the needle swings over with a little overshoot, then keeps a faint
- * live tremor.
+ * The radar: every skill on its own axis, joined into one glowing shape
+ * that grows out from the centre, with a scan line sweeping round and
+ * each vertex flaring as the beam passes it.
  */
-function Dial({ p, i }) {
+function Radar({ items, active, setActive }) {
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
+  const inView = useInView(ref, { once: true, margin: '-80px' })
   const reduce = useReducedMotion()
-  const reading = START + (SWEEP * p.pct) / 100
-  const delay = 0.15 + i * 0.12
   const on = reduce || inView
+  const n = items.length
+  const sweep = useMotionValue(0)
+  useAnimationFrame((_, delta) => {
+    if (!reduce && on) sweep.set((sweep.get() + delta * 0.06) % 360)
+  })
+
+  const verts = items.map((p, k) => point(axisDeg(k, n), (R * p.pct) / 100))
+  const shape = verts.map((v) => v.join(',')).join(' ')
+  const lead = point(0, R)
+  const trail = point(-55, R)
+  const current = active == null ? null : items[active]
 
   return (
-    <div ref={ref} className="flex flex-col items-center text-center" aria-label={`${p.name}: ${p.level}`} role="img">
-      <svg viewBox="0 0 120 120" className="w-full max-w-[150px] overflow-visible" aria-hidden>
-        {/* bezel */}
-        <circle cx="60" cy="60" r="56" fill="var(--stage)" stroke="var(--line)" strokeWidth="1" />
-        <circle cx="60" cy="60" r="30" fill="none" stroke="var(--line)" strokeWidth="0.6" strokeDasharray="1 2.5" />
-        {/* ticks */}
-        {TICKS.map((deg, k) => {
-          const major = k % 9 === 0
-          const [x0, y0] = polar(deg, major ? 37 : 39.5)
-          const [x1, y1] = polar(deg, 43)
-          const lit = deg <= reading + 0.01
-          return (
-            <motion.line
-              key={k}
-              x1={x0} y1={y0} x2={x1} y2={y1}
-              strokeWidth={major ? 1.6 : 1}
-              strokeLinecap="round"
-              initial={{ stroke: 'var(--line)' }}
-              animate={on && lit ? { stroke: 'var(--accent)' } : undefined}
-              transition={{ duration: 0.2, delay: reduce ? 0 : delay + 0.25 + (k / 27) * 1.1 }}
-            />
-          )
-        })}
-        {/* track and value arc */}
-        <path d={arc(49, START, START + SWEEP)} fill="none" stroke="var(--line)" strokeWidth="2.5" strokeLinecap="round" />
-        <motion.path
-          d={arc(49, START, START + SWEEP)}
-          fill="none"
-          stroke="var(--accent)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          style={{ filter: 'drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 70%, transparent))' }}
-          initial={{ pathLength: reduce ? p.pct / 100 : 0 }}
-          animate={on ? { pathLength: p.pct / 100 } : undefined}
-          transition={{ duration: 1.4, ease, delay: delay + 0.2 }}
-        />
-        {/* needle: the invisible circle centres the group's box on the hub, so it pivots there */}
-        <motion.g
-          initial={{ rotate: reduce ? reading : START }}
-          animate={on ? { rotate: reading } : undefined}
-          transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 55, damping: 7, delay: delay + 0.2 }}
-        >
-          <motion.g
-            animate={on && !reduce ? { rotate: [0, 1.4, -0.8, 0.6, 0] } : undefined}
-            transition={{ duration: 3.2, repeat: Infinity, repeatDelay: 0.6, delay: delay + 2.4, ease: 'easeInOut' }}
-          >
-            <circle cx="60" cy="60" r="44" fill="none" />
-            <line x1="60" y1="66" x2="60" y2="21" stroke="var(--fg)" strokeWidth="1.6" strokeLinecap="round" />
-            <circle cx="60" cy="21" r="1.6" fill="var(--accent)" />
-          </motion.g>
+    <svg ref={ref} viewBox="0 0 400 400" className="mx-auto block w-full max-w-[460px] overflow-visible" aria-hidden onPointerLeave={() => setActive(null)}>
+      <defs>
+        <radialGradient id="radar-fill" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.32" />
+        </radialGradient>
+        <linearGradient id="radar-beam" gradientUnits="userSpaceOnUse" x1={trail[0]} y1={trail[1]} x2={lead[0]} y2={lead[1]}>
+          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0" />
+          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.35" />
+        </linearGradient>
+      </defs>
+
+      {/* scope: rings, a fine circular graticule and the axes */}
+      <circle cx={C} cy={C} r={R + 22} fill="var(--stage)" stroke="var(--line)" />
+      <circle cx={C} cy={C} r={R + 10} fill="none" stroke="var(--line)" strokeDasharray="1 5" />
+      {[0.25, 0.5, 0.75, 1].map((f) => (
+        <polygon key={f} points={ring(n, R * f)} fill="none" stroke="var(--line)" strokeWidth={f === 1 ? 1.2 : 0.8} />
+      ))}
+      {items.map((p, k) => {
+        const [x, y] = point(axisDeg(k, n), R)
+        return (
+          <line
+            key={p.name}
+            x1={C} y1={C} x2={x} y2={y}
+            stroke={active === k ? 'var(--accent)' : 'var(--line)'}
+            strokeWidth={active === k ? 1.4 : 0.8}
+            style={{ transition: 'stroke 0.25s' }}
+          />
+        )
+      })}
+
+      {/* sweeping beam; the invisible full circle keeps its pivot on the radar centre */}
+      {!reduce && (
+        <motion.g style={{ rotate: sweep }}>
+          <circle cx={C} cy={C} r={R} fill="none" />
+          <path d={`M ${C} ${C} L ${trail[0]} ${trail[1]} A ${R} ${R} 0 0 1 ${lead[0]} ${lead[1]} Z`} fill="url(#radar-beam)" />
+          <line x1={C} y1={C} x2={lead[0]} y2={lead[1]} stroke="var(--accent)" strokeWidth="1.2" strokeOpacity="0.8" />
         </motion.g>
-        <circle cx="60" cy="60" r="5" fill="var(--bg)" stroke="var(--accent)" strokeWidth="1.4" />
-        {/* readout */}
-        <text x="60" y="86" textAnchor="middle" className="fill-mute font-mono text-[6.5px] uppercase" letterSpacing="1.2">
-          {p.level}
-        </text>
-      </svg>
-      <p className="mt-3 text-sm leading-snug">{p.name}</p>
-      <div className="mt-1.5">
-        <Rank level={p.level} chevronsOnly />
-      </div>
-    </div>
+      )}
+
+      {/* the skills shape grows out from the centre (same invisible-circle pivot) */}
+      <motion.g
+        initial={{ scale: reduce ? 1 : 0, opacity: reduce ? 1 : 0 }}
+        animate={on ? { scale: 1, opacity: 1 } : undefined}
+        transition={{ type: 'spring', stiffness: 70, damping: 11, delay: 0.2 }}
+      >
+        <circle cx={C} cy={C} r={R} fill="none" />
+        <polygon
+          points={shape}
+          fill="url(#radar-fill)"
+          stroke="var(--accent)"
+          strokeWidth="2"
+          strokeLinejoin="round"
+          style={{ filter: 'drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 55%, transparent))' }}
+        />
+      </motion.g>
+
+      {verts.map(([x, y], k) => (
+        <Blip
+          key={items[k].name}
+          x={x} y={y}
+          deg={axisDeg(k, n)}
+          sweep={sweep}
+          active={active === k}
+          on={on}
+          delay={reduce ? 0 : 0.7 + k * 0.1}
+          onHover={() => setActive(k)}
+        />
+      ))}
+
+      {/* axis labels */}
+      {items.map((p, k) => {
+        const deg = axisDeg(k, n)
+        const [x, y] = point(deg, R + 40)
+        const anchor = Math.abs(Math.sin((deg * Math.PI) / 180)) < 0.2 ? 'middle' : Math.sin((deg * Math.PI) / 180) > 0 ? 'start' : 'end'
+        return (
+          <text
+            key={p.name}
+            x={x}
+            y={y + 4}
+            textAnchor={anchor}
+            className={`font-mono text-[11px] uppercase transition-colors ${active === k ? 'fill-accent' : 'fill-mute'}`}
+            letterSpacing="1"
+            onPointerEnter={() => setActive(k)}
+          >
+            {p.short}
+          </text>
+        )
+      })}
+
+      {/* centre readout */}
+      <circle cx={C} cy={C} r="34" fill="var(--bg)" stroke="var(--line)" />
+      <text x={C} y={C - 3} textAnchor="middle" className="fill-fg font-display text-[15px] italic">
+        {current ? current.short : 'Skills'}
+      </text>
+      <text x={C} y={C + 13} textAnchor="middle" className="fill-accent font-mono text-[8px] uppercase" letterSpacing="1.4">
+        {current ? current.level : `${n} tracked`}
+      </text>
+    </svg>
   )
 }
 
@@ -243,6 +311,7 @@ function TagSphere({ filter }) {
 
 export default function Skills() {
   const [filter, setFilter] = useState('all')
+  const [active, setActive] = useState(null)
   return (
     <section id="skills" className="shell py-24 md:py-36">
       <SectionHead index="05" kicker="Skills" title="The toolkit, in full rotation." highlight={['rotation.']} />
@@ -272,21 +341,42 @@ export default function Skills() {
       </div>
 
       <div className="panel mt-12 rounded-2xl p-6 md:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="label">Flight instruments · proficiency</p>
-          <p className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-[0.14em] text-mute">
-            {Object.entries(RANKS).map(([lvl, n]) => (
-              <span key={lvl} className="inline-flex items-center gap-1.5">
-                <span className="text-accent">{'▲'.repeat(n)}</span>
-                {lvl}
-              </span>
+        <p className="label">Radar · proficiency</p>
+        <div className="mt-6 grid items-center gap-10 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+          {/* side room so the outer axis labels never touch the screen edge */}
+          <div className="px-9 sm:px-12 md:px-8">
+            <Radar items={proficiency} active={active} setActive={setActive} />
+          </div>
+          <ul className="space-y-1" onPointerLeave={() => setActive(null)}>
+            {proficiency.map((p, k) => (
+              <li key={p.name}>
+                <button
+                  type="button"
+                  onPointerEnter={() => setActive(k)}
+                  onFocus={() => setActive(k)}
+                  onBlur={() => setActive(null)}
+                  aria-label={`${p.name}: ${p.level}`}
+                  className={`flex w-full items-center justify-between gap-4 rounded-xl border px-4 py-3 text-left transition-colors ${
+                    active === k ? 'border-accent/60 bg-accent/10' : 'border-transparent hover:bg-fg/[0.04]'
+                  }`}
+                >
+                  <span className="flex items-center gap-3">
+                    <span className={`h-2 w-2 rounded-full transition-colors ${active === k ? 'bg-accent shadow-[0_0_10px_var(--accent)]' : 'bg-line'}`} />
+                    <span className="text-[15px]">{p.name}</span>
+                  </span>
+                  <Rank level={p.level} />
+                </button>
+              </li>
             ))}
-          </p>
-        </div>
-        <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-5 [&>*:last-child]:col-span-2 sm:[&>*:last-child]:col-span-1">
-          {proficiency.map((p, i) => (
-            <Dial key={p.name} p={p} i={i} />
-          ))}
+            <li className="flex flex-wrap gap-x-4 gap-y-1 border-t border-line px-4 pt-4 font-mono text-[10px] uppercase tracking-[0.14em] text-mute">
+              {Object.entries(RANKS).map(([lvl, n]) => (
+                <span key={lvl} className="inline-flex items-center gap-1.5">
+                  <span className="text-accent">{'▲'.repeat(n)}</span>
+                  {lvl}
+                </span>
+              ))}
+            </li>
+          </ul>
         </div>
       </div>
     </section>

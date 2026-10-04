@@ -52,11 +52,11 @@ export const doing = [
 ]
 
 export const proficiency = [
-  { name: 'Tricentis Tosca', level: 'expert', pct: 95 },
-  { name: 'API testing (REST / SOAP)', level: 'advanced', pct: 85 },
-  { name: 'CI/CD & DEX', level: 'advanced', pct: 82 },
-  { name: 'Agile / Scrum', level: 'advanced', pct: 85 },
-  { name: 'SQL / MySQL', level: 'proficient', pct: 70 },
+  { name: 'Tricentis Tosca', short: 'Tosca', level: 'expert', pct: 95 },
+  { name: 'API testing (REST / SOAP)', short: 'API testing', level: 'advanced', pct: 85 },
+  { name: 'CI/CD & DEX', short: 'CI/CD & DEX', level: 'advanced', pct: 82 },
+  { name: 'Agile / Scrum', short: 'Agile', level: 'advanced', pct: 85 },
+  { name: 'SQL / MySQL', short: 'SQL', level: 'proficient', pct: 70 },
 ]
 
 export const stack = [
