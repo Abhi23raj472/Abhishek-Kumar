@@ -13,13 +13,26 @@ export const profile = {
 
 export const nav = [
   { id: 'about', label: 'About' },
-  { id: 'skills', label: 'Skills' },
+  { id: 'work', label: 'Work' },
   { id: 'experience', label: 'Experience' },
   { id: 'impact', label: 'Impact' },
+  { id: 'skills', label: 'Skills' },
   { id: 'github', label: 'GitHub' },
-  { id: 'credentials', label: 'Credentials' },
+  { id: 'credentials', label: 'Awards' },
   { id: 'contact', label: 'Contact' },
 ]
+
+export const roles = [
+  'Tosca automation',
+  'API validation',
+  'parallel execution',
+  'CI/CD quality gates',
+  'release confidence',
+]
+
+// Words wrapped in *asterisks* are highlighted as the paragraph lights up on scroll.
+export const intro =
+  "I'm a *Quality* *Engineer* with five years across test automation, API validation and Agile QA. I build *Tricentis* *Tosca* suites that stay maintainable long after the release they were written for — reusable modules, data-driven design and distributed execution, wired into *CI/CD* so every build ships with *confidence.*"
 
 export const stats = [
   { v: 5, suffix: '+', k: 'years in quality engineering' },

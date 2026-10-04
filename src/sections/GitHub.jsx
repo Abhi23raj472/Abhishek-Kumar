@@ -1,13 +1,19 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowUpRight } from 'lucide-react'
 import { profile } from '../data'
-import { Counter, SectionHead, Spotlight, Stagger, StaggerItem } from '../components/motion'
+import { Counter, SectionHead, Stagger, StaggerItem } from '../lib/motion'
 
 const API = 'https://api.github.com'
 const CONTRIB = 'https://github-contributions-api.jogruber.de/v4/'
-const levels = ['bg-tint/[0.09]', 'bg-pass/35', 'bg-pass/55', 'bg-pass/80', 'bg-pass']
+const levels = ['bg-fg/[0.07]', 'bg-accent/30', 'bg-accent/55', 'bg-accent/80', 'bg-accent']
+const DAY = 864e5
 
 const fmt = (d) => new Date(d + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+const inLastYear = (d) => {
+  const t = new Date(d.date + 'T00:00:00').getTime()
+  return t >= Date.now() - 364 * DAY && t <= Date.now()
+}
 
 export default function GitHub() {
   const user = profile.githubUser
@@ -38,26 +44,14 @@ export default function GitHub() {
     () => (data ? Object.keys(data.total || {}).filter((k) => /^\d{4}$/.test(k)).sort((a, b) => b - a).slice(0, 4) : []),
     [data],
   )
-
-  const days = useMemo(() => {
-    if (!data) return []
-    const now = Date.now()
-    const cutoff = now - 364 * 864e5
-    return data.contributions.filter((d) => {
-      const t = new Date(d.date + 'T00:00:00').getTime()
-      return year === 'last' ? t >= cutoff && t <= now : d.date.slice(0, 4) === year
-    })
-  }, [data, year])
-
-  const lastYearTotal = useMemo(() => {
-    if (!data) return null
-    const now = Date.now()
-    const cutoff = now - 364 * 864e5
-    return data.contributions.reduce((a, d) => {
-      const t = new Date(d.date + 'T00:00:00').getTime()
-      return t >= cutoff && t <= now ? a + d.count : a
-    }, 0)
-  }, [data])
+  const days = useMemo(
+    () => (data ? data.contributions.filter((d) => (year === 'last' ? inLastYear(d) : d.date.slice(0, 4) === year)) : []),
+    [data, year],
+  )
+  const lastYearTotal = useMemo(
+    () => (data ? data.contributions.filter(inLastYear).reduce((a, d) => a + d.count, 0) : null),
+    [data],
+  )
 
   const total = days.reduce((a, d) => a + d.count, 0)
   const pad = days.length ? new Date(days[0].date + 'T00:00:00').getDay() : 0
@@ -65,46 +59,55 @@ export default function GitHub() {
 
   const tiles = [
     { k: 'public repos', v: u?.public_repos },
-    { k: 'contributions (1y)', v: lastYearTotal },
-    { k: 'total stars', v: stars },
+    { k: 'contributions, last 12 mo', v: lastYearTotal },
+    { k: 'stars earned', v: stars },
     { k: 'followers', v: u?.followers },
   ]
 
   return (
-    <section id="github" className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+    <section id="github" className="shell py-24 md:py-40">
       <SectionHead
-        index="05"
+        index="06"
         kicker="GitHub"
-        title={<>Open-source <span className="text-gradient">activity</span>.</>}
-        sub={<>Live from <a className="text-fg underline decoration-pass/50 underline-offset-4 hover:decoration-pass" href={profile.github} target="_blank" rel="noopener noreferrer">@{user}</a> — refreshed on every visit.</>}
+        title="Building in the open."
+        highlight={['open.']}
+        sub={
+          <>
+            Live from{' '}
+            <a className="text-fg underline decoration-accent underline-offset-4" href={profile.github} target="_blank" rel="noopener noreferrer">
+              @{user}
+            </a>{' '}
+            — refreshed on every visit.
+          </>
+        }
       />
 
-      <Stagger className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <Stagger className="grid grid-cols-2 border-l border-t border-line md:grid-cols-4">
         {tiles.map((t) => (
-          <StaggerItem key={t.k}>
-            <Spotlight tilt={12} className="p-6">
-              <div className="font-display text-4xl font-semibold text-fg">
-                <Counter to={t.v ?? null} />
-              </div>
-              <div className="mt-1 font-mono text-xs text-mute">{t.k}</div>
-            </Spotlight>
+          <StaggerItem key={t.k} className="border-b border-r border-line p-6 md:p-8">
+            <div className="font-display text-[clamp(2.5rem,5vw,4.5rem)] font-semibold leading-none tracking-[-0.04em]">
+              <Counter to={t.v ?? null} />
+            </div>
+            <div className="mt-3 text-sm text-mute">{t.k}</div>
           </StaggerItem>
         ))}
       </Stagger>
 
-      <Spotlight tilt={3} className="mt-4 p-6 md:p-8">
+      <div className="mt-6 rounded-[1.5rem] border border-line bg-surface p-6 md:p-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="font-mono text-xs uppercase tracking-[0.2em] text-mute">Contribution graph</div>
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-mute">Contribution graph</span>
           {!!years.length && (
-            <div className="flex flex-wrap gap-1 rounded-xl border border-line p-1">
+            <div className="flex flex-wrap gap-1 rounded-full border border-line p-1">
               {[{ y: 'last', t: 'last 12 mo' }, ...years.map((y) => ({ y, t: y }))].map((b) => (
                 <button
                   key={b.y}
+                  type="button"
                   onClick={() => setYear(b.y)}
-                  className={`relative rounded-lg px-3 py-1.5 font-mono text-xs transition-colors ${year === b.y ? 'text-onaccent' : 'text-mute hover:text-fg'}`}
+                  aria-pressed={year === b.y}
+                  className={`relative rounded-full px-3 py-1.5 font-mono text-xs transition-colors ${year === b.y ? 'text-on-lime' : 'text-mute hover:text-fg'}`}
                 >
                   {year === b.y && (
-                    <motion.span layoutId="yr" className="absolute inset-0 -z-0 rounded-lg bg-pass" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
+                    <motion.span layoutId="gh-year" className="absolute inset-0 rounded-full bg-lime" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
                   )}
                   <span className="relative">{b.t}</span>
                 </button>
@@ -115,14 +118,17 @@ export default function GitHub() {
 
         <div className="mt-6 overflow-x-auto pb-2">
           {failed ? (
-            <p className="py-10 text-center">
+            <p className="py-10 text-center text-mute">
               Contribution graph unavailable right now. See{' '}
-              <a className="text-fg underline" href={profile.github} target="_blank" rel="noopener noreferrer">github.com/{user}</a>.
+              <a className="text-fg underline" href={profile.github} target="_blank" rel="noopener noreferrer">
+                github.com/{user}
+              </a>
+              .
             </p>
           ) : !data ? (
             <div className="grid h-[118px] place-items-center font-mono text-sm text-mute">
               <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.4 }}>
-                loading contribution activity…
+                fetching contribution activity…
               </motion.span>
             </div>
           ) : (
@@ -141,7 +147,8 @@ export default function GitHub() {
                       key={d.date}
                       title={`${d.count} contribution${d.count === 1 ? '' : 's'} on ${fmt(d.date)}`}
                       initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
                       transition={{ delay: Math.floor(i / 7) * 0.012, duration: 0.25 }}
                       className={`h-[13px] w-[13px] rounded-[3px] ${levels[d.level]}`}
                     />
@@ -164,7 +171,17 @@ export default function GitHub() {
             </span>
           </div>
         )}
-      </Spotlight>
+      </div>
+
+      <a
+        href={profile.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group mt-6 inline-flex items-center gap-2 font-semibold"
+      >
+        View profile on GitHub
+        <ArrowUpRight size={18} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      </a>
     </section>
   )
 }
