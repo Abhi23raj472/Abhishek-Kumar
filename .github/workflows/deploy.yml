@@ -51,5 +51,23 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # While Settings → Pages → Source is "Deploy from a branch", GitHub also
+      # publishes the raw, unbuilt repository on every push to main. Whichever
+      # deploy finishes last wins, and the raw one shows a blank page. Wait for
+      # that branch build to finish so this built site is published after it.
+      - name: Wait for branch-based Pages build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for i in $(seq 1 36); do
+            status=$(gh api "repos/${{ github.repository }}/pages/builds/latest" --jq .status 2>/dev/null || echo none)
+            echo "branch build: $status"
+            case "$status" in
+              building|queued) sleep 10 ;;
+              *) break ;;
+            esac
+          done
+          # "built" is reported a few seconds before that build's own deploy ends.
+          sleep 20
       - id: deployment
         uses: actions/deploy-pages@v4
