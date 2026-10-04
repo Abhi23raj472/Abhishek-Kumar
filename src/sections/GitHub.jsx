@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { profile } from '../data'
@@ -29,6 +29,13 @@ function blankYear() {
 }
 
 const CELL = 15 // 12px cell + 3px gap
+const REFRESH = 10 * 60 * 1000 // re-check GitHub every 10 minutes while the page is open
+
+// Live requests skip the browser cache so a revisit never shows yesterday's numbers.
+const live = (url) => fetch(url, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+// The snapshot the deploy workflow saves into public/github-data/, used only when live fails.
+const snapshot = (path) => fetch(path, { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+const clock = (d) => d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
 
 export default function GitHub() {
   const user = profile.githubUser
@@ -36,23 +43,51 @@ export default function GitHub() {
   const [stars, setStars] = useState(null)
   const [data, setData] = useState(null)
   const [failed, setFailed] = useState(false)
+  const [source, setSource] = useState(null) // 'live' | 'snapshot'
+  const [updated, setUpdated] = useState(null)
   const [year, setYear] = useState('last')
+  const lastLoad = useRef(0)
 
   useEffect(() => {
-    // Live data first; if a request is blocked or rate-limited, fall back to
-    // the snapshot the deploy workflow saves daily into public/github-data/.
-    const get = (live, snap) =>
-      fetch(live)
-        .then((r) => (r.ok ? r.json() : Promise.reject()))
-        .catch(() => fetch(snap).then((r) => (r.ok ? r.json() : Promise.reject())))
+    let alive = true
+    const countStars = (rs) => rs.filter((r) => !r.fork).reduce((a, r) => a + r.stargazers_count, 0)
 
-    get(`${API}/users/${user}`, './github-data/user.json').then(setU).catch(() => {})
-    get(`${API}/users/${user}/repos?per_page=100&sort=pushed`, './github-data/repos.json')
-      .then((rs) => setStars(rs.filter((r) => !r.fork).reduce((a, r) => a + r.stargazers_count, 0)))
-      .catch(() => {})
-    get(`${CONTRIB}${user}?y=all`, './github-data/contributions.json')
-      .then(setData)
-      .catch(() => setFailed(true))
+    // Always try GitHub live. The deploy snapshot is only a first-load
+    // fallback; a later failed refresh keeps whatever is already showing.
+    const load = (first) => {
+      lastLoad.current = Date.now()
+      live(`${CONTRIB}${user}?y=all`)
+        .then((d) => {
+          if (!alive) return
+          setData(d)
+          setSource('live')
+          setUpdated(new Date())
+          setFailed(false)
+        })
+        .catch(() => {
+          if (!first || !alive) return
+          snapshot('./github-data/contributions.json')
+            .then((d) => alive && (setData(d), setSource('snapshot')))
+            .catch(() => alive && setFailed(true))
+        })
+      live(`${API}/users/${user}`)
+        .then((d) => alive && setU(d))
+        .catch(() => first && snapshot('./github-data/user.json').then((d) => alive && setU(d)).catch(() => {}))
+      live(`${API}/users/${user}/repos?per_page=100&sort=pushed`)
+        .then((rs) => alive && setStars(countStars(rs)))
+        .catch(() => first && snapshot('./github-data/repos.json').then((rs) => alive && setStars(countStars(rs))).catch(() => {}))
+    }
+
+    load(true)
+    const id = setInterval(() => !document.hidden && load(false), REFRESH)
+    // Coming back to the tab after a while fetches fresh numbers straight away.
+    const onVisible = () => !document.hidden && Date.now() - lastLoad.current > 2 * 60 * 1000 && load(false)
+    document.addEventListener('visibilitychange', onVisible)
+    return () => {
+      alive = false
+      clearInterval(id)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
   }, [user])
 
   const years = useMemo(
@@ -99,7 +134,7 @@ export default function GitHub() {
             <a className="text-fg underline decoration-line underline-offset-4 hover:decoration-fg" href={profile.github} target="_blank" rel="noopener noreferrer">
               @{user}
             </a>
-            , refreshed on every visit.
+            , refreshed live while you're on the page.
           </>
         }
       />
@@ -117,7 +152,21 @@ export default function GitHub() {
 
       <div className="panel mt-5 rounded-2xl p-5 md:p-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-mute">Contribution graph</span>
+          <span className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-mute">
+            Contribution graph
+            {source === 'live' && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 px-2 py-0.5 normal-case tracking-normal text-accent">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:animate-none" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+                </span>
+                Live · updated {clock(updated)}
+              </span>
+            )}
+            {source === 'snapshot' && (
+              <span className="rounded-full border border-line px-2 py-0.5 normal-case tracking-normal">Snapshot from the last deploy</span>
+            )}
+          </span>
           {!!years.length && (
             <div className="flex flex-wrap gap-1 rounded-full border border-line p-1">
               {[{ y: 'last', t: 'last 12 mo' }, ...years.map((y) => ({ y, t: y }))].map((b) => (
