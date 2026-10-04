@@ -133,12 +133,12 @@ export default function About() {
               ['Email', `mailto:${profile.email}`],
               ['LinkedIn', profile.linkedin],
               ['GitHub', profile.github],
-              ['Résumé', resume],
+              ['Resume', resume],
             ].map(([k, href]) => (
               <a
                 key={k}
                 href={href}
-                {...(k === 'Résumé' ? { download: true } : href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                {...(k === 'Resume' ? { download: true } : href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                 className="rounded-full border border-line px-4 py-2 transition-colors hover:border-accent"
               >
                 <Roll>{k}</Roll>

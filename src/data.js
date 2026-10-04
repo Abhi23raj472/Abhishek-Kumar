@@ -78,16 +78,17 @@ export const experience = [
   {
     role: 'Quality Engineer',
     org: 'Optum Global Solutions',
-    place: 'UnitedHealth Group · Gurugram',
+    place: 'UnitedHealth Group',
     period: 'Nov 2025 — Present',
     current: true,
     points: [
-      'Develop and maintain Tosca automation suites for web and desktop applications.',
-      'Build reusable UI modules via XScan and data-driven test cases in TCD for new features.',
-      'Automate REST and SOAP API validation as part of sprint and release testing.',
-      'Engineer recovery and cleanup scenarios so runs stay reliable in unstable environments.',
-      'Support CI/CD-integrated execution through DEX and publish daily regression reports.',
-      'Escalated a critical production-impacting defect — Bravo! Diamond Award.',
+      "Develop and maintain automation suites for web and desktop applications in Tricentis Tosca within the team's established framework.",
+      'Build and maintain reusable UI modules through Tosca XScan to broaden automation coverage across interfaces.',
+      'Design parameterized, data-driven test cases in Tosca TCD to validate new feature functionality.',
+      'Execute functional, smoke and regression cycles each sprint in line with Agile ceremonies.',
+      'Engineer recovery and cleanup scenarios so test runs stay reliable during unstable environment states.',
+      'Triage, log and track defects in JIRA, partnering with developers to close issues quickly and limit re-testing.',
+      'Assist in integrating Tosca automation runs into the CI/CD pipeline; publish daily regression reports on suite health.',
     ],
     tags: ['Tosca', 'XScan', 'TCD', 'DEX', 'API', 'JIRA'],
   },
@@ -97,41 +98,43 @@ export const experience = [
     place: 'Pune, India',
     period: 'Sep 2021 — Nov 2025',
     points: [
-      'Owned end-to-end Tosca automation suite design and delivery — architecture through rollout.',
-      'Defined release-level test strategy: automation scope, risk coverage and test data planning.',
-      'Architected data-driven, parameterized TCD frameworks to scale across product lines.',
-      'Led REST and SOAP API coverage, validating response codes, payloads and headers.',
-      'Ran distributed execution via DEX with agent load balancing, and drove CI/CD integration.',
-      'Set team standards for modules, RTBs and TQL-driven bulk updates; mentored teammates.',
+      'Owned end-to-end Tosca automation suite design and delivery for web and desktop applications, from architecture through rollout.',
+      "Established the team's reusable UI module standards via Tosca XScan, extending automation feasibility to new interfaces.",
+      'Architected data-driven, parameterized test frameworks in Tosca TCD to scale testing across multiple product lines.',
+      'Led REST and SOAP API test coverage, validating response codes, payloads and headers in real time.',
+      'Ran distributed, parallel test execution via Tosca DEX across remote agents using event-driven and scheduled runs.',
+      'Standardized test scenario logic across the team with shared test sheets, business rule templates and TQL-driven bulk artifact updates.',
+      'Defined release-level test strategy (scope, risk coverage and test data planning) and drove CI/CD integration of automation suites.',
+      'Mentored teammates through code/test reviews and led retrospectives to raise team-wide QA standards.',
     ],
     tags: ['Tosca', 'DEX', 'TQL', 'CI/CD', 'SoapUI', 'Mentoring'],
   },
 ]
 
 export const impact = [
-  { code: 'I-01', title: 'Faster regression cycles', body: 'Modularized test cases and enabled distributed execution to shorten regression runs.' },
-  { code: 'I-02', title: 'Broader API coverage', body: 'Automated validation of payloads, status codes and authentication across services.' },
-  { code: 'I-03', title: 'Lower maintenance', body: 'Reusable templates and centralized TCD test data cut upkeep across suites.' },
-  { code: 'I-04', title: 'Higher DEX throughput', body: 'Agent load balancing and parallel run configuration for faster feedback.' },
-  { code: 'I-05', title: 'Zero UAT escalations', body: 'Defect-free releases across multiple sprints — recognized by the client.' },
-  { code: 'I-06', title: 'Ahead of schedule', body: 'Delivered critical automation early, pulling QA feedback forward.' },
+  { code: 'I-01', title: 'Faster regression cycles', body: 'Reduced regression cycle duration by modularizing test cases and enabling distributed execution.' },
+  { code: 'I-02', title: 'Broader API coverage', body: 'Increased API test coverage through automated validation of payloads, status codes and authentication.' },
+  { code: 'I-03', title: 'Lower maintenance', body: 'Minimized maintenance effort by building reusable templates and centralizing test data in TCD.' },
+  { code: 'I-04', title: 'Higher DEX throughput', body: 'Improved Tosca DEX throughput through optimized agent load balancing and parallel run configuration.' },
+  { code: 'I-05', title: 'Zero UAT escalations', body: 'Delivered defect-free releases across multiple sprint cycles with zero UAT escalations, recognized by the client.' },
+  { code: 'I-06', title: 'Ahead of schedule', body: 'Delivered critical automation ahead of schedule, improving QA timelines and early feedback cycles.' },
 ]
 
 export const certs = [
   { org: 'Tricentis Academy', items: ['AS1', 'AS2', 'TDS1', 'TDS2', 'AE1', 'API', 'TQL'] },
   { org: 'ISTQB', items: ['Certified Tester — Foundation Level'] },
-  { org: 'Optum.ai', items: ['AI Dojo — Generative AI · Mar 2026'] },
-  { org: 'Other', items: ['SQL', 'Agile with Atlassian Jira', 'Allianz ABS (L1)'] },
+  { org: 'Generative AI', items: ['Optum.ai AI Dojo · Mar 2026'] },
+  { org: 'Other', items: ['Allianz ABS (L1)', 'SQL Certification', 'Agile with Atlassian Jira'] },
 ]
 
 export const awards = [
-  { date: 'Jun 2026', name: 'Bravo! Diamond Award', by: 'UnitedHealth Group', body: 'Identified and escalated a critical production-impacting defect in the Tosca automation team.' },
-  { date: 'Dec 2024', name: 'Bold Mind Award', body: 'Innovative solutions and test strategy enhancement in Tosca.' },
-  { date: 'Apr 2024', name: 'Applause Award', body: 'Reduced regression cycle time through automation optimization.' },
-  { date: 'Sep 2023', name: 'WoW Award', body: 'Exceptional contribution to enterprise automation delivery.' },
+  { date: 'Jun 2026', name: 'Bravo! Diamond Award', by: 'UnitedHealth Group', body: 'Proactively identified and escalated a critical production-impacting defect in the Tosca Automation team.' },
+  { date: 'Dec 2024', name: 'Bold Mind Award', body: 'For innovative solutions and test strategy enhancement in Tosca.' },
+  { date: 'Apr 2024', name: 'Applause Award', body: 'For reducing regression cycle time through automation optimization.' },
+  { date: 'Sep 2023', name: 'WoW Award', body: 'For exceptional contribution to enterprise automation delivery.' },
 ]
 
-export const education = { degree: 'B.Tech — Computer Science & Engineering', school: 'Galgotias University · Greater Noida', year: '2021' }
+export const education = { degree: 'Bachelor of Technology — Computer Science & Engineering', school: 'Galgotias University, Greater Noida, UP', year: '2021' }
 
 // About: read out like a mission record.
 export const record = [
@@ -170,6 +173,8 @@ export const skillCloud = [
   ['Functional', 'testing', 2],
   ['Smoke', 'testing', 1],
   ['UI testing', 'testing', 1],
+  ['Database testing', 'testing', 1],
+  ['Requirement analysis', 'testing', 1],
   ['Risk-based testing', 'testing', 2],
   ['Test case design', 'testing', 2],
   ['Coverage mapping', 'testing', 1],
@@ -181,5 +186,6 @@ export const skillCloud = [
   ['Rally', 'delivery', 1],
   ['Scrum', 'delivery', 2],
   ['Kanban', 'delivery', 1],
+  ['SDLC', 'delivery', 1],
   ['STLC', 'delivery', 1],
 ]

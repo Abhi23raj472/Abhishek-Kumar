@@ -168,7 +168,7 @@ export default function Hero({ ready }) {
           </Magnetic>
           <Magnetic>
             <a href={resume} download className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-medium transition-colors hover:border-accent">
-              <Roll>Résumé</Roll> <Download size={15} />
+              <Roll>Resume</Roll> <Download size={15} />
             </a>
           </Magnetic>
         </motion.div>

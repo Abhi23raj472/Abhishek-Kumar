@@ -8,7 +8,7 @@ const resume = `${import.meta.env.BASE_URL}${profile.resume}`
 const socials = [
   { k: 'LinkedIn', href: profile.linkedin },
   { k: 'GitHub', href: profile.github },
-  { k: 'Résumé', href: resume, download: true },
+  { k: 'Resume', href: resume, download: true },
 ]
 const label = 'font-mono text-[11px] uppercase tracking-[0.18em] text-mute'
 

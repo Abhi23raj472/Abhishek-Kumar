@@ -94,7 +94,7 @@ export default function Nav() {
               download
               className="hidden h-9 items-center rounded-full border border-line px-4 text-[13px] text-fg transition-colors hover:border-accent sm:inline-flex"
             >
-              <Roll>Résumé</Roll>
+              <Roll>Resume</Roll>
             </a>
             <button
               type="button"
@@ -155,7 +155,7 @@ export default function Nav() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
-              <a href={resume} download className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">Download résumé</a>
+              <a href={resume} download className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">Download resume</a>
               <a href={`mailto:${profile.email}`} className="rounded-full border border-line px-5 py-2.5 text-sm font-medium">Email me</a>
             </motion.div>
           </motion.div>
