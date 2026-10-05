@@ -1,28 +1,62 @@
-import { useMemo, useRef } from 'react'
+import { useRef, useState } from 'react'
 import { motion, useInView, useReducedMotion } from 'framer-motion'
+import { BadgeCheck, CalendarCheck, Gauge, Network, ShieldCheck, Wrench } from 'lucide-react'
 import { impact } from '../data'
 import { SectionHead, ease } from '../lib/motion'
 
-// Deterministic jitter so each packet keeps the same trace between renders.
-function trace(seed, points = 48) {
-  let s = seed * 9301 + 49297
-  const rnd = () => ((s = (s * 9301 + 49297) % 233280) / 233280)
-  let y = 12
-  const d = []
-  for (let i = 0; i < points; i++) {
-    y = Math.max(3, Math.min(21, y + (rnd() - 0.5) * 9))
-    d.push(`${i === 0 ? 'M' : 'L'}${((i / (points - 1)) * 200).toFixed(1)} ${y.toFixed(1)}`)
-  }
-  return d.join(' ')
+// What each result is about, shown as the receiver that lights up.
+const receivers = {
+  'I-01': { Icon: Gauge, kind: 'Speed' },
+  'I-02': { Icon: ShieldCheck, kind: 'Coverage' },
+  'I-03': { Icon: Wrench, kind: 'Effort' },
+  'I-04': { Icon: Network, kind: 'Throughput' },
+  'I-05': { Icon: BadgeCheck, kind: 'Quality' },
+  'I-06': { Icon: CalendarCheck, kind: 'Delivery' },
+}
+
+const prerendering = typeof window === 'undefined'
+
+/** A signal packet travels down a dashed track and lights up the result it carries. */
+function Delivery({ code, run, delay, onArrive, arrived, reduce }) {
+  const { Icon, kind } = receivers[code] ?? receivers['I-01']
+  return (
+    <div className="col-start-2 flex h-9 items-center gap-2 lg:col-start-auto">
+      <div className="relative h-full flex-1">
+        <span aria-hidden className="absolute inset-x-0 top-1/2 border-t border-dashed border-line" />
+        {!prerendering && !reduce && !arrived && (
+          <motion.span
+            aria-hidden
+            className="absolute top-1/2 -mt-[3.5px] h-[7px] w-[7px] rounded-full bg-accent"
+            style={{ x: '-50%', boxShadow: '0 0 10px var(--accent)' }}
+            initial={{ left: '0%', opacity: 0 }}
+            animate={run ? { left: ['0%', '100%'], opacity: [0, 1, 1] } : undefined}
+            transition={{ duration: 1.3, ease: [0.45, 0, 0.25, 1], delay, times: [0, 0.15, 1] }}
+            onAnimationComplete={() => run && onArrive()}
+          />
+        )}
+      </div>
+      <span
+        title={kind}
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-[color,border-color,box-shadow] duration-500 ${
+          arrived ? 'border-accent text-accent shadow-[0_0_14px_-4px_var(--accent)]' : 'border-line text-mute'
+        }`}
+      >
+        <Icon size={17} strokeWidth={1.6} aria-hidden />
+        <span className="sr-only">{kind}</span>
+      </span>
+    </div>
+  )
 }
 
 function Packet({ it, i }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
   const reduce = useReducedMotion()
-  const path = useMemo(() => trace(i + 3), [i])
+  // Before JavaScript runs (and with reduced motion) show the delivered state.
+  const [arrived, setArrived] = useState(prerendering)
+  const done = arrived || (reduce && inView)
   const strength = 3 + ((i * 7) % 3)
-  const arrive = reduce ? 0 : 0.6 + i * 0.12
+  const travel = 0.3 + i * 0.08
 
   return (
     <motion.li
@@ -38,42 +72,25 @@ function Packet({ it, i }) {
         <p className="mt-1 text-sm leading-relaxed text-mute">{it.body}</p>
       </div>
 
-      {/* The trace "draws in" by unclipping left to right. Animating pathLength
-          here would break the line into dashes: browsers measure dashes in
-          screen pixels when vector-effect is non-scaling-stroke. */}
-      <motion.svg
-        viewBox="0 0 200 24"
-        preserveAspectRatio="none"
-        aria-hidden
-        className="col-start-2 h-6 w-full lg:col-start-auto"
-        initial={{ clipPath: 'inset(0% 100% 0% 0%)', opacity: 0.3 }}
-        animate={inView ? { clipPath: 'inset(0% 0% 0% 0%)', opacity: 0.9 } : undefined}
-        transition={{ duration: 1.4, ease, delay: i * 0.08 + 0.2 }}
-      >
-        <path d={path} fill="none" stroke="var(--accent)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-      </motion.svg>
+      <Delivery code={it.code} run={inView} delay={travel} arrived={done} reduce={reduce} onArrive={() => setArrived(true)} />
 
       <div aria-label={`Signal ${strength} of 5`} className="col-start-2 flex h-5 items-end gap-[3px] lg:col-start-auto">
         {[1, 2, 3, 4, 5].map((b) => (
-          <motion.span
+          <span
             key={b}
-            className={`w-1 rounded-sm ${b <= strength ? 'bg-accent' : 'bg-line'}`}
-            style={{ height: `${b * 20}%` }}
-            initial={{ scaleY: 0 }}
-            animate={inView ? { scaleY: 1 } : undefined}
-            transition={{ duration: 0.3, delay: arrive + b * 0.05 }}
+            className={`w-1 origin-bottom rounded-sm transition-transform duration-300 ${b <= strength ? 'bg-accent' : 'bg-line'}`}
+            style={{ height: `${b * 20}%`, transform: `scaleY(${done ? 1 : 0.15})`, transitionDelay: `${done ? b * 50 : 0}ms` }}
           />
         ))}
       </div>
 
-      <motion.span
-        className="col-start-2 font-mono text-[11px] uppercase tracking-[0.16em] lg:col-start-auto lg:text-right"
-        initial={{ color: 'var(--mute)' }}
-        animate={inView ? { color: 'var(--accent)' } : undefined}
-        transition={{ delay: arrive + 0.4 }}
+      <span
+        className={`col-start-2 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors duration-500 lg:col-start-auto lg:text-right ${
+          done ? 'text-accent' : 'text-mute'
+        }`}
       >
-        {inView ? '✓ Received' : 'Waiting'}
-      </motion.span>
+        {done ? '✓ Received' : inView ? 'In transit' : 'Waiting'}
+      </span>
     </motion.li>
   )
 }
@@ -90,7 +107,7 @@ export default function Impact() {
       />
       <div className="panel rounded-2xl px-5 md:px-8">
         <div className="hidden grid-cols-[4.5rem_minmax(0,1fr)_12rem_4rem_6.5rem] gap-x-6 border-b border-line py-4 lg:grid">
-          {['Packet', 'Result', 'Trace', 'Signal', 'Status'].map((h, i) => (
+          {['Packet', 'Result', 'Delivery', 'Signal', 'Status'].map((h, i) => (
             <span key={h} className={`label ${i === 4 ? 'text-right' : ''}`}>{h}</span>
           ))}
         </div>
