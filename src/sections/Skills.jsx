@@ -291,7 +291,7 @@ function TagSphere({ filter }) {
       role="img"
       aria-label={`Skills: ${skillCloud.map((s) => s[0]).join(', ')}`}
     >
-      <div aria-hidden className="absolute inset-[10%] rounded-full bg-[radial-gradient(circle,rgb(77_141_255/0.1),transparent_65%)]" />
+      <div aria-hidden className="absolute inset-[10%] rounded-full bg-[radial-gradient(circle,rgb(94_230_200/0.1),transparent_65%)]" />
       {skillCloud.map(([name, cat, w], i) => (
         <span
           key={name}

@@ -91,14 +91,14 @@ function Satellite({ reduce }) {
   return (
     <motion.div aria-hidden className="pointer-events-none absolute" style={{ left, top, zIndex: z }}>
       <motion.svg viewBox="0 0 64 28" className="-ml-6 -mt-3 w-12" style={{ scale, opacity }}>
-        <rect x="1" y="9" width="20" height="10" rx="1" fill="#16264d" stroke="#8fc4ff" strokeWidth="1" />
-        <rect x="43" y="9" width="20" height="10" rx="1" fill="#16264d" stroke="#8fc4ff" strokeWidth="1" />
-        <path d="M8 9v10M14 9v10M50 9v10M56 9v10" stroke="#8fc4ff" strokeWidth="0.6" />
+        <rect x="1" y="9" width="20" height="10" rx="1" fill="#0d2e30" stroke="#5ee6c8" strokeWidth="1" />
+        <rect x="43" y="9" width="20" height="10" rx="1" fill="#0d2e30" stroke="#5ee6c8" strokeWidth="1" />
+        <path d="M8 9v10M14 9v10M50 9v10M56 9v10" stroke="#5ee6c8" strokeWidth="0.6" />
         <path d="M21 14h5M38 14h5" stroke="#cfdcf3" strokeWidth="1.2" />
         <rect x="26" y="7" width="12" height="14" rx="2" fill="#dfe7f5" />
-        <rect x="28.5" y="10" width="7" height="4" rx="0.8" fill="#3b6fd8" />
+        <rect x="28.5" y="10" width="7" height="4" rx="0.8" fill="#1f9e86" />
         <path d="M32 7V3" stroke="#dfe7f5" strokeWidth="1" />
-        <circle cx="32" cy="2.5" r="1.4" fill="#f2c27b" />
+        <circle cx="32" cy="2.5" r="1.4" fill="#b79cff" />
       </motion.svg>
     </motion.div>
   )
@@ -137,7 +137,7 @@ export default function Hero({ ready, intro = true }) {
             animate={ready ? { opacity: 1 } : undefined}
             transition={{ duration: 1.2, delay: 0.8 }}
           >
-            <ellipse cx="50" cy="20" rx="46" ry="16" fill="none" stroke="rgb(143 196 255 / 0.18)" strokeWidth="0.15" strokeDasharray="0.6 0.9" vectorEffect="non-scaling-stroke" />
+            <ellipse cx="50" cy="20" rx="46" ry="16" fill="none" stroke="rgb(94 230 200 / 0.2)" strokeWidth="0.15" strokeDasharray="0.6 0.9" vectorEffect="non-scaling-stroke" />
           </motion.svg>
           <h1 className="relative z-[1] font-display text-[clamp(3.25rem,10vw,7.5rem)] font-normal leading-[0.95] tracking-[-0.01em]">
             <span className="sr-only">Abhishek Kumar, {profile.role}</span>

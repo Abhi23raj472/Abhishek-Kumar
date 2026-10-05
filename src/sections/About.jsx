@@ -79,7 +79,7 @@ function Porthole() {
             <motion.span
               key={`${x}-${y}`}
               aria-hidden
-              className="absolute h-1.5 w-1.5 rounded-full bg-[#8fc4ff] shadow-[0_0_8px_#8fc4ff]"
+              className="absolute h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_8px_var(--accent)]"
               style={{ left: `${x}%`, top: `${y}%` }}
               animate={{ opacity: [0.15, 1, 0.15] }}
               transition={{ duration: 6, repeat: Infinity, delay: d, ease: 'easeInOut' }}
