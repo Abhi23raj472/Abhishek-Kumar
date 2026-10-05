@@ -11,7 +11,7 @@ import { ArrowDown, ArrowUpRight, Download } from 'lucide-react'
 import { profile, roles } from '../data'
 import { Magnetic, Roll, ease } from '../lib/motion'
 
-const resume = `${import.meta.env.BASE_URL}${profile.resume}`
+const resume = `./${profile.resume}`
 const inOut = [0.65, 0, 0.35, 1]
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>#*+'
 

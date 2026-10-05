@@ -4,7 +4,7 @@ import { ArrowUp, ArrowUpRight, Check, Copy } from 'lucide-react'
 import { nav, profile } from '../data'
 import { Magnetic, RevealWords, Roll, ease } from '../lib/motion'
 
-const resume = `${import.meta.env.BASE_URL}${profile.resume}`
+const resume = `./${profile.resume}`
 const socials = [
   { k: 'LinkedIn', href: profile.linkedin },
   { k: 'GitHub', href: profile.github },

@@ -6,7 +6,7 @@ import { Roll, ease } from '../lib/motion'
 import { lockScroll } from '../lib/smoothScroll'
 
 const ids = nav.map((n) => n.id)
-const resume = `${import.meta.env.BASE_URL}${profile.resume}`
+const resume = `./${profile.resume}`
 
 function useActiveSection() {
   const [active, setActive] = useState('')

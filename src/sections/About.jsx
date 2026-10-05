@@ -3,7 +3,7 @@ import { motion, useInView, useReducedMotion } from 'framer-motion'
 import { profile, record, stats } from '../data'
 import { Counter, Roll, SectionHead, ease } from '../lib/motion'
 
-const resume = `${import.meta.env.BASE_URL}${profile.resume}`
+const resume = `./${profile.resume}`
 
 /** Types its text out once it scrolls into view. */
 function TypeOut({ text, delay = 0 }) {
