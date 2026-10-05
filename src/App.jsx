@@ -23,6 +23,8 @@ function shouldShowIntro() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false
     if (window.location.hash) return false
     if (sessionStorage.getItem('ak-intro-seen')) return false
+    // Slow connection: the visitor has already been reading the page, don't cover it.
+    if (performance.now() > 1500) return false
   } catch {
     /* storage blocked: still show it */
   }
@@ -31,6 +33,7 @@ function shouldShowIntro() {
 
 export default function App() {
   const [loading, setLoading] = useState(shouldShowIntro)
+  const [intro] = useState(loading)
   const done = useCallback(() => {
     try {
       sessionStorage.setItem('ak-intro-seen', '1')
@@ -51,7 +54,7 @@ export default function App() {
       <Cursor />
       <Nav />
       <main>
-        <Hero ready={!loading} />
+        <Hero ready={!loading} intro={intro} />
         <About />
         <Work />
         <Impact />

@@ -7,7 +7,17 @@ import { resolve } from 'node:path'
 
 const ssrEntry = resolve('dist-ssr/entry-server.js')
 const { render } = await import(pathToFileURL(ssrEntry).href)
-const html = render()
+// Framer Motion renders each element's animation start state inline
+// (opacity:0 plus an offset). Visitors see this HTML until JavaScript loads,
+// so un-hide it here: the page reads as finished instead of blank.
+const unhide = (markup) =>
+  markup.replace(/style="([^"]*)"/g, (whole, css) => {
+    const decls = css.split(';').filter(Boolean)
+    if (!decls.some((d) => /^opacity:0(\.0+)?$/.test(d.trim()))) return whole
+    const kept = decls.filter((d) => !/^(opacity|transform|filter):/.test(d.trim()))
+    return kept.length ? `style="${kept.join(';')}"` : ''
+  })
+const html = unhide(render())
 
 const indexPath = resolve('dist/index.html')
 const template = await readFile(indexPath, 'utf8')

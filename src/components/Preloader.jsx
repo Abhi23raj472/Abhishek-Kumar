@@ -14,13 +14,16 @@ export default function Preloader({ onDone }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     const c = animate(0, 100, {
-      duration: 2.2,
+      duration: 1.2,
       ease: [0.45, 0, 0.25, 1],
       onUpdate: (v) => setPct(v),
-      onComplete: () => setTimeout(onDone, 250),
+      onComplete: () => setTimeout(onDone, 150),
     })
+    // Browsers pause animation frames in background tabs; a plain timer still fires.
+    const backup = setTimeout(onDone, 2500)
     return () => {
       c.stop()
+      clearTimeout(backup)
       document.body.style.overflow = ''
     }
   }, [onDone])
@@ -34,7 +37,7 @@ export default function Preloader({ onDone }) {
       aria-label="Loading"
       className="preloader-bg fixed inset-0 z-[100] flex items-end p-6 md:p-10"
       exit={{ opacity: 0, y: -40 }}
-      transition={{ duration: 0.9, ease }}
+      transition={{ duration: 0.6, ease }}
     >
       <div className="w-full max-w-md">
         <p className="font-display text-3xl italic text-fg">Abhishek Kumar</p>
