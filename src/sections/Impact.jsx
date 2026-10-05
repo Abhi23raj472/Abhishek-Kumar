@@ -38,18 +38,20 @@ function Packet({ it, i }) {
         <p className="mt-1 text-sm leading-relaxed text-mute">{it.body}</p>
       </div>
 
-      <svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden className="col-start-2 h-6 w-full lg:col-start-auto">
-        <motion.path
-          d={path}
-          fill="none"
-          stroke="var(--accent)"
-          strokeWidth="1"
-          vectorEffect="non-scaling-stroke"
-          initial={{ pathLength: 0, opacity: 0.3 }}
-          animate={inView ? { pathLength: 1, opacity: 0.9 } : undefined}
-          transition={{ duration: 1.4, ease, delay: i * 0.08 + 0.2 }}
-        />
-      </svg>
+      {/* The trace "draws in" by unclipping left to right. Animating pathLength
+          here would break the line into dashes: browsers measure dashes in
+          screen pixels when vector-effect is non-scaling-stroke. */}
+      <motion.svg
+        viewBox="0 0 200 24"
+        preserveAspectRatio="none"
+        aria-hidden
+        className="col-start-2 h-6 w-full lg:col-start-auto"
+        initial={{ clipPath: 'inset(0% 100% 0% 0%)', opacity: 0.3 }}
+        animate={inView ? { clipPath: 'inset(0% 0% 0% 0%)', opacity: 0.9 } : undefined}
+        transition={{ duration: 1.4, ease, delay: i * 0.08 + 0.2 }}
+      >
+        <path d={path} fill="none" stroke="var(--accent)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+      </motion.svg>
 
       <div aria-label={`Signal ${strength} of 5`} className="col-start-2 flex h-5 items-end gap-[3px] lg:col-start-auto">
         {[1, 2, 3, 4, 5].map((b) => (

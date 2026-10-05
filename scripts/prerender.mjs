@@ -13,8 +13,9 @@ const { render } = await import(pathToFileURL(ssrEntry).href)
 const unhide = (markup) =>
   markup.replace(/style="([^"]*)"/g, (whole, css) => {
     const decls = css.split(';').filter(Boolean)
-    if (!decls.some((d) => /^opacity:0(\.0+)?$/.test(d.trim()))) return whole
-    const kept = decls.filter((d) => !/^(opacity|transform|filter):/.test(d.trim()))
+    const hidden = (d) => /^opacity:0(\.0+)?$/.test(d) || /^clip-path:inset\(.*100%/.test(d)
+    if (!decls.some((d) => hidden(d.trim()))) return whole
+    const kept = decls.filter((d) => !/^(opacity|transform|filter|clip-path):/.test(d.trim()))
     return kept.length ? `style="${kept.join(';')}"` : ''
   })
 const html = unhide(render())
