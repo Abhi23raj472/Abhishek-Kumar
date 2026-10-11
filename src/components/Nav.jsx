@@ -32,7 +32,7 @@ function ThemeToggle() {
   const toggle = () => {
     const next = light ? 'dark' : 'light'
     document.documentElement.dataset.theme = next
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'light' ? '#f7f3ec' : '#0a0806')
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'light' ? '#f7f3ec' : '#04060d')
     try {
       localStorage.setItem(THEME_KEY, next)
     } catch {

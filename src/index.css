@@ -1,30 +1,34 @@
 @import "tailwindcss";
 
-/* Two themes, "Solar flare". Dark (default): a warm black sky, warm
-   starlight text, amber as the main accent and sky blue as the second
-   colour, used sparingly. Light: warm daylight paper with deep-brown ink,
-   burnt amber and a deep blue. Grey text stays at 4.8:1 or better in both.
+/* Two themes, each with its own palette.
+   Dark, "Mission blue": a deep navy-black sky, cool starlight text,
+   electric blue as the accent and warm gold as the second colour.
+   Light, "Solar flare": warm daylight paper, deep-brown ink, burnt amber
+   and deep blue. Grey text stays at 4.8:1 or better in both.
    Toggled by data-theme on <html>; the choice is remembered. */
 :root,
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0a0806;
-  --surface: rgb(255 210 150 / 0.04);
-  --surface-2: rgb(255 210 150 / 0.08);
-  --fg: #f3ede4;
-  --mute: #b8ab98;
-  --line: rgb(255 210 150 / 0.17);
-  --ink: #f3ede4;
-  --on-ink: #0a0806;
-  --accent: #ffb54d;
-  --signal: #8ec9ff;
-  --panel: rgb(22 16 10 / 0.72);
-  --stage: rgb(22 16 10 / 0.45);
-  --star: #fff6e6;
-  --halo: 0 1px 14px rgb(10 8 6 / 0.9), 0 0 2px rgb(10 8 6 / 0.6);
-  --sky-top: #2a1606;
-  --sky: #0a0806;
+  --bg: #04060d;
+  --surface: rgb(150 180 255 / 0.04);
+  --surface-2: rgb(150 180 255 / 0.08);
+  --fg: #e9eef8;
+  --mute: #a3afc6;
+  --line: rgb(150 180 255 / 0.18);
+  --ink: #e9eef8;
+  --on-ink: #04060d;
+  --accent: #7fb2ff;
+  --signal: #f4c27a;
+  --panel: rgb(8 12 26 / 0.72);
+  --stage: rgb(8 12 26 / 0.45);
+  --star: #ffffff;
+  --halo: 0 1px 14px rgb(4 6 13 / 0.9), 0 0 2px rgb(4 6 13 / 0.6);
+  --sky-top: #0b1d44;
+  --sky: #04060d;
   --vignette: rgb(0 0 0 / 0.55);
+  /* the rocket in Experience: a warm flame in both themes */
+  --flame: #f4c27a;
+  --fin: #7fb2ff;
 }
 
 :root[data-theme="light"] {
@@ -46,6 +50,8 @@
   --sky-top: #ffffff;
   --sky: #efe6d8;
   --vignette: rgb(215 195 165 / 0.4);
+  --flame: #a9530a;
+  --fin: #1d5f9e;
 }
 
 @theme inline {
