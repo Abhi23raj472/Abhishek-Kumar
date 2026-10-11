@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { motion, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useTransform } from 'framer-motion'
-import { proficiency, skillCats, skillCloud } from '../data'
-import { SectionHead } from '../lib/motion'
-
-const sizes = { 1: 'text-[13px]', 2: 'text-[15px]', 3: 'text-lg font-medium' }
+import { latest, proficiency, skillCats, skillCloud } from '../data'
+import { SectionHead, Stagger, StaggerItem, ease } from '../lib/motion'
 
 // Proficiency reads as a radar scope and rank chevrons instead of a percentage.
 const RANKS = { expert: 3, advanced: 2, proficient: 1 }
@@ -185,126 +183,73 @@ function Radar({ items, active, setActive }) {
   )
 }
 
-/** Evenly spread points on a unit sphere (Fibonacci lattice). */
-function spherePoints(n) {
-  const pts = []
-  const golden = Math.PI * (3 - Math.sqrt(5))
-  for (let i = 0; i < n; i++) {
-    const y = 1 - (i / (n - 1)) * 2
-    const r = Math.sqrt(1 - y * y)
-    const t = golden * i
-    pts.push([Math.cos(t) * r, y, Math.sin(t) * r])
-  }
-  return pts
+const tone = {
+  3: 'border-accent/60 bg-accent/10 text-fg shadow-[0_0_18px_-6px_var(--accent)]',
+  2: 'border-line bg-fg/[0.04] text-fg',
+  1: 'border-line text-mute',
 }
 
 /**
- * Tags on a slowly turning sphere. Drag to spin it; it keeps some momentum.
- * Positions are written straight to the DOM each frame, outside React.
+ * Star catalogue: one panel per area, skills as stars of three magnitudes.
+ * Picking an area brightens its panel and dims the rest.
  */
-function TagSphere({ filter }) {
-  const reduce = useReducedMotion()
-  const stage = useRef(null)
-  const els = useRef([])
-  const filterRef = useRef(filter)
-  filterRef.current = filter
-  const pts = useMemo(() => spherePoints(skillCloud.length), [])
-
-  useEffect(() => {
-    const el = stage.current
-    let radius = 160
-    const ro = new ResizeObserver(([e]) => {
-      radius = Math.min(e.contentRect.width, e.contentRect.height) * 0.4
-    })
-    ro.observe(el)
-
-    const rot = { x: -0.25, y: 0, vx: 0, vy: reduce ? 0 : 0.0025 }
-    const drag = { on: false, px: 0, py: 0 }
-    const auto = reduce ? 0 : 0.0025
-
-    const down = (e) => {
-      drag.on = true
-      drag.px = e.clientX
-      drag.py = e.clientY
-      el.setPointerCapture(e.pointerId)
-    }
-    const move = (e) => {
-      if (!drag.on) return
-      const dx = e.clientX - drag.px
-      const dy = e.clientY - drag.py
-      drag.px = e.clientX
-      drag.py = e.clientY
-      rot.vy = dx * 0.006
-      rot.vx = -dy * 0.006
-    }
-    const up = () => (drag.on = false)
-    el.addEventListener('pointerdown', down)
-    el.addEventListener('pointermove', move)
-    el.addEventListener('pointerup', up)
-    el.addEventListener('pointercancel', up)
-
-    let raf = 0
-    const frame = () => {
-      raf = requestAnimationFrame(frame)
-      if (!drag.on) {
-        rot.vy += (auto - rot.vy) * 0.02
-        rot.vx *= 0.94
-      }
-      rot.y += rot.vy
-      rot.x = Math.max(-1.2, Math.min(1.2, rot.x + rot.vx))
-      const cy = Math.cos(rot.y)
-      const sy = Math.sin(rot.y)
-      const cx = Math.cos(rot.x)
-      const sx = Math.sin(rot.x)
-      const f = filterRef.current
-      pts.forEach(([x, y, z], i) => {
-        const node = els.current[i]
-        if (!node) return
-        // Rotate about Y, then X.
-        const x1 = x * cy + z * sy
-        const z1 = -x * sy + z * cy
-        const y2 = y * cx - z1 * sx
-        const z2 = y * sx + z1 * cx
-        const depth = (z2 + 1) / 2
-        const scale = 0.62 + depth * 0.55
-        const match = f === 'all' || node.dataset.cat === f
-        node.style.transform = `translate(-50%, -50%) translate3d(${(x1 * radius).toFixed(1)}px, ${(y2 * radius).toFixed(1)}px, 0) scale(${scale.toFixed(3)})`
-        node.style.opacity = ((0.64 + depth * 0.36) * (match ? 1 : 0.35)).toFixed(3)
-        node.style.zIndex = String(Math.round(depth * 100))
-      })
-    }
-    frame()
-    return () => {
-      cancelAnimationFrame(raf)
-      ro.disconnect()
-      el.removeEventListener('pointerdown', down)
-      el.removeEventListener('pointermove', move)
-      el.removeEventListener('pointerup', up)
-      el.removeEventListener('pointercancel', up)
-    }
-  }, [pts, reduce])
-
+function Catalogue({ filter }) {
   return (
-    <div
-      ref={stage}
-      className="relative mx-auto aspect-square w-full max-w-[520px] cursor-grab touch-pan-y select-none active:cursor-grabbing"
-      role="img"
-      aria-label={`Skills: ${skillCloud.map((s) => s[0]).join(', ')}`}
-    >
-      <div aria-hidden className="absolute inset-[10%] rounded-full bg-[radial-gradient(circle,rgb(94_230_200/0.1),transparent_65%)]" />
-      {skillCloud.map(([name, cat, w], i) => (
-        <span
-          key={name}
-          aria-hidden
-          ref={(n) => (els.current[i] = n)}
-          data-cat={cat}
-          className={`absolute left-1/2 top-1/2 whitespace-nowrap transition-colors duration-300 ${sizes[w]} ${
-            filter !== 'all' && filter === cat ? 'text-accent' : 'text-fg'
-          }`}
-        >
-          {name}
-        </span>
-      ))}
+    <Stagger className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" gap={0.08}>
+      {skillCats.map((c) => {
+        const on = filter === 'all' || filter === c.id
+        const items = skillCloud.filter((s) => s[1] === c.id)
+        return (
+          <StaggerItem key={c.id} className="h-full">
+            <motion.div
+              animate={{ opacity: on ? 1 : 0.35, scale: on ? 1 : 0.98 }}
+              transition={{ duration: 0.35, ease }}
+              className={`panel h-full rounded-2xl p-5 transition-colors ${filter === c.id ? 'border-accent/50' : ''}`}
+            >
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="font-display text-2xl">{c.label}</h3>
+                <span className="font-mono text-[11px] text-mute">×{items.length}</span>
+              </div>
+              <ul className="mt-4 flex flex-wrap gap-1.5">
+                {items.map(([name, , w]) => (
+                  <li
+                    key={name}
+                    className={`rounded-full border px-2.5 py-1 text-[13px] transition-colors hover:border-accent hover:text-fg ${tone[w]}`}
+                  >
+                    {name}
+                    {latest.some((l) => l.name === name) && <span className="ml-1.5 font-mono text-[9px] uppercase tracking-wider text-accent">new</span>}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          </StaggerItem>
+        )
+      })}
+    </Stagger>
+  )
+}
+
+/** The newest additions, each lighting up like a fresh signal. */
+function Latest() {
+  return (
+    <div className="panel relative overflow-hidden rounded-2xl">
+      <div className="flex items-center gap-2 border-b border-line px-5 py-3">
+        <motion.span
+          className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_8px_var(--accent)]"
+          animate={{ opacity: [1, 0.3, 1] }}
+          transition={{ duration: 1.8, repeat: Infinity }}
+        />
+        <span className="label">Latest additions · 2026</span>
+      </div>
+      <Stagger className="grid sm:grid-cols-3" gap={0.12}>
+        {latest.map((l, i) => (
+          <StaggerItem key={l.name} className={`px-5 py-5 ${i > 0 ? 'border-t border-line sm:border-l sm:border-t-0' : ''}`}>
+            <p className="font-display text-2xl leading-tight">{l.name}</p>
+            <p className="mt-1.5 text-sm text-mute">{l.note}</p>
+            <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-accent">{l.when}</p>
+          </StaggerItem>
+        ))}
+      </Stagger>
     </div>
   )
 }
@@ -314,9 +259,17 @@ export default function Skills() {
   const [active, setActive] = useState(null)
   return (
     <section id="skills" className="shell py-24 md:py-36">
-      <SectionHead index="05" kicker="Skills" title="The toolkit, in full rotation." highlight={['rotation.']} />
+      <SectionHead
+        index="05"
+        kicker="Skills"
+        title="The toolkit, charted by area."
+        highlight={['charted']}
+        sub="What I've added most recently, everything I work with, and how deep the core skills go."
+      />
 
-      <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter skills">
+      <Latest />
+
+      <div className="mt-12 flex flex-wrap gap-1.5" role="group" aria-label="Filter skills">
         {[{ id: 'all', label: 'All' }, ...skillCats].map((c) => (
           <button
             key={c.id}
@@ -336,8 +289,7 @@ export default function Skills() {
       </div>
 
       <div className="mt-6">
-        <TagSphere filter={filter} />
-        <p className="label mt-2 text-center">Drag to spin</p>
+        <Catalogue filter={filter} />
       </div>
 
       <div className="panel mt-12 rounded-2xl p-6 md:p-8">

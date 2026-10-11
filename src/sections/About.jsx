@@ -85,7 +85,7 @@ function Porthole() {
               transition={{ duration: 6, repeat: Infinity, delay: d, ease: 'easeInOut' }}
             />
           ))}
-          <span className="absolute inset-0 grid place-items-center font-display text-6xl italic text-[#e6ebf5] [text-shadow:none]">AK</span>
+          <span className="absolute inset-0 grid place-items-center font-display text-6xl italic text-[#e9eef8] [text-shadow:none]">AK</span>
         </div>
       </div>
     </div>
@@ -132,7 +132,6 @@ export default function About() {
             {[
               ['Email', `mailto:${profile.email}`],
               ['LinkedIn', profile.linkedin],
-              ['GitHub', profile.github],
               ['Resume', resume],
             ].map(([k, href]) => (
               <a

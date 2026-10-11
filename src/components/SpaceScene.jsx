@@ -197,7 +197,7 @@ void main(){
   float d = length(gl_PointCoord - 0.5);
   float a = smoothstep(0.5, 0.0, d);
   // In the light theme stars become slate specks on the grey daytime sky.
-  vec3 c = mix(vColor, vec3(0.22, 0.28, 0.4), uLight);
+  vec3 c = mix(vColor, vec3(0.36, 0.27, 0.18), uLight);
   gl_FragColor = vec4(c, a * a * vAlpha * (1.0 - uLight * 0.35));
 }
 `
@@ -289,7 +289,7 @@ export default function SpaceScene({ launched }) {
       return // no WebGL: the CSS gradient behind the canvas stays as the backdrop
     }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, small ? 1.25 : 1.5))
-    renderer.setClearColor(0x03050a, 1)
+    renderer.setClearColor(0x04060d, 1)
 
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(50, 1, 0.5, 4000)
@@ -308,18 +308,21 @@ export default function SpaceScene({ launched }) {
     // Faint nebulae at a few depths
     const glow = glowTexture()
     const nebulae = []
+    // Each nebula has a colour per theme: blues and a touch of gold at night,
+    // warm ambers with a blue by day.
     ;[
-      [-420, 160, -380, 900, 0x3b5bdb, 0.1],
-      [520, -120, -950, 1300, 0x6d4bd8, 0.08],
-      [-300, -200, -1500, 1500, 0x1c7ed6, 0.09],
-      [250, 220, -2100, 1600, 0x9c36b5, 0.06],
-    ].forEach(([x, y, z, s, color, opacity]) => {
+      [-420, 160, -380, 900, 0x3b5bdb, 0xc8641c, 0.1],
+      [520, -120, -950, 1300, 0xb8862e, 0x1d5f9e, 0.07],
+      [-300, -200, -1500, 1500, 0x1c7ed6, 0x8a3d14, 0.09],
+      [250, 220, -2100, 1600, 0x4c4fd0, 0x3b6fb0, 0.06],
+    ].forEach(([x, y, z, s, color, dayColor, opacity]) => {
       const sp = new THREE.Sprite(
         new THREE.SpriteMaterial({ map: glow, color, opacity, blending: THREE.AdditiveBlending, depthWrite: false }),
       )
       sp.position.set(x, y, z)
       sp.scale.set(s, s, 1)
       sp.userData.opacity = opacity
+      sp.userData.colors = [color, dayColor]
       nebulae.push(sp)
       scene.add(sp)
     })
@@ -489,17 +492,18 @@ export default function SpaceScene({ launched }) {
       const light = document.documentElement.dataset.theme === 'light'
       lightTheme = light
       const blend = light ? THREE.NormalBlending : THREE.AdditiveBlending
-      renderer.setClearColor(light ? 0xe3e8ef : 0x03050a, 1)
+      renderer.setClearColor(light ? 0xefe8dc : 0x04060d, 1)
       starMat.uniforms.uLight.value = light ? 1 : 0
       starMat.blending = blend
       for (const sp of nebulae) {
         sp.material.blending = blend
         sp.material.opacity = sp.userData.opacity * (light ? 1.4 : 1)
+        sp.material.color.set(sp.userData.colors[light ? 1 : 0])
         sp.material.needsUpdate = true
       }
       atmo.material.blending = blend
       meteorMat.blending = blend
-      meteorMat.color.set(light ? 0x2a3b5c : 0xcfe1ff)
+      meteorMat.color.set(light ? 0x5a4126 : 0xcfe1ff)
       for (const mat of [starMat, atmo.material, meteorMat]) mat.needsUpdate = true
       if (reduce) renderer.render(scene, camera)
     }

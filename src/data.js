@@ -6,7 +6,6 @@ export const profile = {
   location: 'India',
   email: 'rajputabhishek677@gmail.com',
   linkedin: 'https://www.linkedin.com/in/abhishek-kumar2301',
-  github: 'https://github.com/Abhi23raj472',
   resume: 'Abhishek_Kumar_Resume.pdf',
 }
 
@@ -90,6 +89,12 @@ export const experience = [
       'Help integrate Tosca runs into the CI/CD pipeline and publish daily regression reports on suite health.',
     ],
     tags: ['Tosca', 'XScan', 'TCD', 'Recovery', 'JIRA', 'CI/CD'],
+    // Headline results, shown before the full log.
+    wins: [
+      { k: 'Bravo! Diamond Award', v: 'Caught and escalated a critical production-impacting defect' },
+      { k: 'Stable runs', v: 'Recovery and cleanup scenarios for unreliable environments' },
+      { k: 'CI/CD', v: 'Tosca runs in the pipeline, with daily suite-health reports' },
+    ],
   },
   {
     role: 'Senior Software Engineer',
@@ -107,6 +112,11 @@ export const experience = [
       'Mentored teammates through test reviews and led retrospectives to raise QA standards across the team.',
     ],
     tags: ['Tosca', 'DEX', 'TQL', 'API', 'SoapUI', 'Mentoring'],
+    wins: [
+      { k: 'Applause Award', v: 'Cut regression cycle time by modularizing and optimizing runs' },
+      { k: 'Frameworks', v: 'Data-driven Tosca TCD frameworks across multiple product lines' },
+      { k: 'Scale', v: 'Distributed, parallel execution on Tosca DEX across remote agents' },
+    ],
   },
 ]
 
@@ -122,8 +132,8 @@ export const impact = [
 export const certs = [
   { org: 'Tricentis Academy', items: ['AS1', 'AS2', 'TDS1', 'TDS2', 'AE1', 'API', 'TQL'] },
   { org: 'ISTQB', items: ['Certified Tester — Foundation Level'] },
-  { org: 'Generative AI', items: ['Optum.ai AI Dojo · Mar 2026'] },
-  { org: 'Other', items: ['Allianz ABS (L1)', 'SQL Certification', 'Agile with Atlassian Jira'] },
+  { org: 'Optum.ai', items: ['Generative AI · AI Dojo, Mar 2026'] },
+  { org: 'Allianz', items: ['ABS (L1)', 'SQL Certification', 'Agile with Atlassian Jira'] },
 ]
 
 export const awards = [
@@ -143,9 +153,9 @@ export const record = [
   ['Base', 'India'],
   ['Experience', '5+ years in quality engineering'],
   ['Specialty', 'Tricentis Tosca, API validation, CI/CD'],
+  ['Education', 'B.Tech, Computer Science & Engineering, Galgotias University, 2021'],
 ]
 
-// Skills sphere. Weight 1-3 sets the size of each tag.
 export const skillCats = [
   { id: 'automation', label: 'Automation' },
   { id: 'api', label: 'API & data' },
@@ -153,13 +163,21 @@ export const skillCats = [
   { id: 'delivery', label: 'Delivery & tools' },
 ]
 
+// Added most recently (from the 2026 resume); shown first in Skills.
+export const latest = [
+  { name: 'Generative AI', note: 'Optum.ai AI Dojo', when: 'Mar 2026' },
+  { name: 'Recovery & cleanup scenarios', note: 'Stable Tosca runs on unstable environments', when: 'Optum' },
+  { name: 'Suite-health reporting', note: 'Daily regression reports from CI/CD runs', when: 'Optum' },
+]
+
+// Skills catalogue. Weight 1-3 sets how brightly each one shows.
 export const skillCloud = [
   ['Tricentis Tosca', 'automation', 3],
   ['XScan', 'automation', 2],
   ['TCD', 'automation', 2],
   ['Tosca DEX', 'automation', 3],
   ['TQL', 'automation', 1],
-  ['Recovery scenarios', 'automation', 1],
+  ['Recovery & cleanup scenarios', 'automation', 2],
   ['Reusable modules', 'automation', 2],
   ['REST', 'api', 3],
   ['SOAP', 'api', 2],
@@ -187,4 +205,6 @@ export const skillCloud = [
   ['Kanban', 'delivery', 1],
   ['SDLC', 'delivery', 1],
   ['STLC', 'delivery', 1],
+  ['Generative AI', 'delivery', 2],
+  ['MS Word, Excel, PowerPoint', 'delivery', 1],
 ]

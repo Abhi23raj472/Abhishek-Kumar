@@ -1,70 +1,54 @@
-import { useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { BadgeCheck, Plus } from 'lucide-react'
+import { Award, BadgeCheck } from 'lucide-react'
 import { awards, certs } from '../data'
-import { SectionHead, Stagger, StaggerItem, ease } from '../lib/motion'
+import { SectionHead, Stagger, StaggerItem } from '../lib/motion'
 
-/** One award per row; hovering (or tapping) opens it up. */
-function AwardRow({ a, i, open, onOpen }) {
+/** A mission patch: the award date runs round a ring that turns on hover. */
+function Patch({ a, i }) {
+  const id = `patch-${i}`
   return (
-    <motion.li
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.7, ease, delay: i * 0.08 }}
-      onPointerEnter={(e) => e.pointerType === 'mouse' && onOpen(i)}
-      className="relative isolate border-b border-line"
-    >
-      <motion.span
-        aria-hidden
-        className="absolute inset-0 -z-10 origin-bottom bg-surface-2"
-        initial={false}
-        animate={{ scaleY: open ? 1 : 0 }}
-        transition={{ duration: 0.45, ease }}
-      />
-      <button
-        type="button"
-        onClick={() => onOpen(open ? null : i)}
-        aria-expanded={open}
-        className="grid w-full grid-cols-[4.5rem_1fr_auto] items-center gap-4 px-2 py-5 text-left md:grid-cols-[7rem_1fr_auto] md:px-4"
-      >
-        <span className="font-mono text-[11px] uppercase tracking-wider text-mute">{a.date}</span>
-        <span className="font-display text-xl md:text-2xl">
-          {a.name}
-          {a.by && <span className="ml-2 hidden text-sm font-normal text-mute sm:inline">· {a.by}</span>}
-        </span>
-        <motion.span className="text-mute" animate={{ rotate: open ? 45 : 0 }} transition={{ duration: 0.3, ease }}>
-          <Plus size={18} />
-        </motion.span>
-      </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.4, ease }}
-            className="overflow-hidden"
-          >
-            <p className="max-w-xl px-2 pb-6 text-[15px] leading-relaxed text-mute md:pl-[calc(7rem+2rem)] md:pr-4">{a.body}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.li>
+    <span className="relative grid h-20 w-20 shrink-0 place-items-center" aria-hidden>
+      <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full transition-transform duration-[2s] ease-out group-hover:rotate-[120deg]">
+        <defs>
+          <path id={id} d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0" />
+        </defs>
+        <circle cx="50" cy="50" r="48" fill="none" stroke="var(--accent)" strokeOpacity="0.5" />
+        <circle cx="50" cy="50" r="30" fill="var(--surface-2)" stroke="var(--line)" />
+        <text className="fill-mute font-mono text-[8.5px] uppercase" letterSpacing="1">
+          <textPath href={`#${id}`} textLength="232" lengthAdjust="spacing">
+            {`Award ✦ ${a.date} ✦ Award ✦ ${a.date} ✦ `}
+          </textPath>
+        </text>
+      </svg>
+      <Award size={22} className="relative text-accent" />
+    </span>
   )
 }
 
 export default function Credentials() {
-  const [open, setOpen] = useState(0)
   return (
     <section id="credentials" className="shell py-24 md:py-32">
       <SectionHead index="06" kicker="Recognition" title="Commendations along the way." highlight={['along', 'the', 'way.']} />
 
-      <ul className="border-t border-line" onPointerLeave={(e) => e.pointerType === 'mouse' && setOpen(null)}>
+      <Stagger className="grid gap-3 md:grid-cols-2" gap={0.1}>
         {awards.map((a, i) => (
-          <AwardRow key={a.name} a={a} i={i} open={open === i} onOpen={setOpen} />
+          <StaggerItem
+            key={a.name}
+            whileHover={{ y: -4 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+            className={`group panel flex gap-5 rounded-2xl p-5 md:p-6 ${i === 0 ? 'border-accent/40' : ''}`}
+          >
+            <Patch a={a} i={i} />
+            <div className="min-w-0">
+              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-mute">
+                {a.date}
+                {a.by && <span className="text-accent"> · {a.by}</span>}
+              </p>
+              <h3 className="mt-1 font-display text-2xl leading-tight">{a.name}</h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-mute">{a.body}</p>
+            </div>
+          </StaggerItem>
         ))}
-      </ul>
+      </Stagger>
 
       <div className="mt-20">
         <h3 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-mute">

@@ -6,16 +6,16 @@ The site is a flight from Earth orbit into deep space:
 
 - **Launch**: a short countdown (once per session), then the camera lifts off from Earth's limb into orbit.
 - **Sky**: a three.js scene behind the page with a twinkling starfield, faint nebulae, a procedurally shaded Earth (clouds, city lights, atmosphere glow), planets that drift past the edges and the odd meteor. Scrolling flies the camera forward.
-- **Hero**: the name fades up out of a blur with a satellite orbiting it; the focus line decodes from random glyphs.
+- **Hero**: the name fades up out of a blur with a satellite orbiting it; the focus line decodes from random glyphs, and the headline numbers sit under the buttons.
 - **About**: a porthole radar scope and a crew record that types itself out.
 - **What I do**: each area of work is a small rotating planet.
 - **Impact**: results arrive as downlink packets with live signal traces.
-- **Experience**: a constellation; select a star to open that role's mission log.
-- **Skills**: a draggable 3D sphere of tags with category filters, beside proficiency gauges.
-- **Awards & Contact**: expanding award rows, certifications and a contact footer.
+- **Experience**: a rocket launch. A sticky altitude gauge beside the stages (liftoff, Stage 1, Orbit) has a rocket that climbs as you scroll and drops its booster on reaching orbit; each job card leads with its key wins, with the full flight log folded underneath. Phones get a slim altitude bar instead.
+- **Skills**: the latest additions first, a star catalogue of every skill by area with filters, and a radar of the core skills.
+- **Awards & Contact**: awards as mission-patch cards, certifications and a contact footer.
 - **Throughout**: Lenis smooth scrolling, a targeting-reticle cursor that snaps onto links, and rolling link labels.
 
-There are two themes, switched from the sun/moon button in the top bar and remembered for next time: the dark space theme (default) and a light grey daytime theme, where the sky turns pale and Earth stays in view.
+There are two themes, each with its own palette, switched from the sun/moon button in the top bar and remembered for next time: a dark "Mission blue" theme (default: navy-black sky, electric blue and gold) and a light "Solar flare" theme (warm daylight paper, burnt amber and deep blue), where the sky turns pale and Earth stays in view.
 
 The three.js scene loads in its own chunk so the page renders straight away. With reduced motion turned on, the intro, flight, smooth scrolling and cursor are off and the sky holds a single still frame.
 

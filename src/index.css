@@ -1,50 +1,57 @@
 @import "tailwindcss";
 
-/* Two themes. Dark (default): near-black sky, starlight text, one cool
-   accent and one warm signal colour used sparingly. Light: a cool grey
-   daytime sky with ink text. Secondary text stays at 6.5:1 or better in
-   both. Toggled by data-theme on <html>; the choice is remembered. */
+/* Two themes, each with its own palette.
+   Dark, "Mission blue": a deep navy-black sky, cool starlight text,
+   electric blue as the accent and warm gold as the second colour.
+   Light, "Solar flare": warm daylight paper, deep-brown ink, burnt amber
+   and deep blue. Grey text stays at 4.8:1 or better in both.
+   Toggled by data-theme on <html>; the choice is remembered. */
 :root,
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #04080b;
-  --surface: rgb(150 230 215 / 0.04);
-  --surface-2: rgb(150 230 215 / 0.08);
-  --fg: #e8f1f2;
-  --mute: #9fb3b8;
-  --line: rgb(150 225 210 / 0.18);
-  --ink: #e8f1f2;
-  --on-ink: #04080b;
-  --accent: #5ee6c8;
-  --signal: #b79cff;
-  --panel: rgb(6 16 20 / 0.72);
-  --stage: rgb(6 16 20 / 0.45);
+  --bg: #04060d;
+  --surface: rgb(150 180 255 / 0.04);
+  --surface-2: rgb(150 180 255 / 0.08);
+  --fg: #e9eef8;
+  --mute: #a3afc6;
+  --line: rgb(150 180 255 / 0.18);
+  --ink: #e9eef8;
+  --on-ink: #04060d;
+  --accent: #7fb2ff;
+  --signal: #f4c27a;
+  --panel: rgb(8 12 26 / 0.72);
+  --stage: rgb(8 12 26 / 0.45);
   --star: #ffffff;
-  --halo: 0 1px 14px rgb(4 8 11 / 0.9), 0 0 2px rgb(4 8 11 / 0.6);
-  --sky-top: #082a33;
-  --sky: #04080b;
+  --halo: 0 1px 14px rgb(4 6 13 / 0.9), 0 0 2px rgb(4 6 13 / 0.6);
+  --sky-top: #0b1d44;
+  --sky: #04060d;
   --vignette: rgb(0 0 0 / 0.55);
+  /* the rocket in Experience: a warm flame in both themes */
+  --flame: #f4c27a;
+  --fin: #7fb2ff;
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #f2f6f6;
-  --surface: rgb(14 40 44 / 0.04);
-  --surface-2: rgb(14 40 44 / 0.07);
-  --fg: #0e1a1c;
-  --mute: #45585c;
-  --line: rgb(14 26 28 / 0.14);
-  --ink: #0e1a1c;
-  --on-ink: #f4f8f8;
-  --accent: #0a7563;
-  --signal: #6a4fd1;
-  --panel: rgb(255 255 255 / 0.78);
+  --bg: #f7f3ec;
+  --surface: rgb(60 40 15 / 0.04);
+  --surface-2: rgb(60 40 15 / 0.07);
+  --fg: #1d160d;
+  --mute: #5f5444;
+  --line: rgb(29 22 13 / 0.14);
+  --ink: #1d160d;
+  --on-ink: #faf6ef;
+  --accent: #a9530a;
+  --signal: #1d5f9e;
+  --panel: rgb(255 255 255 / 0.75);
   --stage: rgb(255 255 255 / 0.5);
-  --star: #0a7563;
-  --halo: 0 1px 12px rgb(242 246 246 / 0.9), 0 0 2px rgb(242 246 246 / 0.7);
+  --star: #a9530a;
+  --halo: 0 1px 12px rgb(247 243 236 / 0.9), 0 0 2px rgb(247 243 236 / 0.7);
   --sky-top: #ffffff;
-  --sky: #e2eceb;
-  --vignette: rgb(190 210 208 / 0.4);
+  --sky: #efe6d8;
+  --vignette: rgb(215 195 165 / 0.4);
+  --flame: #a9530a;
+  --fin: #1d5f9e;
 }
 
 @theme inline {
