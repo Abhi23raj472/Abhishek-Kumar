@@ -58,7 +58,7 @@ function Rocket({ separated, reduce }) {
         animate={reduce ? undefined : { scaleY: [1, 1.35, 0.9, 1.2, 1], opacity: [0.9, 1, 0.8, 1, 0.9] }}
         transition={{ duration: 0.5, repeat: Infinity }}
       >
-        <path d={separated ? 'M14 74 Q20 104 26 74 Z' : 'M13 104 Q20 140 27 104 Z'} fill="var(--signal)" opacity="0.85" />
+        <path d={separated ? 'M14 74 Q20 104 26 74 Z' : 'M13 104 Q20 140 27 104 Z'} fill="var(--accent)" opacity="0.9" />
         <path d={separated ? 'M17 74 Q20 92 23 74 Z' : 'M16 104 Q20 126 24 104 Z'} fill="var(--star)" />
       </motion.g>
       {/* booster */}
@@ -68,13 +68,13 @@ function Rocket({ separated, reduce }) {
         style={{ originX: '20px', originY: '90px' }}
       >
         <rect x="12" y="74" width="16" height="30" rx="2" fill="var(--panel)" stroke="var(--fg)" strokeWidth="1.4" />
-        <path d="M12 92 L5 106 L12 104 Z M28 92 L35 106 L28 104 Z" fill="var(--accent)" />
+        <path d="M12 92 L5 106 L12 104 Z M28 92 L35 106 L28 104 Z" fill="var(--signal)" />
         <line x1="12" y1="82" x2="28" y2="82" stroke="var(--line)" />
       </motion.g>
       {/* upper stage */}
       <path d="M20 4 C29 16 30 34 30 46 L30 72 L10 72 L10 46 C10 34 11 16 20 4 Z" fill="var(--panel)" stroke="var(--fg)" strokeWidth="1.4" />
-      <circle cx="20" cy="34" r="5" fill="var(--bg)" stroke="var(--accent)" strokeWidth="1.6" />
-      <path d="M10 60 L4 72 L10 72 Z M30 60 L36 72 L30 72 Z" fill="var(--accent)" />
+      <circle cx="20" cy="34" r="5" fill="var(--bg)" stroke="var(--signal)" strokeWidth="1.6" />
+      <path d="M10 60 L4 72 L10 72 Z M30 60 L36 72 L30 72 Z" fill="var(--signal)" />
       <line x1="10" y1="72" x2="30" y2="72" stroke="var(--fg)" strokeWidth="1.4" />
     </svg>
   )
@@ -141,7 +141,7 @@ function Gauge({ progress, active, separated }) {
           {/* exhaust trail from the engine down to the pad */}
           <motion.span
             aria-hidden
-            className="absolute left-1/2 w-[2px] -translate-x-1/2 bg-gradient-to-b from-[var(--signal)] to-transparent"
+            className="absolute left-1/2 w-[2px] -translate-x-1/2 bg-gradient-to-b from-[var(--accent)] to-transparent"
             style={{ top: separated ? 'calc(100% - 56px)' : 'calc(100% - 18px)', height: separated ? trailUpper : trailFull }}
           />
           <Rocket separated={separated} reduce={reduce} />
@@ -171,7 +171,7 @@ function MiniGauge({ progress, active }) {
       </div>
       <div className="relative mt-2.5 h-[18px]">
         <div className="absolute inset-x-0 top-1/2 h-px bg-line" />
-        <motion.div className="absolute left-0 top-1/2 h-px bg-[var(--signal)]" style={{ width: left }} />
+        <motion.div className="absolute left-0 top-1/2 h-px bg-[var(--accent)]" style={{ width: left }} />
         {stages.map((s, i) => (
           <span
             key={s.id}

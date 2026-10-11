@@ -13,7 +13,7 @@ import { Magnetic, Roll, ease } from '../lib/motion'
 
 const resume = `./${profile.resume}`
 const telemetry = [
-  [`${stats[0].v}${stats[0].suffix}`, 'years in QA'],
+  [`${stats[0].v}${stats[0].suffix}`, 'years'],
   [stats[1].v, 'certifications'],
   [stats[2].v, 'awards'],
 ]
@@ -96,14 +96,14 @@ function Satellite({ reduce }) {
   return (
     <motion.div aria-hidden className="pointer-events-none absolute" style={{ left, top, zIndex: z }}>
       <motion.svg viewBox="0 0 64 28" className="-ml-6 -mt-3 w-12" style={{ scale, opacity }}>
-        <rect x="1" y="9" width="20" height="10" rx="1" fill="#0d2e30" stroke="#5ee6c8" strokeWidth="1" />
-        <rect x="43" y="9" width="20" height="10" rx="1" fill="#0d2e30" stroke="#5ee6c8" strokeWidth="1" />
-        <path d="M8 9v10M14 9v10M50 9v10M56 9v10" stroke="#5ee6c8" strokeWidth="0.6" />
+        <rect x="1" y="9" width="20" height="10" rx="1" fill="var(--panel)" stroke="var(--accent)" strokeWidth="1" />
+        <rect x="43" y="9" width="20" height="10" rx="1" fill="var(--panel)" stroke="var(--accent)" strokeWidth="1" />
+        <path d="M8 9v10M14 9v10M50 9v10M56 9v10" stroke="var(--accent)" strokeWidth="0.6" />
         <path d="M21 14h5M38 14h5" stroke="#cfdcf3" strokeWidth="1.2" />
         <rect x="26" y="7" width="12" height="14" rx="2" fill="#dfe7f5" />
         <rect x="28.5" y="10" width="7" height="4" rx="0.8" fill="#1f9e86" />
         <path d="M32 7V3" stroke="#dfe7f5" strokeWidth="1" />
-        <circle cx="32" cy="2.5" r="1.4" fill="#b79cff" />
+        <circle cx="32" cy="2.5" r="1.4" fill="var(--signal)" />
       </motion.svg>
     </motion.div>
   )
@@ -142,7 +142,7 @@ export default function Hero({ ready, intro = true }) {
             animate={ready ? { opacity: 1 } : undefined}
             transition={{ duration: 1.2, delay: 0.8 }}
           >
-            <ellipse cx="50" cy="20" rx="46" ry="16" fill="none" stroke="rgb(94 230 200 / 0.2)" strokeWidth="0.15" strokeDasharray="0.6 0.9" vectorEffect="non-scaling-stroke" />
+            <ellipse cx="50" cy="20" rx="46" ry="16" fill="none" style={{ stroke: 'color-mix(in srgb, var(--accent) 22%, transparent)' }} strokeWidth="0.15" strokeDasharray="0.6 0.9" vectorEffect="non-scaling-stroke" />
           </motion.svg>
           <h1 className="relative z-[1] font-display text-[clamp(3.25rem,10vw,7.5rem)] font-normal leading-[0.95] tracking-[-0.01em]">
             <span className="sr-only">Abhishek Kumar, {profile.role}</span>
@@ -179,7 +179,7 @@ export default function Hero({ ready, intro = true }) {
         </motion.div>
 
         {/* mission telemetry: the headline numbers, readable in the first frame */}
-        <motion.ul {...show(0.8)} className="mt-8 flex flex-wrap justify-center gap-x-7 gap-y-2 font-mono text-[11px] uppercase tracking-[0.16em] text-mute">
+        <motion.ul {...show(0.8)} className="panel mx-auto mt-8 flex w-fit max-w-full flex-wrap justify-center gap-x-4 gap-y-1 rounded-2xl px-4 py-2 font-mono text-[10.5px] uppercase tracking-[0.1em] text-mute sm:gap-x-7 sm:rounded-full sm:px-5 sm:text-[11px] sm:tracking-[0.16em]">
           {telemetry.map(([v, k]) => (
             <li key={k} className="flex items-baseline gap-2">
               <span className="text-[13px] text-fg">{v}</span>

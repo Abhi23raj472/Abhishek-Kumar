@@ -67,14 +67,14 @@ function Porthole() {
           />
         ))}
       </motion.svg>
-      <div className="absolute inset-[6%] rounded-full border border-line bg-[#060a14] p-[5%] shadow-[inset_0_0_40px_rgb(0_0_0/0.8),0_0_60px_rgb(77_141_255/0.08)]">
-        <div className="relative h-full w-full overflow-hidden rounded-full bg-[radial-gradient(circle,#0b1a33,#050913_70%)]">
+      <div className="absolute inset-[6%] rounded-full border border-line bg-[#120c06] p-[5%] shadow-[inset_0_0_40px_rgb(0_0_0/0.8),0_0_60px_rgb(255_160_60/0.08)]">
+        <div className="relative h-full w-full overflow-hidden rounded-full bg-[radial-gradient(circle,#2a1808,#0c0805_70%)]">
           {[22, 38, 50].map((r) => (
-            <span key={r} aria-hidden className="absolute rounded-full border border-[rgb(143_196_255/0.15)]" style={{ inset: `${50 - r}%` }} />
+            <span key={r} aria-hidden className="absolute rounded-full border border-[rgb(255_196_130/0.15)]" style={{ inset: `${50 - r}%` }} />
           ))}
-          <span aria-hidden className="absolute inset-y-0 left-1/2 w-px bg-[rgb(143_196_255/0.1)]" />
-          <span aria-hidden className="absolute inset-x-0 top-1/2 h-px bg-[rgb(143_196_255/0.1)]" />
-          <span aria-hidden className="sweep absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,rgb(143_196_255/0.28),transparent_22%)]" />
+          <span aria-hidden className="absolute inset-y-0 left-1/2 w-px bg-[rgb(255_196_130/0.1)]" />
+          <span aria-hidden className="absolute inset-x-0 top-1/2 h-px bg-[rgb(255_196_130/0.1)]" />
+          <span aria-hidden className="sweep absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,rgb(255_181_77/0.3),transparent_22%)]" />
           {blips.map(([x, y, d]) => (
             <motion.span
               key={`${x}-${y}`}
@@ -85,7 +85,7 @@ function Porthole() {
               transition={{ duration: 6, repeat: Infinity, delay: d, ease: 'easeInOut' }}
             />
           ))}
-          <span className="absolute inset-0 grid place-items-center font-display text-6xl italic text-[#e6ebf5] [text-shadow:none]">AK</span>
+          <span className="absolute inset-0 grid place-items-center font-display text-6xl italic text-[#f6efe4] [text-shadow:none]">AK</span>
         </div>
       </div>
     </div>
