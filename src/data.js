@@ -153,6 +153,7 @@ export const record = [
   ['Base', 'India'],
   ['Experience', '5+ years in quality engineering'],
   ['Specialty', 'Tricentis Tosca, API validation, CI/CD'],
+  ['Education', 'B.Tech, Computer Science & Engineering, Galgotias University, 2021'],
 ]
 
 export const skillCats = [

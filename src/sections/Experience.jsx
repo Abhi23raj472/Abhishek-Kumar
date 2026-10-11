@@ -10,8 +10,8 @@ import {
   useTransform,
   useVelocity,
 } from 'framer-motion'
-import { ChevronDown, GraduationCap, Star } from 'lucide-react'
-import { education, experience } from '../data'
+import { ChevronDown, Star } from 'lucide-react'
+import { experience } from '../data'
 import { SectionHead, ease } from '../lib/motion'
 
 const MONTHS = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 }
@@ -32,10 +32,10 @@ const duration = (mo) => {
   return [y && `${y} yr${y > 1 ? 's' : ''}`, m && `${m} mo${m > 1 ? 's' : ''}`].filter(Boolean).join(' ')
 }
 
-// The flight, in time order: the launch pad, then each job as a stage, ending in orbit.
+// The flight, in time order: liftoff in 2021, then each job as a stage, ending in orbit.
 const jobs = [...experience].reverse()
 const stages = [
-  { id: 'pad', name: 'Launch pad', tag: 'T−0', at: 0 },
+  { id: 'liftoff', name: 'Liftoff', tag: 'T−0', at: 0 },
   ...jobs.map((j, i) => ({
     id: j.org,
     name: j.current ? 'Orbit' : `Stage ${i + 1}`,
@@ -282,36 +282,6 @@ function StageCard({ s, i, onActive }) {
   )
 }
 
-function PadCard({ onActive }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { margin: '-45% 0px -45% 0px' })
-  useEffect(() => {
-    if (inView) onActive(0)
-  }, [inView, onActive])
-  return (
-    <motion.li
-      ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.8, ease }}
-      className="flex items-start gap-4 rounded-2xl border border-dashed border-line p-6"
-    >
-      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line text-accent">
-        <GraduationCap size={19} />
-      </span>
-      <div className="min-w-0">
-        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-mute">
-          <span className="text-accent">Launch pad · T−0</span> · {education.year}
-        </p>
-        <h3 className="mt-2 font-display text-2xl leading-tight md:text-3xl">{education.degree}</h3>
-        <p className="mt-1 text-sm text-mute">{education.school}</p>
-        <p className="mt-3 text-[15px] leading-relaxed text-fg/85">Graduated in Computer Science and lifted off straight into quality engineering.</p>
-      </div>
-    </motion.li>
-  )
-}
-
 export default function Experience() {
   const [active, setActive] = useState(stages.length - 1)
   const [separated, setSeparated] = useState(false)
@@ -325,7 +295,7 @@ export default function Experience() {
       <SectionHead
         index="04"
         kicker="Experience"
-        title="From launch pad to orbit."
+        title="From liftoff to orbit."
         highlight={['orbit.']}
         sub="Five years in two stages. Scroll to fly the route; the booster drops away when the mission reaches orbit."
       />
@@ -338,7 +308,6 @@ export default function Experience() {
         <div className="min-w-0">
           <MiniGauge progress={progress} active={active} />
           <ol ref={track} className="space-y-6">
-            <PadCard onActive={setActive} />
             {stages.slice(1).map((s, i) => (
               <StageCard key={s.id} s={s} i={i + 1} onActive={setActive} />
             ))}
