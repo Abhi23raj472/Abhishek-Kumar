@@ -15,7 +15,7 @@ The site is a flight from Earth orbit into deep space:
 - **Awards & Contact**: awards as mission-patch cards, certifications and a contact footer.
 - **Throughout**: Lenis smooth scrolling, a targeting-reticle cursor that snaps onto links, and rolling link labels.
 
-There are two themes, switched from the sun/moon button in the top bar and remembered for next time: the dark space theme (default) and a light grey daytime theme, where the sky turns pale and Earth stays in view.
+There are two themes, each with its own palette, switched from the sun/moon button in the top bar and remembered for next time: a dark "Mission blue" theme (default: navy-black sky, electric blue and gold) and a light "Solar flare" theme (warm daylight paper, burnt amber and deep blue), where the sky turns pale and Earth stays in view.
 
 The three.js scene loads in its own chunk so the page renders straight away. With reduced motion turned on, the intro, flight, smooth scrolling and cursor are off and the sky holds a single still frame.
 
