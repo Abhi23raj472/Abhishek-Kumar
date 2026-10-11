@@ -6,7 +6,6 @@ export const profile = {
   location: 'India',
   email: 'rajputabhishek677@gmail.com',
   linkedin: 'https://www.linkedin.com/in/abhishek-kumar2301',
-  github: 'https://github.com/Abhi23raj472',
   resume: 'Abhishek_Kumar_Resume.pdf',
 }
 
@@ -122,8 +121,8 @@ export const impact = [
 export const certs = [
   { org: 'Tricentis Academy', items: ['AS1', 'AS2', 'TDS1', 'TDS2', 'AE1', 'API', 'TQL'] },
   { org: 'ISTQB', items: ['Certified Tester — Foundation Level'] },
-  { org: 'Generative AI', items: ['Optum.ai AI Dojo · Mar 2026'] },
-  { org: 'Other', items: ['Allianz ABS (L1)', 'SQL Certification', 'Agile with Atlassian Jira'] },
+  { org: 'Optum.ai', items: ['Generative AI · AI Dojo, Mar 2026'] },
+  { org: 'Allianz', items: ['ABS (L1)', 'SQL Certification', 'Agile with Atlassian Jira'] },
 ]
 
 export const awards = [
@@ -145,7 +144,6 @@ export const record = [
   ['Specialty', 'Tricentis Tosca, API validation, CI/CD'],
 ]
 
-// Skills sphere. Weight 1-3 sets the size of each tag.
 export const skillCats = [
   { id: 'automation', label: 'Automation' },
   { id: 'api', label: 'API & data' },
@@ -153,13 +151,21 @@ export const skillCats = [
   { id: 'delivery', label: 'Delivery & tools' },
 ]
 
+// Added most recently (from the 2026 resume); shown first in Skills.
+export const latest = [
+  { name: 'Generative AI', note: 'Optum.ai AI Dojo', when: 'Mar 2026' },
+  { name: 'Recovery & cleanup scenarios', note: 'Stable Tosca runs on unstable environments', when: 'Optum' },
+  { name: 'Suite-health reporting', note: 'Daily regression reports from CI/CD runs', when: 'Optum' },
+]
+
+// Skills catalogue. Weight 1-3 sets how brightly each one shows.
 export const skillCloud = [
   ['Tricentis Tosca', 'automation', 3],
   ['XScan', 'automation', 2],
   ['TCD', 'automation', 2],
   ['Tosca DEX', 'automation', 3],
   ['TQL', 'automation', 1],
-  ['Recovery scenarios', 'automation', 1],
+  ['Recovery & cleanup scenarios', 'automation', 2],
   ['Reusable modules', 'automation', 2],
   ['REST', 'api', 3],
   ['SOAP', 'api', 2],
@@ -187,4 +193,6 @@ export const skillCloud = [
   ['Kanban', 'delivery', 1],
   ['SDLC', 'delivery', 1],
   ['STLC', 'delivery', 1],
+  ['Generative AI', 'delivery', 2],
+  ['MS Word, Excel, PowerPoint', 'delivery', 1],
 ]

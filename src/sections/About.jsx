@@ -132,7 +132,6 @@ export default function About() {
             {[
               ['Email', `mailto:${profile.email}`],
               ['LinkedIn', profile.linkedin],
-              ['GitHub', profile.github],
               ['Resume', resume],
             ].map(([k, href]) => (
               <a

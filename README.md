@@ -6,13 +6,13 @@ The site is a flight from Earth orbit into deep space:
 
 - **Launch**: a short countdown (once per session), then the camera lifts off from Earth's limb into orbit.
 - **Sky**: a three.js scene behind the page with a twinkling starfield, faint nebulae, a procedurally shaded Earth (clouds, city lights, atmosphere glow), planets that drift past the edges and the odd meteor. Scrolling flies the camera forward.
-- **Hero**: the name fades up out of a blur with a satellite orbiting it; the focus line decodes from random glyphs.
+- **Hero**: the name fades up out of a blur with a satellite orbiting it; the focus line decodes from random glyphs, and the headline numbers sit under the buttons.
 - **About**: a porthole radar scope and a crew record that types itself out.
 - **What I do**: each area of work is a small rotating planet.
 - **Impact**: results arrive as downlink packets with live signal traces.
 - **Experience**: a constellation; select a star to open that role's mission log.
-- **Skills**: a draggable 3D sphere of tags with category filters, beside proficiency gauges.
-- **Awards & Contact**: expanding award rows, certifications and a contact footer.
+- **Skills**: the latest additions first, a star catalogue of every skill by area with filters, and a radar of the core skills.
+- **Awards & Contact**: awards as mission-patch cards, certifications and a contact footer.
 - **Throughout**: Lenis smooth scrolling, a targeting-reticle cursor that snaps onto links, and rolling link labels.
 
 There are two themes, switched from the sun/moon button in the top bar and remembered for next time: the dark space theme (default) and a light grey daytime theme, where the sky turns pale and Earth stays in view.

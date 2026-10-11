@@ -8,10 +8,15 @@ import {
   useTransform,
 } from 'framer-motion'
 import { ArrowDown, ArrowUpRight, Download } from 'lucide-react'
-import { profile, roles } from '../data'
+import { profile, roles, stats } from '../data'
 import { Magnetic, Roll, ease } from '../lib/motion'
 
 const resume = `./${profile.resume}`
+const telemetry = [
+  [`${stats[0].v}${stats[0].suffix}`, 'years in QA'],
+  [stats[1].v, 'certifications'],
+  [stats[2].v, 'awards'],
+]
 const inOut = [0.65, 0, 0.35, 1]
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>#*+'
 
@@ -120,7 +125,7 @@ export default function Hero({ ready, intro = true }) {
   })
 
   return (
-    <section ref={ref} id="top" className="relative flex min-h-svh flex-col pb-[22svh] pt-28">
+    <section ref={ref} id="top" className="relative flex min-h-svh overflow-x-clip flex-col pb-[22svh] pt-28">
       <motion.div style={reduce ? undefined : { y: lift, opacity: fade }} className="shell flex flex-1 flex-col items-center justify-center text-center">
         <motion.p {...show(0.7)} className="label inline-flex items-center gap-2.5">
           <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
@@ -172,6 +177,16 @@ export default function Hero({ ready, intro = true }) {
             </a>
           </Magnetic>
         </motion.div>
+
+        {/* mission telemetry: the headline numbers, readable in the first frame */}
+        <motion.ul {...show(0.8)} className="mt-8 flex flex-wrap justify-center gap-x-7 gap-y-2 font-mono text-[11px] uppercase tracking-[0.16em] text-mute">
+          {telemetry.map(([v, k]) => (
+            <li key={k} className="flex items-baseline gap-2">
+              <span className="text-[13px] text-fg">{v}</span>
+              {k}
+            </li>
+          ))}
+        </motion.ul>
       </motion.div>
 
       <motion.a
