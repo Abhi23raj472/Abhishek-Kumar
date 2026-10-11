@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from 'framer-motion'
-import { Moon, Sun, X } from 'lucide-react'
+import { Download, Moon, Sun, X } from 'lucide-react'
 import { nav, profile } from '../data'
-import { Roll, ease } from '../lib/motion'
+import { ease } from '../lib/motion'
 import { lockScroll } from '../lib/smoothScroll'
 
 const ids = nav.map((n) => n.id)
 const resume = `./${profile.resume}`
+const THEME_KEY = 'ak-portfolio-theme'
+export const THEME_COLORS = { light: '#e4e8eb', dark: '#0b0f12' }
 
 function useActiveSection() {
   const [active, setActive] = useState('')
@@ -24,41 +26,39 @@ function useActiveSection() {
   return active
 }
 
-const THEME_KEY = 'ak-portfolio-theme'
-
-/** Switches between the dark space theme and the light grey one, and remembers it. */
+/** Light/dark switch. The page starts on the system setting; a choice made here is remembered. */
 function ThemeToggle() {
-  const [light, setLight] = useState(() => typeof document !== 'undefined' && document.documentElement.dataset.theme === 'light')
+  const [dark, setDark] = useState(() => typeof document !== 'undefined' && document.documentElement.dataset.theme === 'dark')
   const toggle = () => {
-    const next = light ? 'dark' : 'light'
+    const next = dark ? 'light' : 'dark'
     document.documentElement.dataset.theme = next
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'light' ? '#eef1f5' : '#03050a')
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[next])
     try {
       localStorage.setItem(THEME_KEY, next)
     } catch {
       /* storage blocked: the theme still applies for this visit */
     }
-    setLight(!light)
+    setDark(!dark)
   }
   return (
     <button
       type="button"
       onClick={toggle}
       role="switch"
-      aria-checked={light}
-      aria-label="Light theme"
-      title={light ? 'Switch to dark theme' : 'Switch to light theme'}
-      className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-full border border-line text-fg transition-colors hover:border-accent"
+      aria-checked={dark}
+      aria-label="Dark theme"
+      title={dark ? 'Switch to light theme' : 'Switch to dark theme'}
+      className="grid h-11 w-11 place-items-center overflow-hidden border border-rule text-ink transition-colors hover:border-ink"
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span
-          key={light ? 'sun' : 'moon'}
-          initial={{ y: 14, rotate: -90, opacity: 0 }}
-          animate={{ y: 0, rotate: 0, opacity: 1 }}
-          exit={{ y: -14, rotate: 90, opacity: 0 }}
-          transition={{ duration: 0.3, ease }}
+          key={dark ? 'moon' : 'sun'}
+          initial={{ y: 14, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -14, opacity: 0 }}
+          transition={{ duration: 0.25, ease }}
         >
-          {light ? <Sun size={15} /> : <Moon size={15} />}
+          {dark ? <Moon size={16} /> : <Sun size={16} />}
         </motion.span>
       </AnimatePresence>
     </button>
@@ -69,15 +69,13 @@ export default function Nav() {
   const active = useActiveSection()
   const [open, setOpen] = useState(false)
   const [hidden, setHidden] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
   const { scrollY, scrollYProgress } = useScroll()
-  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 26 })
+  const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 28 })
 
   // Tuck the bar away while scrolling down, bring it back on the way up.
   useMotionValueEvent(scrollY, 'change', (y) => {
     const prev = scrollY.getPrevious() ?? 0
-    setHidden(y > prev && y > 240 && !open)
-    setScrolled(y > 24)
+    setHidden(y > prev && y > 320 && !open)
   })
 
   useEffect(() => {
@@ -89,21 +87,18 @@ export default function Nav() {
 
   return (
     <>
-      {/* Altitude rail: how far through the page you are. */}
-      <div aria-hidden className="fixed bottom-[15vh] right-4 top-[15vh] z-[55] hidden w-px bg-line md:block">
-        <motion.div className="h-full w-px origin-top bg-accent" style={{ scaleY: progress }} />
-      </div>
-
       <motion.header
-        animate={{ y: hidden ? '-120%' : '0%' }}
-        transition={{ duration: 0.45, ease }}
-        className={`fixed inset-x-0 top-0 z-[60] border-b transition-[background-color,border-color] duration-300 ${
-          scrolled ? 'border-line bg-bg/70 backdrop-blur-md' : 'border-transparent'
-        }`}
+        animate={{ y: hidden ? '-110%' : '0%' }}
+        transition={{ duration: 0.4, ease }}
+        className="fixed inset-x-0 top-0 z-[60] border-b border-rule bg-paper/90 backdrop-blur-md"
       >
-        <div className="shell flex h-16 items-center gap-4">
-          <a href="#top" className="font-display text-2xl italic" aria-label="Abhishek Kumar, back to top">
-            Abhishek
+        <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-3 px-5 md:px-8">
+          <a href="#top" className="flex items-center gap-3" aria-label="Abhishek Kumar, back to top">
+            <span className="grid h-11 w-11 place-items-center bg-ink font-mono text-[13px] font-medium text-sheet">AK</span>
+            <span className="hidden leading-tight sm:block">
+              <span className="block text-[15px] font-semibold">Abhishek Kumar</span>
+              <span className="block font-mono text-[11px] uppercase tracking-[0.12em] text-ink-2">Quality Engineer</span>
+            </span>
           </a>
 
           <nav aria-label="Main" className="ml-auto hidden xl:block">
@@ -113,14 +108,17 @@ export default function Nav() {
                   <a
                     href={`#${n.id}`}
                     aria-current={active === n.id ? 'true' : undefined}
-                    className={`relative block px-3 py-2 text-[13px] transition-colors ${active === n.id ? 'text-fg' : 'text-mute hover:text-fg'}`}
+                    className={`relative flex items-baseline gap-1.5 px-2.5 py-2 text-[14px] transition-colors ${
+                      active === n.id ? 'text-ink' : 'text-ink-2 hover:text-ink'
+                    }`}
                   >
-                    <Roll>{n.label}</Roll>
+                    <span className={`figure font-mono text-[11px] ${active === n.id ? 'text-stamp' : ''}`}>{n.no}</span>
+                    {n.label}
                     {active === n.id && (
                       <motion.span
-                        layoutId="nav-dot"
-                        className="absolute -bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-accent"
-                        transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                        layoutId="nav-mark"
+                        className="absolute inset-x-2.5 -bottom-[13px] h-[2px] bg-stamp"
+                        transition={{ type: 'spring', stiffness: 380, damping: 34 }}
                       />
                     )}
                   </a>
@@ -129,77 +127,72 @@ export default function Nav() {
             </ul>
           </nav>
 
-          <div className="ml-auto flex items-center gap-2 xl:ml-3">
+          <div className="ml-auto flex items-center gap-2 xl:ml-4">
             <ThemeToggle />
-            <a
-              href={resume}
-              download
-              className="hidden h-9 items-center rounded-full border border-line px-4 text-[13px] text-fg transition-colors hover:border-accent sm:inline-flex"
-            >
-              <Roll>Resume</Roll>
+            <a href={resume} download className="btn btn-solid hidden sm:inline-flex">
+              <Download size={15} aria-hidden /> Resume
             </a>
             <button
               type="button"
               onClick={() => setOpen(true)}
               aria-label="Open menu"
               aria-expanded={open}
-              className="grid h-9 w-9 place-items-center rounded-full border border-line xl:hidden"
+              className="grid h-11 w-11 place-items-center border border-rule hover:border-ink xl:hidden"
             >
               <span className="relative block h-2.5 w-4">
-                <span className="absolute left-0 top-0 h-px w-4 bg-current" />
-                <span className="absolute bottom-0 left-0 h-px w-4 bg-current" />
+                <span className="absolute left-0 top-0 h-[1.5px] w-4 bg-current" />
+                <span className="absolute bottom-0 left-0 h-[1.5px] w-4 bg-current" />
               </span>
             </button>
           </div>
         </div>
+        {/* How far through the record you are. */}
+        <motion.div aria-hidden className="absolute inset-x-0 -bottom-px h-[2px] origin-left bg-stamp" style={{ scaleX: progress }} />
       </motion.header>
 
-      {/* Full-screen menu that grows out of the menu button. */}
+      {/* Menu: the table of contents slides down like a page being pulled out. */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ clipPath: 'circle(0% at calc(100% - 38px) 32px)' }}
-            animate={{ clipPath: 'circle(150% at calc(100% - 38px) 32px)' }}
-            exit={{ clipPath: 'circle(0% at calc(100% - 38px) 32px)' }}
-            transition={{ duration: 0.6, ease }}
-            className="fixed inset-0 z-[65] flex flex-col bg-bg/95 text-fg backdrop-blur-md xl:hidden"
+            initial={{ y: '-100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '-100%' }}
+            transition={{ duration: 0.5, ease }}
+            className="fixed inset-0 z-[65] flex flex-col overflow-y-auto bg-sheet text-ink xl:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Contents"
           >
-            <div className="shell flex h-16 items-center justify-between">
-              <span className="label">Navigation</span>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Close menu"
-                className="grid h-9 w-9 place-items-center rounded-full bg-ink text-on-ink"
-              >
-                <X size={16} />
+            <div className="flex h-16 shrink-0 items-center justify-between border-b border-rule px-5 md:px-8">
+              <span className="label">Contents</span>
+              <button type="button" onClick={() => setOpen(false)} aria-label="Close menu" className="grid h-11 w-11 place-items-center bg-ink text-sheet">
+                <X size={18} />
               </button>
             </div>
-            <motion.ul
-              className="shell flex-1 pt-4"
-              initial="h"
-              animate="s"
-              variants={{ h: {}, s: { transition: { staggerChildren: 0.04, delayChildren: 0.15 } } }}
-            >
-              {nav.map((n) => (
-                <motion.li key={n.id} className="overflow-hidden border-b border-line" variants={{ h: { y: '100%' }, s: { y: '0%', transition: { duration: 0.5, ease } } }}>
-                  <a href={`#${n.id}`} onClick={() => setOpen(false)} className="block py-3">
-                    <span className="font-display text-3xl">
-                      <Roll>{n.label}</Roll>
-                    </span>
+            <ol className="flex-1 px-5 pt-2 md:px-8">
+              {nav.map((n, i) => (
+                <motion.li
+                  key={n.id}
+                  className="border-b border-rule"
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, ease, delay: 0.15 + i * 0.04 }}
+                >
+                  <a href={`#${n.id}`} onClick={() => setOpen(false)} className="flex items-baseline gap-4 py-3.5">
+                    <span className="figure w-8 font-mono text-[13px] text-stamp">{n.no}</span>
+                    <span className="display text-[clamp(1.6rem,7vw,2.4rem)]">{n.label}</span>
                   </a>
                 </motion.li>
               ))}
-            </motion.ul>
-            <motion.div
-              className="shell flex flex-wrap gap-3 py-8"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-            >
-              <a href={resume} download className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">Download resume</a>
-              <a href={`mailto:${profile.email}`} className="rounded-full border border-line px-5 py-2.5 text-sm font-medium">Email me</a>
-            </motion.div>
+            </ol>
+            <div className="flex flex-wrap gap-3 px-5 py-8 md:px-8">
+              <a href={resume} download className="btn btn-solid">
+                <Download size={15} aria-hidden /> Download resume
+              </a>
+              <a href={`mailto:${profile.email}`} className="btn btn-line">
+                Email me
+              </a>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,23 +1,22 @@
 # Abhishek Kumar — Portfolio
 
-Personal portfolio built with React, Vite, Tailwind CSS, Framer Motion, Lenis and three.js.
+Personal portfolio built with React, Vite, Tailwind CSS, Framer Motion and Lenis.
 
-The site is a flight from Earth orbit into deep space:
+The site is written up as a quality inspection record, the document a QA engineer signs off:
 
-- **Launch**: a short countdown (once per session), then the camera lifts off from Earth's limb into orbit.
-- **Sky**: a three.js scene behind the page with a twinkling starfield, faint nebulae, a procedurally shaded Earth (clouds, city lights, atmosphere glow), planets that drift past the edges and the odd meteor. Scrolling flies the camera forward.
-- **Hero**: the name fades up out of a blur with a satellite orbiting it; the focus line decodes from random glyphs.
-- **About**: a porthole radar scope and a crew record that types itself out.
-- **What I do**: each area of work is a small rotating planet.
-- **Impact**: results arrive as downlink packets with live signal traces.
-- **Experience**: a constellation; select a star to open that role's mission log.
-- **Skills**: a draggable 3D sphere of tags with category filters, beside proficiency gauges.
-- **Awards & Contact**: expanding award rows, certifications and a contact footer.
-- **Throughout**: Lenis smooth scrolling, a targeting-reticle cursor that snaps onto links, and rolling link labels.
+- **Title block**: the name in expanded capitals, a title block with role, organisation and specialty, a result summary, and a rubber stamp in ultramarine ink that lands with a thud on load.
+- **§ 1.0 Summary**: key words get a reviewer's highlighter as the paragraph scrolls past.
+- **§ 2.0 Scope**: a checklist; each box ticks itself as its row comes into view.
+- **§ 3.0 Findings**: each result is re-run as you scroll: queued, running, then PASS, with a live pass count.
+- **§ 4.0 Record**: the roles as a revision history, with a timeline that fills as you read.
+- **§ 5.0 Skills**: the latest additions first, a radar of core skills with a sweep line, and every skill by area.
+- **§ 6.0 Certified**: certificates as status shields, and the awards.
+- **§ 7.0 Contact**: email with a copy button and a sign-off block.
+- **Throughout**: Lenis smooth scrolling, section headings that slide up out of a mask, and a scroll progress line under the header.
 
-There are two themes, switched from the sun/moon button in the top bar and remembered for next time: the dark space theme (default) and a light grey daytime theme, where the sky turns pale and Earth stays in view.
+Fonts: Archivo (its width axis gives the expanded display face) and IBM Plex Mono.
 
-The three.js scene loads in its own chunk so the page renders straight away. With reduced motion turned on, the intro, flight, smooth scrolling and cursor are off and the sky holds a single still frame.
+The page follows the system light/dark setting until the visitor picks one with the button in the top bar, which is remembered. With reduced motion turned on, animations and smooth scrolling are off and everything shows in its final state.
 
 ## Run locally
 
@@ -35,7 +34,7 @@ npm run preview
 
 ## Edit content
 
-All text content lives in `src/data.js`. Each section is a component in `src/sections/`, the sky is `src/components/SpaceScene.jsx`, shared animation helpers are in `src/lib/motion.jsx`, and theme colours are CSS variables at the top of `src/index.css`.
+All text content lives in `src/data.js`. Each section is a component in `src/sections/`, the header is `src/components/Nav.jsx`, shared animation helpers (including the numbered `Section` frame) are in `src/lib/motion.jsx`, and theme colours are CSS variables at the top of `src/index.css`. Skills added most recently are the `latest` list in `src/data.js`.
 Replace `public/Abhishek_Kumar_Resume.pdf` to update the resume download.
 
 ## GitHub Pages

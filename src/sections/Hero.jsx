@@ -1,190 +1,162 @@
-import { useEffect, useRef, useState } from 'react'
-import {
-  motion,
-  useAnimationFrame,
-  useMotionValue,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from 'framer-motion'
-import { ArrowDown, ArrowUpRight, Download } from 'lucide-react'
-import { profile, roles } from '../data'
-import { Magnetic, Roll, ease } from '../lib/motion'
+import { useId } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { ArrowUpRight, Download, Mail } from 'lucide-react'
+import { profile, record, stats } from '../data'
+import { Counter, ease } from '../lib/motion'
 
 const resume = `./${profile.resume}`
-const inOut = [0.65, 0, 0.35, 1]
-const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>#*+'
 
-/** Letters drift up out of a blur, one after another. */
-function Letters({ text, ready, intro, delay = 0 }) {
+/**
+ * The inspector's rubber stamp, in ultramarine ink. A noise filter knocks
+ * small gaps out of the ink so it reads as pressed, not printed.
+ */
+function Stamp({ className = '', delay = 1 }) {
+  const reduce = useReducedMotion()
+  const id = useId().replace(/:/g, '')
+  const ring = `M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0`
   return (
-    <span aria-hidden className="inline-flex">
-      {[...text].map((ch, i) => (
-        <motion.span
-          key={i}
-          className="inline-block"
-          initial={intro ? { opacity: 0, y: '0.4em', filter: 'blur(10px)' } : false}
-          animate={ready ? { opacity: 1, y: '0em', filter: 'blur(0px)' } : undefined}
-          transition={{ duration: 0.9, ease: inOut, delay: delay + i * 0.04 }}
-        >
-          {ch === ' ' ? ' ' : ch}
-        </motion.span>
-      ))}
+    // The tilt lives on this wrapper so the stamp keeps it before JavaScript runs.
+    <div className={`pointer-events-none rotate-[-12deg] ${className}`} aria-hidden>
+      <motion.div
+        className="relative"
+        initial={reduce ? false : { opacity: 0, scale: 1.7, rotate: 9 }}
+        animate={{ opacity: 0.94, scale: 1, rotate: 0 }}
+        transition={{ type: 'spring', stiffness: 520, damping: 24, delay }}
+      >
+        {/* the ink spreading on impact */}
+        {!reduce && (
+          <motion.span
+            className="absolute inset-[6%] rounded-full border-2 border-stamp"
+            initial={{ opacity: 0, scale: 1 }}
+            // ends back at its own size so it never widens the page
+            animate={{ opacity: [0, 0.5, 0, 0], scale: [1, 1, 1.35, 1] }}
+            transition={{ duration: 0.7, delay: delay + 0.12, times: [0, 0.1, 0.98, 1] }}
+          />
+        )}
+        <svg viewBox="0 0 200 200" className="block h-full w-full text-stamp">
+          <defs>
+            <filter id={`ink-${id}`} x="-5%" y="-5%" width="110%" height="110%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="n" />
+              <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.7 1.65" result="m" />
+              <feComposite in="SourceGraphic" in2="m" operator="in" result="c" />
+              <feDisplacementMap in="c" in2="n" scale="2.2" />
+            </filter>
+            <path id={`ring-${id}`} d={ring} />
+          </defs>
+          <g filter={`url(#ink-${id})`} fill="currentColor" stroke="currentColor">
+            <circle cx="100" cy="100" r="94" fill="none" strokeWidth="5" />
+            <circle cx="100" cy="100" r="66" fill="none" strokeWidth="1.6" />
+            <text className="font-mono" fontSize="12.5" fontWeight="600" stroke="none" letterSpacing="2">
+              <textPath href={`#ring-${id}`} textLength="492" lengthAdjust="spacing">
+                QUALITY ENGINEER ✦ INSPECTED ✦ SINCE 2021 ✦
+              </textPath>
+            </text>
+            <text x="100" y="84" textAnchor="middle" className="font-mono" fontSize="11" fontWeight="600" stroke="none" letterSpacing="2">
+              5+ YRS
+            </text>
+            <text x="100" y="113" textAnchor="middle" fontSize="31" fontWeight="800" stroke="none" style={{ fontStretch: '125%' }}>
+              PASSED
+            </text>
+            <line x1="56" y1="124" x2="144" y2="124" strokeWidth="1.6" />
+            <text x="100" y="140" textAnchor="middle" className="font-mono" fontSize="10" fontWeight="600" stroke="none" letterSpacing="2">
+              AK · 2026
+            </text>
+          </g>
+        </svg>
+      </motion.div>
+    </div>
+  )
+}
+
+/** One line of the name, sliding up out of its own mask on load. */
+function NameLine({ children, delay }) {
+  const reduce = useReducedMotion()
+  return (
+    <span className="block overflow-hidden pb-[0.06em]">
+      <motion.span
+        className="block"
+        initial={reduce ? false : { y: '105%', opacity: 0 }}
+        animate={{ y: '0%', opacity: 1 }}
+        transition={{ duration: 1, ease, delay }}
+      >
+        {children}
+      </motion.span>
     </span>
   )
 }
 
-/** Text that resolves out of random glyphs, like a signal locking on. */
-function Decode({ text, run, delay = 0 }) {
-  const reduce = useReducedMotion()
-  const [out, setOut] = useState(reduce ? text : '')
-  useEffect(() => {
-    if (!run || reduce) {
-      if (reduce) setOut(text)
-      return
-    }
-    let frame = 0
-    let id
-    const start = setTimeout(() => {
-      id = setInterval(() => {
-        frame++
-        const locked = Math.floor(frame / 2)
-        setOut(
-          [...text]
-            .map((ch, i) => (ch === ' ' || i < locked ? ch : GLYPHS[Math.floor(Math.random() * GLYPHS.length)]))
-            .join(''),
-        )
-        if (locked >= text.length) clearInterval(id)
-      }, 30)
-    }, delay * 1000)
-    return () => {
-      clearTimeout(start)
-      clearInterval(id)
-    }
-  }, [text, run, delay, reduce])
-  return <span aria-hidden>{out || ' '}</span>
-}
+const fade = (delay) => ({
+  initial: { opacity: 0, y: 14 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.7, ease, delay },
+})
 
-/** Cycles through focus areas, decoding each one in. */
-function RoleTicker({ run }) {
-  const [i, setI] = useState(0)
-  useEffect(() => {
-    if (!run) return
-    const t = setInterval(() => setI((v) => (v + 1) % roles.length), 3200)
-    return () => clearInterval(t)
-  }, [run])
-  return <Decode key={i} text={roles[i]} run={run} delay={i === 0 ? 0.6 : 0} />
-}
-
-/** A small satellite on a tilted orbit around the name, passing behind it on the far side. */
-function Satellite({ reduce }) {
-  const angle = useMotionValue(Math.PI * 0.15)
-  useAnimationFrame((_, delta) => {
-    if (!reduce) angle.set(angle.get() + delta * 0.00035)
-  })
-  const left = useTransform(angle, (a) => `${50 + Math.cos(a) * 54}%`)
-  const top = useTransform(angle, (a) => `${50 + Math.sin(a) * 42}%`)
-  const front = useTransform(angle, (a) => Math.sin(a) > 0)
-  const z = useTransform(front, (f) => (f ? 3 : 0))
-  const scale = useTransform(angle, (a) => 0.7 + (Math.sin(a) + 1) * 0.18)
-  const opacity = useTransform(angle, (a) => 0.45 + (Math.sin(a) + 1) * 0.27)
+export default function Hero() {
   return (
-    <motion.div aria-hidden className="pointer-events-none absolute" style={{ left, top, zIndex: z }}>
-      <motion.svg viewBox="0 0 64 28" className="-ml-6 -mt-3 w-12" style={{ scale, opacity }}>
-        <rect x="1" y="9" width="20" height="10" rx="1" fill="#0d2e30" stroke="#5ee6c8" strokeWidth="1" />
-        <rect x="43" y="9" width="20" height="10" rx="1" fill="#0d2e30" stroke="#5ee6c8" strokeWidth="1" />
-        <path d="M8 9v10M14 9v10M50 9v10M56 9v10" stroke="#5ee6c8" strokeWidth="0.6" />
-        <path d="M21 14h5M38 14h5" stroke="#cfdcf3" strokeWidth="1.2" />
-        <rect x="26" y="7" width="12" height="14" rx="2" fill="#dfe7f5" />
-        <rect x="28.5" y="10" width="7" height="4" rx="0.8" fill="#1f9e86" />
-        <path d="M32 7V3" stroke="#dfe7f5" strokeWidth="1" />
-        <circle cx="32" cy="2.5" r="1.4" fill="#b79cff" />
-      </motion.svg>
-    </motion.div>
-  )
-}
-
-export default function Hero({ ready, intro = true }) {
-  const reduce = useReducedMotion()
-  const ref = useRef(null)
-
-  // Scrolling away lifts the content and fades it into the sky.
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const lift = useTransform(p, [0, 1], ['0%', '-30%'])
-  const fade = useTransform(p, [0, 0.6], [1, 0])
-
-  const show = (delay) => ({
-    initial: intro ? { opacity: 0, y: 16 } : false,
-    animate: ready ? { opacity: 1, y: 0 } : undefined,
-    transition: { duration: 0.8, ease, delay },
-  })
-
-  return (
-    <section ref={ref} id="top" className="relative flex min-h-svh flex-col pb-[22svh] pt-28">
-      <motion.div style={reduce ? undefined : { y: lift, opacity: fade }} className="shell flex flex-1 flex-col items-center justify-center text-center">
-        <motion.p {...show(0.7)} className="label inline-flex items-center gap-2.5">
-          <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
-          {profile.company} · {profile.location}
-        </motion.p>
-
-        <div className="relative mt-6 isolate">
-          <motion.svg
-            aria-hidden
-            viewBox="0 0 100 40"
-            preserveAspectRatio="none"
-            className="pointer-events-none absolute -inset-x-[8%] -inset-y-[20%] -z-10 h-[140%] w-[116%]"
-            initial={intro ? { opacity: 0 } : false}
-            animate={ready ? { opacity: 1 } : undefined}
-            transition={{ duration: 1.2, delay: 0.8 }}
-          >
-            <ellipse cx="50" cy="20" rx="46" ry="16" fill="none" stroke="rgb(94 230 200 / 0.2)" strokeWidth="0.15" strokeDasharray="0.6 0.9" vectorEffect="non-scaling-stroke" />
-          </motion.svg>
-          <h1 className="relative z-[1] font-display text-[clamp(3.25rem,10vw,7.5rem)] font-normal leading-[0.95] tracking-[-0.01em]">
-            <span className="sr-only">Abhishek Kumar, {profile.role}</span>
-            <Letters text="Abhishek" ready={ready} intro={intro} delay={0.05} />{' '}
-            <span className="italic text-accent">
-              <Letters text="Kumar" ready={ready} intro={intro} delay={0.25} />
-            </span>
-          </h1>
-          {ready && <Satellite reduce={reduce} />}
-        </div>
-
-        <motion.p {...show(0.5)} className="mt-6 max-w-lg text-base leading-relaxed text-mute md:text-lg">
-          <span className="text-fg">Quality Engineer</span> building scalable test automation for web, desktop and API
-          experiences, so teams release with speed and confidence.
-        </motion.p>
-
-        <motion.p {...show(0.6)} className="mt-5 font-mono text-xs uppercase tracking-[0.16em] text-mute">
-          <span className="sr-only">Focus: {roles.join(', ')}</span>
-          Focus ▸ <span className="text-accent"><RoleTicker run={ready} /></span>
-        </motion.p>
-
-        <motion.div {...show(0.7)} className="mt-9 flex flex-wrap items-center justify-center gap-3">
-          <Magnetic>
-            <a href="#work" className="group inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">
-              <Roll>Explore the mission</Roll>
-              <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:rotate-45" />
-            </a>
-          </Magnetic>
-          <Magnetic>
-            <a href={resume} download className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-medium transition-colors hover:border-accent">
-              <Roll>Resume</Roll> <Download size={15} />
-            </a>
-          </Magnetic>
-        </motion.div>
+    <section id="top" className="pad pb-14 pt-24 md:pb-20 md:pt-32">
+      {/* document header line */}
+      <motion.div {...fade(0)} className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ink pb-3">
+        <p className="label text-ink">Quality inspection record</p>
+        <p className="label figure">Doc AK-QE-2026 · Issued Oct 2026</p>
       </motion.div>
 
-      <motion.a
-        href="#about"
-        {...show(0.9)}
-        className="absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 text-mute hover:text-fg"
-        aria-label="Scroll to about"
+      <div className="relative">
+        <h1 className="display mt-8 text-[clamp(2.7rem,10.5vw,8.6rem)] uppercase md:mt-12">
+          <span className="sr-only">Abhishek Kumar, Quality Engineer</span>
+          <span aria-hidden>
+            <NameLine delay={0.1}>Abhishek</NameLine>
+            <NameLine delay={0.22}>
+              Kumar<span className="text-stamp">.</span>
+            </NameLine>
+          </span>
+        </h1>
+        <Stamp className="absolute right-0 top-[44%] hidden h-48 w-48 lg:block xl:right-4 xl:h-56 xl:w-56" />
+      </div>
+
+      <div className="mt-8 flex items-start justify-between gap-5 md:mt-10">
+        <motion.p {...fade(0.45)} className="max-w-[46ch] text-[clamp(1.05rem,1.6vw,1.3rem)] leading-snug">
+          <strong className="font-semibold">Quality Engineer</strong> at Optum, building Tricentis Tosca automation for web, desktop and API
+          testing, so teams release with speed and confidence.
+        </motion.p>
+        <Stamp className="-mt-4 h-28 w-28 shrink-0 sm:h-36 sm:w-36 lg:hidden" delay={0.9} />
+      </div>
+
+      <motion.div {...fade(0.6)} className="mt-8 flex flex-wrap gap-3">
+        <a href={resume} download className="btn btn-solid">
+          <Download size={16} aria-hidden /> Download resume
+        </a>
+        <a href={`mailto:${profile.email}`} className="btn btn-line">
+          <Mail size={16} aria-hidden /> Email
+        </a>
+        <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="btn btn-line">
+          LinkedIn <ArrowUpRight size={16} aria-hidden />
+        </a>
+      </motion.div>
+
+      {/* title block: who and what is being inspected */}
+      <motion.dl
+        {...fade(0.75)}
+        className="mt-12 grid grid-cols-1 border-l border-t border-ink sm:grid-cols-2 lg:grid-cols-3 md:mt-16"
       >
-        <span className="label">Scroll</span>
-        <motion.span animate={reduce ? undefined : { y: [0, 6, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}>
-          <ArrowDown size={14} />
-        </motion.span>
-      </motion.a>
+        {record.map(([k, v]) => (
+          <div key={k} className="min-w-0 border-b border-r border-ink px-4 py-3">
+            <dt className="label">{k}</dt>
+            <dd className="mt-1 text-[15px] font-medium">{v}</dd>
+          </div>
+        ))}
+      </motion.dl>
+
+      {/* result summary */}
+      <motion.div {...fade(0.9)} className="mt-6 grid grid-cols-2 gap-px border border-ink bg-ink lg:grid-cols-4">
+        {stats.map((s) => (
+          <div key={s.k} className="bg-sheet px-4 py-5">
+            <p className="display text-[clamp(2.2rem,4vw,3.2rem)]">
+              <Counter to={s.v} suffix={s.suffix} />
+            </p>
+            <p className="mt-2 max-w-[22ch] text-[13px] leading-snug text-ink-2">{s.k}</p>
+          </div>
+        ))}
+      </motion.div>
     </section>
   )
 }
