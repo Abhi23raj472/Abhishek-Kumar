@@ -6,18 +6,18 @@ export const profile = {
   location: 'India',
   email: 'rajputabhishek677@gmail.com',
   linkedin: 'https://www.linkedin.com/in/abhishek-kumar2301',
+  github: 'https://github.com/Abhi23raj472',
   resume: 'Abhishek_Kumar_Resume.pdf',
 }
 
-// Report sections, in order. `no` is the section number printed in the margin.
 export const nav = [
-  { id: 'about', no: '1.0', label: 'Summary' },
-  { id: 'work', no: '2.0', label: 'Scope' },
-  { id: 'impact', no: '3.0', label: 'Findings' },
-  { id: 'experience', no: '4.0', label: 'Record' },
-  { id: 'skills', no: '5.0', label: 'Skills' },
-  { id: 'credentials', no: '6.0', label: 'Certified' },
-  { id: 'contact', no: '7.0', label: 'Contact' },
+  { id: 'about', label: 'About' },
+  { id: 'work', label: 'Work' },
+  { id: 'impact', label: 'Impact' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'credentials', label: 'Awards' },
+  { id: 'contact', label: 'Contact' },
 ]
 
 export const roles = [
@@ -36,7 +36,7 @@ export const stats = [
   { v: 5, suffix: '+', k: 'years in quality engineering' },
   { v: 12, suffix: '', k: 'certifications earned' },
   { v: 4, suffix: '', k: 'awards & recognitions' },
-  { v: 0, suffix: '', k: 'UAT escalations across sprint cycles' },
+  { v: 2, suffix: '', k: 'global enterprises' },
 ]
 
 export const marquee = [
@@ -111,19 +111,19 @@ export const experience = [
 ]
 
 export const impact = [
-  { code: 'I-01', title: 'Faster regression cycles', metric: 'Regression cycle time', dir: 'down', body: 'Reduced regression cycle duration by modularizing test cases and enabling distributed execution.' },
-  { code: 'I-02', title: 'Broader API coverage', metric: 'API test coverage', dir: 'up', body: 'Increased API test coverage through automated validation of payloads, status codes and authentication.' },
-  { code: 'I-03', title: 'Lower maintenance', metric: 'Maintenance effort', dir: 'down', body: 'Minimized maintenance effort by building reusable templates and centralizing test data in TCD.' },
-  { code: 'I-04', title: 'Higher DEX throughput', metric: 'DEX throughput', dir: 'up', body: 'Improved Tosca DEX throughput through optimized agent load balancing and parallel run configuration.' },
-  { code: 'I-05', title: 'Zero UAT escalations', metric: 'UAT escalations', dir: 'zero', body: 'Delivered defect-free releases across multiple sprint cycles with zero UAT escalations, recognized by the client.' },
-  { code: 'I-06', title: 'Ahead of schedule', metric: 'Delivery date', dir: 'early', body: 'Delivered critical automation ahead of schedule, improving QA timelines and early feedback cycles.' },
+  { code: 'I-01', title: 'Faster regression cycles', body: 'Reduced regression cycle duration by modularizing test cases and enabling distributed execution.' },
+  { code: 'I-02', title: 'Broader API coverage', body: 'Increased API test coverage through automated validation of payloads, status codes and authentication.' },
+  { code: 'I-03', title: 'Lower maintenance', body: 'Minimized maintenance effort by building reusable templates and centralizing test data in TCD.' },
+  { code: 'I-04', title: 'Higher DEX throughput', body: 'Improved Tosca DEX throughput through optimized agent load balancing and parallel run configuration.' },
+  { code: 'I-05', title: 'Zero UAT escalations', body: 'Delivered defect-free releases across multiple sprint cycles with zero UAT escalations, recognized by the client.' },
+  { code: 'I-06', title: 'Ahead of schedule', body: 'Delivered critical automation ahead of schedule, improving QA timelines and early feedback cycles.' },
 ]
 
 export const certs = [
   { org: 'Tricentis Academy', items: ['AS1', 'AS2', 'TDS1', 'TDS2', 'AE1', 'API', 'TQL'] },
   { org: 'ISTQB', items: ['Certified Tester — Foundation Level'] },
-  { org: 'Optum.ai', items: ['Generative AI · AI Dojo · Mar 2026'] },
-  { org: 'Allianz', items: ['ABS (L1)', 'SQL Certification', 'Agile with Atlassian Jira'] },
+  { org: 'Generative AI', items: ['Optum.ai AI Dojo · Mar 2026'] },
+  { org: 'Other', items: ['Allianz ABS (L1)', 'SQL Certification', 'Agile with Atlassian Jira'] },
 ]
 
 export const awards = [
@@ -135,12 +135,12 @@ export const awards = [
 
 export const education = { degree: 'Bachelor of Technology — Computer Science & Engineering', school: 'Galgotias University, Greater Noida, UP', year: '2021' }
 
-// The hero's title block.
+// About: read out like a mission record.
 export const record = [
   ['Name', 'Abhishek Kumar'],
   ['Role', 'Quality Engineer'],
   ['Organisation', 'Optum Global Solutions, UnitedHealth Group'],
-  ['Location', 'India'],
+  ['Base', 'India'],
   ['Experience', '5+ years in quality engineering'],
   ['Specialty', 'Tricentis Tosca, API validation, CI/CD'],
 ]
@@ -153,20 +153,13 @@ export const skillCats = [
   { id: 'delivery', label: 'Delivery & tools' },
 ]
 
-// Added most recently (from the 2026 resume), shown first in Skills.
-export const latest = [
-  { name: 'Generative AI', note: 'Optum.ai AI Dojo', date: 'Mar 2026' },
-  { name: 'Recovery & cleanup scenarios', note: 'Stable Tosca runs on unstable environments', date: 'Optum' },
-  { name: 'Suite-health reporting', note: 'Daily regression reports from CI/CD runs', date: 'Optum' },
-]
-
 export const skillCloud = [
   ['Tricentis Tosca', 'automation', 3],
   ['XScan', 'automation', 2],
   ['TCD', 'automation', 2],
   ['Tosca DEX', 'automation', 3],
   ['TQL', 'automation', 1],
-  ['Recovery & cleanup scenarios', 'automation', 1],
+  ['Recovery scenarios', 'automation', 1],
   ['Reusable modules', 'automation', 2],
   ['REST', 'api', 3],
   ['SOAP', 'api', 2],
@@ -194,6 +187,4 @@ export const skillCloud = [
   ['Kanban', 'delivery', 1],
   ['SDLC', 'delivery', 1],
   ['STLC', 'delivery', 1],
-  ['Generative AI', 'delivery', 2],
-  ['MS Word, Excel, PowerPoint', 'delivery', 1],
 ]

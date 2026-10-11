@@ -1,10 +1,16 @@
-import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUp, ArrowUpRight, Check, Copy, Download, Mail } from 'lucide-react'
-import { profile } from '../data'
-import { Reveal, Section, ease } from '../lib/motion'
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { ArrowUp, ArrowUpRight, Check, Copy } from 'lucide-react'
+import { nav, profile } from '../data'
+import { Magnetic, RevealWords, Roll, ease } from '../lib/motion'
 
 const resume = `./${profile.resume}`
+const socials = [
+  { k: 'LinkedIn', href: profile.linkedin },
+  { k: 'GitHub', href: profile.github },
+  { k: 'Resume', href: resume, download: true },
+]
+const label = 'font-mono text-[11px] uppercase tracking-[0.18em] text-mute'
 
 function useIndiaTime() {
   const [t, setT] = useState('')
@@ -17,8 +23,18 @@ function useIndiaTime() {
   return t
 }
 
-function CopyEmail() {
+export default function Contact() {
+  const ref = useRef(null)
+  const reduce = useReducedMotion()
   const [copied, setCopied] = useState(false)
+  const time = useIndiaTime()
+
+  // The headline settles into place as the footer scrolls up.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.25'] })
+  const scale = useTransform(scrollYProgress, [0, 1], [0.92, 1])
+  const y = useTransform(scrollYProgress, [0, 1], [60, 0])
+  const opacity = useTransform(scrollYProgress, [0, 1], [0.3, 1])
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(profile.email)
@@ -28,88 +44,101 @@ function CopyEmail() {
       window.location.href = `mailto:${profile.email}`
     }
   }
+
   return (
-    <button type="button" onClick={copy} className="btn btn-line min-w-[150px] justify-center overflow-hidden">
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.span
-          key={copied ? 'y' : 'n'}
-          initial={{ y: 14, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -14, opacity: 0 }}
-          transition={{ duration: 0.2, ease }}
-          className="inline-flex items-center gap-2"
+    <footer id="contact" ref={ref} className="relative overflow-hidden border-t border-line bg-bg/60 pt-24 backdrop-blur-sm md:pt-32">
+      <div className="shell">
+        <p className={label}>
+          <span className="text-accent">07</span>&nbsp;&nbsp;&nbsp;Contact
+        </p>
+
+        <motion.h2
+          style={reduce ? undefined : { scale, y, opacity }}
+          className="mt-6 max-w-3xl origin-bottom-left font-display text-[clamp(2.5rem,6vw,4.75rem)] font-normal leading-[1.02]"
         >
-          {copied ? <Check size={16} aria-hidden /> : <Copy size={16} aria-hidden />}
-          {copied ? 'Copied' : 'Copy email'}
-        </motion.span>
-      </AnimatePresence>
-    </button>
-  )
-}
+          Open a channel for your <span className="italic text-accent">next launch.</span>
+        </motion.h2>
 
-export default function Contact() {
-  const time = useIndiaTime()
-  const year = new Date().getFullYear()
-  return (
-    <>
-      <Section
-        id="contact"
-        no="7.0"
-        label="Contact"
-        title="Let's talk about your next release."
-        intro="Have a quality engineering challenge, or want to talk test automation? Tell me about your release pipeline."
-      >
-        <Reveal>
-          <a
-            href={`mailto:${profile.email}`}
-            className="display block break-all text-[clamp(1.35rem,4.2vw,3rem)] leading-tight decoration-stamp decoration-2 underline-offset-[0.18em] hover:text-stamp hover:underline"
-          >
-            {profile.email}
-          </a>
-        </Reveal>
-        <Reveal delay={0.1} className="mt-8 flex flex-wrap gap-3">
-          <a href={`mailto:${profile.email}`} className="btn btn-solid">
-            <Mail size={16} aria-hidden /> Email me
-          </a>
-          <CopyEmail />
-          <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="btn btn-line">
-            LinkedIn <ArrowUpRight size={16} aria-hidden />
-          </a>
-          <a href={resume} download className="btn btn-line">
-            <Download size={16} aria-hidden /> Resume
-          </a>
-        </Reveal>
+        <div className="mt-10 grid gap-8 md:grid-cols-12 md:items-end">
+          <RevealWords
+            text="Have a quality engineering challenge or want to talk test automation? Tell me about your release pipeline and how it ships."
+            className="max-w-md text-base leading-relaxed text-mute md:col-span-6"
+          />
+          <div className="flex flex-wrap items-center gap-3 md:col-span-6 md:justify-end">
+            <Magnetic>
+              <a href={`mailto:${profile.email}`} className="group inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">
+                <Roll>Get in touch</Roll>
+                <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:rotate-45" />
+              </a>
+            </Magnetic>
+            <button
+              type="button"
+              onClick={copy}
+              className="inline-flex min-w-[15.5rem] items-center justify-center overflow-hidden rounded-full border border-line px-5 py-2.5 font-mono text-[13px] transition-colors hover:bg-fg/5"
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={copied ? 'y' : 'n'}
+                  initial={{ y: 14, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -14, opacity: 0 }}
+                  transition={{ duration: 0.2, ease }}
+                  className="inline-flex items-center gap-2"
+                >
+                  {copied ? <Check size={14} /> : <Copy size={14} />}
+                  {copied ? 'Copied to clipboard' : profile.email}
+                </motion.span>
+              </AnimatePresence>
+            </button>
+          </div>
+        </div>
 
-        {/* sign-off block, as at the foot of an inspection record */}
-        <Reveal delay={0.15} className="mt-14 grid border-l border-t border-ink sm:grid-cols-3">
-          <div className="border-b border-r border-ink px-4 py-4">
-            <p className="label">Inspected by</p>
-            <p className="mt-6 border-b border-ink pb-1 text-[17px] font-bold" style={{ fontStretch: '112%' }}>
-              {profile.name}
+        <div className="mt-20 grid gap-10 border-t border-line py-10 text-sm sm:grid-cols-3">
+          <div>
+            <p className={label}>Elsewhere</p>
+            <ul className="mt-3 space-y-0.5">
+              {socials.map((s) => (
+                <li key={s.k}>
+                  <a
+                    href={s.href}
+                    {...(s.download ? { download: true } : { target: '_blank', rel: 'noopener noreferrer' })}
+                    className="group inline-flex items-center gap-1 py-1.5 text-mute hover:text-fg"
+                  >
+                    <Roll>{s.k}</Roll>
+                    <ArrowUpRight size={13} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className={label}>Sections</p>
+            <ul className="mt-3 grid grid-cols-2 gap-x-4">
+              {nav.slice(0, -1).map((n) => (
+                <li key={n.id}>
+                  <a href={`#${n.id}`} className="inline-block py-1.5 text-mute hover:text-fg"><Roll>{n.label}</Roll></a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="sm:text-right">
+            <p className={label}>Local time</p>
+            <p className="mt-4 text-lg tabular-nums">
+              {time} <span className="text-xs text-mute">IST</span>
             </p>
-            <p className="mt-1.5 text-[13px] text-ink-2">{profile.role}</p>
+            <a href="#top" className="group mt-3 inline-flex items-center gap-1.5 py-1.5 text-mute hover:text-fg">
+              <Roll>Back to top</Roll> <ArrowUp size={14} className="transition-transform group-hover:-translate-y-0.5" />
+            </a>
           </div>
-          <div className="border-b border-r border-ink px-4 py-4">
-            <p className="label">Location</p>
-            <p className="mt-6 text-[17px] font-semibold">{profile.location}</p>
-            <p className="figure mt-1.5 text-[13px] text-ink-2">{time ? `${time} IST` : 'IST, UTC+5:30'}</p>
-          </div>
-          <div className="border-b border-r border-ink px-4 py-4">
-            <p className="label">Record</p>
-            <p className="mt-6 text-[17px] font-semibold">Doc AK-QE-2026</p>
-            <p className="mt-1.5 text-[13px] text-ink-2">Issued Oct 2026</p>
-          </div>
-        </Reveal>
-      </Section>
+        </div>
+      </div>
 
-      <footer className="pad flex flex-wrap items-center justify-between gap-3 border-t-2 border-ink py-6 font-mono text-[12px] uppercase tracking-[0.12em] text-ink-2">
-        <span>
-          © {year} {profile.name}
-        </span>
-        <a href="#top" className="inline-flex min-h-[44px] items-center gap-1.5 hover:text-ink">
-          Back to top <ArrowUp size={14} aria-hidden />
-        </a>
-      </footer>
-    </>
+      <div className="border-t border-line">
+        <div className="shell flex flex-wrap justify-between gap-2 py-6 font-mono text-[11px] uppercase tracking-[0.16em] text-mute">
+          <span>© {new Date().getFullYear()} {profile.name}</span>
+          <span>Built with React &amp; Framer Motion</span>
+        </div>
+      </div>
+    </footer>
   )
 }

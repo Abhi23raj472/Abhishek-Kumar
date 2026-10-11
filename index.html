@@ -8,7 +8,7 @@
     <meta name="author" content="Abhishek Kumar" />
     <meta name="google-site-verification" content="AibNwcviTGMCdOVkGT77zfWSPhGmv-8xL150qojgdfA" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta name="theme-color" content="#e4e8eb" />
+    <meta name="theme-color" content="#04080b" />
     <link rel="canonical" href="https://abhi23raj472.github.io/Abhishek-Kumar/" />
 
     <!-- Link previews (LinkedIn, WhatsApp, Slack, X) -->
@@ -20,7 +20,7 @@
     <meta property="og:image" content="https://abhi23raj472.github.io/Abhishek-Kumar/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Abhishek Kumar, Quality Engineer: inspection record title block with a PASSED stamp" />
+    <meta property="og:image:alt" content="Abhishek Kumar, Quality Engineer, over a view of Earth from orbit" />
     <meta property="profile:first_name" content="Abhishek" />
     <meta property="profile:last_name" content="Kumar" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -62,13 +62,13 @@
     </script>
 
     <script>
-      // Apply the theme before first paint: the visitor's saved choice, else the system setting.
+      // Apply the remembered theme before first paint. Dark is the default.
       (function () {
         var t
         try { t = localStorage.getItem('ak-portfolio-theme') } catch (e) {}
-        if (t !== 'light' && t !== 'dark') t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        t = t === 'light' ? 'light' : 'dark'
         document.documentElement.dataset.theme = t
-        document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#0b0f12' : '#e4e8eb')
+        if (t === 'light') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#eef1f5')
       })()
     </script>
   </head>
