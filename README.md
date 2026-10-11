@@ -10,7 +10,7 @@ The site is a flight from Earth orbit into deep space:
 - **About**: a porthole radar scope and a crew record that types itself out.
 - **What I do**: each area of work is a small rotating planet.
 - **Impact**: results arrive as downlink packets with live signal traces.
-- **Experience**: a flight path; each job is a mission card with its log, and a sticky flight computer follows the mission on screen with the whole career on one bar.
+- **Experience**: a rocket launch. A sticky altitude gauge beside the stages (launch pad, Stage 1, Orbit) has a rocket that climbs as you scroll and drops its booster on reaching orbit; each job card leads with its key wins, with the full flight log folded underneath. Phones get a slim altitude bar instead.
 - **Skills**: the latest additions first, a star catalogue of every skill by area with filters, and a radar of the core skills.
 - **Awards & Contact**: awards as mission-patch cards, certifications and a contact footer.
 - **Throughout**: Lenis smooth scrolling, a targeting-reticle cursor that snaps onto links, and rolling link labels.

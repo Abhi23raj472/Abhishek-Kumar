@@ -89,6 +89,12 @@ export const experience = [
       'Help integrate Tosca runs into the CI/CD pipeline and publish daily regression reports on suite health.',
     ],
     tags: ['Tosca', 'XScan', 'TCD', 'Recovery', 'JIRA', 'CI/CD'],
+    // Headline results, shown before the full log.
+    wins: [
+      { k: 'Bravo! Diamond Award', v: 'Caught and escalated a critical production-impacting defect' },
+      { k: 'Stable runs', v: 'Recovery and cleanup scenarios for unreliable environments' },
+      { k: 'CI/CD', v: 'Tosca runs in the pipeline, with daily suite-health reports' },
+    ],
   },
   {
     role: 'Senior Software Engineer',
@@ -106,6 +112,11 @@ export const experience = [
       'Mentored teammates through test reviews and led retrospectives to raise QA standards across the team.',
     ],
     tags: ['Tosca', 'DEX', 'TQL', 'API', 'SoapUI', 'Mentoring'],
+    wins: [
+      { k: 'Applause Award', v: 'Cut regression cycle time by modularizing and optimizing runs' },
+      { k: 'Frameworks', v: 'Data-driven Tosca TCD frameworks across multiple product lines' },
+      { k: 'Scale', v: 'Distributed, parallel execution on Tosca DEX across remote agents' },
+    ],
   },
 ]
 
