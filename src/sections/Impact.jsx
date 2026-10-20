@@ -9,7 +9,7 @@ const receivers = {
   'I-01': { Icon: Gauge, kind: 'Speed' },
   'I-02': { Icon: ShieldCheck, kind: 'Coverage' },
   'I-03': { Icon: Wrench, kind: 'Effort' },
-  'I-04': { Icon: Network, kind: 'Throughput' },
+  'I-04': { Icon: Network, kind: 'Scale' },
   'I-05': { Icon: BadgeCheck, kind: 'Quality' },
   'I-06': { Icon: CalendarCheck, kind: 'Delivery' },
 }
