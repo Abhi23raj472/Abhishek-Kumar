@@ -28,10 +28,10 @@ const THEME_KEY = 'ak-portfolio-theme'
 
 // Every palette lives in index.css under :root[data-theme="…"]; these are the swatches shown in the picker.
 export const THEMES = [
-  { id: 'dark', name: 'Mission blue', mode: 'Dark', sw: ['#04060d', '#7fb2ff', '#f4c27a'] },
-  { id: 'aurora', name: 'Aurora', mode: 'Dark', sw: ['#020f10', '#5eead4', '#c4b5fd'] },
-  { id: 'nebula', name: 'Nebula', mode: 'Dark', sw: ['#0a0614', '#d0a8ff', '#ff9ec7'] },
-  { id: 'supernova', name: 'Supernova', mode: 'Dark', sw: ['#0d0604', '#ff8a5b', '#ffd166'] },
+  { id: 'dark', name: 'Mission blue', mode: 'Dark', sw: ['#060b22', '#7fb2ff', '#f4c27a'] },
+  { id: 'aurora', name: 'Aurora', mode: 'Dark', sw: ['#031a1b', '#5eead4', '#c4b5fd'] },
+  { id: 'nebula', name: 'Nebula', mode: 'Dark', sw: ['#100827', '#d0a8ff', '#ff9ec7'] },
+  { id: 'supernova', name: 'Supernova', mode: 'Dark', sw: ['#180a06', '#ff8a5b', '#ffd166'] },
   { id: 'eclipse', name: 'Eclipse', mode: 'Dark', sw: ['#000000', '#ffffff', '#e8c27a'] },
   { id: 'light', name: 'Solar flare', mode: 'Light', sw: ['#f7f3ec', '#a9530a', '#1d5f9e'] },
   { id: 'arctic', name: 'Arctic', mode: 'Light', sw: ['#eef4f8', '#0b6e99', '#b5307a'] },
@@ -273,7 +273,7 @@ export default function Nav() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
-              <a href={resume} download className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">Download resume</a>
+              <a href={resume} download className="btn-glow rounded-full px-5 py-2.5 text-sm font-medium">Download resume</a>
               <a href={`mailto:${profile.email}`} className="rounded-full border border-line px-5 py-2.5 text-sm font-medium">Email me</a>
             </motion.div>
           </motion.div>

@@ -66,6 +66,9 @@ const charRise = {
  * Title whose letters rise and untwist one after another as it enters the
  * viewport. It plays once and then stays put, so a title never sits hidden.
  */
+/** Colour for letter i of n: steps from the accent to the second colour across the word. */
+export const blend = (i, n) => `color-mix(in oklab, var(--accent) ${Math.round(100 - (n > 1 ? (i / (n - 1)) * 100 : 0))}%, var(--signal))`
+
 export function SplitChars({ text, highlight = [], className = '' }) {
   const words = text.split(' ')
   return (
@@ -84,7 +87,12 @@ export function SplitChars({ text, highlight = [], className = '' }) {
           <span key={i}>
             <span className={`inline-block whitespace-nowrap ${highlight.includes(bare(w)) ? 'italic text-accent' : ''}`}>
               {[...w].map((ch, j) => (
-                <motion.span key={j} className="inline-block origin-bottom-left" variants={charRise}>
+                <motion.span
+                  key={j}
+                  className="inline-block origin-bottom-left"
+                  variants={charRise}
+                  style={highlight.includes(bare(w)) ? { color: blend(j, w.length) } : undefined}
+                >
                   {ch}
                 </motion.span>
               ))}

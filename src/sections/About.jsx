@@ -68,7 +68,7 @@ function Porthole() {
         ))}
       </motion.svg>
       <div className="absolute inset-[6%] rounded-full border border-line bg-[#060a14] p-[5%] shadow-[inset_0_0_40px_rgb(0_0_0/0.8),0_0_60px_rgb(77_141_255/0.08)]">
-        <div className="relative h-full w-full overflow-hidden rounded-full bg-[radial-gradient(circle,#0b1a33,#050913_70%)]">
+        <div className="relative h-full w-full overflow-hidden rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--accent)_16%,#050913),#050913_70%)]">
           {[22, 38, 50].map((r) => (
             <span key={r} aria-hidden className="absolute rounded-full border border-[rgb(143_196_255/0.15)]" style={{ inset: `${50 - r}%` }} />
           ))}
@@ -98,9 +98,9 @@ function Stats({ className = '' }) {
     <dl className={`grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line ${className}`}>
       {stats.map((s) => (
         <div key={s.k} className="bg-bg/80 p-4">
-          <dd className="font-display text-4xl">
+          <dd className="text-gradient w-fit font-display text-4xl">
             <Counter to={s.v} />
-            <span className="text-accent">{s.suffix}</span>
+            <span>{s.suffix}</span>
           </dd>
           <dt className="mt-1 text-xs leading-snug text-mute">{s.k}</dt>
         </div>

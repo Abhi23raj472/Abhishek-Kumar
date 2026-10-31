@@ -503,7 +503,7 @@ export default function SpaceScene({ launched }) {
       starMat.blending = blend
       nebulae.forEach((sp, i) => {
         sp.material.blending = blend
-        sp.material.opacity = sp.userData.opacity * (light ? 1.4 : 1)
+        sp.material.opacity = Math.min(0.45, sp.userData.opacity * (light ? 1.4 : 1) * parseFloat(v('--neb-boost', '1')))
         sp.material.color.set(v(`--neb-${i + 1}`, '#' + new THREE.Color(sp.userData.colors[light ? 1 : 0]).getHexString()))
         sp.material.needsUpdate = true
       })
