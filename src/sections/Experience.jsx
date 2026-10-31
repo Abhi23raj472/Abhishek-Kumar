@@ -287,17 +287,20 @@ export default function Experience() {
   const [separated, setSeparated] = useState(false)
   const track = useRef(null)
   const { scrollYProgress } = useScroll({ target: track, offset: ['start 45%', 'end 85%'] })
-  const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 24 })
+  // The current job is listed first, so the flight reads in reverse: the rocket
+  // starts in orbit and rewinds towards liftoff as you scroll down.
+  const rewind = useTransform(scrollYProgress, (v) => 1 - v)
+  const progress = useSpring(rewind, { stiffness: 90, damping: 24 })
   useMotionValueEvent(progress, 'change', (v) => setSeparated(v > SEPARATE_AT))
 
   return (
-    <section id="experience" className="shell py-24 md:py-36">
+    <section id="experience" className="shell py-16 md:py-24">
       <SectionHead
         index="04"
         kicker="Experience"
         title="From liftoff to orbit."
         highlight={['orbit.']}
-        sub="Five years in two stages. Scroll to fly the route; the booster drops away when the mission reaches orbit."
+        sub="Five years in two stages, current mission first. Scroll down to rewind the flight from orbit back to liftoff."
       />
 
       <div className="grid items-start gap-10 lg:grid-cols-[230px_minmax(0,1fr)] lg:gap-12">
@@ -308,9 +311,13 @@ export default function Experience() {
         <div className="min-w-0">
           <MiniGauge progress={progress} active={active} />
           <ol ref={track} className="space-y-6">
-            {stages.slice(1).map((s, i) => (
-              <StageCard key={s.id} s={s} i={i + 1} onActive={setActive} />
-            ))}
+            {stages
+              .map((s, i) => ({ s, i }))
+              .slice(1)
+              .reverse()
+              .map(({ s, i }) => (
+                <StageCard key={s.id} s={s} i={i} onActive={setActive} />
+              ))}
           </ol>
         </div>
       </div>

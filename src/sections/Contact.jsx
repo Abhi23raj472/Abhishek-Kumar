@@ -45,7 +45,7 @@ export default function Contact() {
   }
 
   return (
-    <footer id="contact" ref={ref} className="relative overflow-hidden border-t border-line bg-bg/60 pt-24 backdrop-blur-sm md:pt-32">
+    <footer id="contact" ref={ref} className="relative overflow-hidden border-t border-line bg-bg/60 pt-16 backdrop-blur-sm md:pt-24">
       <div className="shell">
         <p className={label}>
           <span className="text-accent">07</span>&nbsp;&nbsp;&nbsp;Contact

@@ -258,7 +258,7 @@ export default function Skills() {
   const [filter, setFilter] = useState('all')
   const [active, setActive] = useState(null)
   return (
-    <section id="skills" className="shell py-24 md:py-36">
+    <section id="skills" className="shell py-16 md:py-24">
       <SectionHead
         index="05"
         kicker="Skills"

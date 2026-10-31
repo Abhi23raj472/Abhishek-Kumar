@@ -26,7 +26,7 @@ function Patch({ a, i }) {
 
 export default function Credentials() {
   return (
-    <section id="credentials" className="shell py-24 md:py-32">
+    <section id="credentials" className="shell py-16 md:py-24">
       <SectionHead index="06" kicker="Recognition" title="Commendations along the way." highlight={['along', 'the', 'way.']} />
 
       <Stagger className="grid gap-3 md:grid-cols-2" gap={0.1}>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring } from 'framer-motion'
-import { BadgeCheck, CalendarCheck, Gauge, Network, Satellite, ShieldCheck, Wrench } from 'lucide-react'
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion'
+import { BadgeCheck, CalendarCheck, Gauge, Network, ShieldCheck, Wrench } from 'lucide-react'
 import { impact } from '../data'
 import { SectionHead, ease } from '../lib/motion'
 
@@ -12,6 +12,14 @@ const receivers = {
   'I-04': { Icon: Network, kind: 'Scale' },
   'I-05': { Icon: BadgeCheck, kind: 'Quality' },
   'I-06': { Icon: CalendarCheck, kind: 'Delivery' },
+}
+
+// The headline figure for each result, where the result has one.
+const metrics = {
+  'I-01': { v: '40%', u: 'faster' },
+  'I-02': { v: '120', u: 'API tests' },
+  'I-03': { v: '50%', u: 'less upkeep' },
+  'I-04': { v: '200+', u: 'runs a day' },
 }
 
 const prerendering = typeof window === 'undefined'
@@ -38,7 +46,7 @@ function Decode({ text, run }) {
 function Delivery({ code, fire, arrived, onArrive, reduce }) {
   const { Icon, kind } = receivers[code] ?? receivers['I-01']
   return (
-    <div className="col-start-2 flex h-10 items-center gap-3 lg:col-start-auto">
+    <div className="flex h-10 items-center gap-3">
       <div className="relative h-full flex-1 overflow-hidden">
         <span aria-hidden className="absolute inset-x-0 top-1/2 border-t border-dashed border-line" />
         {/* The part of the track the packet has already travelled glows. */}
@@ -89,7 +97,7 @@ function Delivery({ code, fire, arrived, onArrive, reduce }) {
         </motion.span>
       </span>
       <span
-        className={`w-[5.75rem] shrink-0 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors duration-500 ${
+        className={`hidden w-[5.75rem] shrink-0 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors duration-500 sm:inline ${
           arrived ? 'text-accent' : 'text-mute'
         }`}
       >
@@ -99,76 +107,66 @@ function Delivery({ code, fire, arrived, onArrive, reduce }) {
   )
 }
 
-function Packet({ it, i, total, progress, reduce }) {
-  // Lit once the downlink beam reaches this row; delivered once the packet lands.
-  const threshold = (i + 0.5) / total
+/** One result as a card: a packet flies to its receiver when the card scrolls in, then the figure lands. */
+function Packet({ it, i, reduce }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-15% 0px -15% 0px' })
   const [lit, setLit] = useState(prerendering)
   const [arrived, setArrived] = useState(prerendering)
-  useMotionValueEvent(progress, 'change', (v) => {
-    if (!lit && v >= threshold) setLit(true)
-  })
   useEffect(() => {
     if (reduce) {
       setLit(true)
       setArrived(true)
+      return
     }
-  }, [reduce])
-
-  const spot = useRef(null)
-  const move = (e) => {
-    const r = e.currentTarget.getBoundingClientRect()
-    spot.current?.style.setProperty('--mx', `${e.clientX - r.left}px`)
-    spot.current?.style.setProperty('--my', `${e.clientY - r.top}px`)
-  }
+    if (!inView) return
+    const t = setTimeout(() => setLit(true), (i % 3) * 180)
+    return () => clearTimeout(t)
+  }, [inView, reduce, i])
+  const m = metrics[it.code]
 
   return (
-    <li
-      onPointerMove={move}
-      className="group relative grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-x-4 gap-y-3 border-b border-line py-6 pl-7 last:border-0 md:pl-10 lg:grid-cols-[4rem_minmax(0,1fr)_20rem] lg:gap-x-8"
+    <motion.li
+      ref={ref}
+      initial={{ opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.7, ease, delay: (i % 3) * 0.08 }}
+      className={`panel group relative flex flex-col rounded-2xl p-4 transition-colors duration-500 sm:p-6 ${arrived ? 'border-accent/30' : ''}`}
     >
-      {/* Cursor spotlight */}
-      <span
-        ref={spot}
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{ background: 'radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%)' }}
-      />
-
-      {/* Node on the downlink beam */}
-      <span aria-hidden className="absolute left-0 top-1/2 -ml-[5px] -mt-[5px] md:left-0">
-        <span
-          className={`block h-[10px] w-[10px] rounded-full border transition-all duration-500 ${
-            lit ? 'scale-100 border-accent bg-accent shadow-[0_0_12px_var(--accent)]' : 'scale-75 border-line bg-bg'
-          }`}
-        />
-      </span>
-
-      <span className={`relative font-mono text-xs transition-colors duration-500 ${lit ? 'text-accent' : 'text-mute'}`}>
-        <span className="sr-only">{it.code}</span>
-        <Decode text={it.code} run={lit && !reduce && !prerendering} />
-      </span>
-      <div className="relative min-w-0">
-        <h3 className="font-display text-xl transition-transform duration-300 group-hover:translate-x-1 md:text-2xl">{it.title}</h3>
-        <p className="mt-1 text-sm leading-relaxed text-mute">{it.body}</p>
+      <div className="flex items-center gap-3">
+        <span className={`font-mono text-xs transition-colors duration-500 ${lit ? 'text-accent' : 'text-mute'}`}>
+          <span className="sr-only">{it.code}</span>
+          <Decode text={it.code} run={lit && !reduce && !prerendering} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <Delivery code={it.code} fire={lit} arrived={arrived} reduce={reduce} onArrive={() => setArrived(true)} />
+        </div>
       </div>
 
-      <div className="relative col-start-2 lg:col-start-auto">
-        <Delivery code={it.code} fire={lit} arrived={arrived} reduce={reduce} onArrive={() => setArrived(true)} />
-      </div>
-    </li>
+      {m && (
+        <p className="mt-5 flex items-baseline gap-2 sm:mt-7">
+          <motion.span
+            className="font-display text-[2.6rem] leading-none text-fg sm:text-6xl"
+            initial={false}
+            animate={arrived ? { opacity: 1, y: 0 } : { opacity: 0.25, y: 6 }}
+            transition={{ duration: 0.6, ease }}
+          >
+            {m.v}
+          </motion.span>
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent">{m.u}</span>
+        </p>
+      )}
+      <h3 className={`font-display text-lg leading-tight transition-transform duration-300 group-hover:translate-x-1 sm:text-2xl ${m ? 'mt-3' : 'mt-5 sm:mt-7'}`}>{it.title}</h3>
+      <p className="mt-2 text-[13px] leading-relaxed text-mute sm:text-sm">{it.body}</p>
+    </motion.li>
   )
 }
 
 export default function Impact() {
-  const list = useRef(null)
   const reduce = useReducedMotion()
-  // The beam fills as the list scrolls through the middle of the screen.
-  const { scrollYProgress } = useScroll({ target: list, offset: ['start 70%', 'end 55%'] })
-  const beam = useSpring(scrollYProgress, { stiffness: 120, damping: 24, mass: 0.4 })
-  const fullBeam = reduce || prerendering
-
   return (
-    <section id="impact" className="shell py-24 md:py-36">
+    <section id="impact" className="shell py-16 md:py-24">
       <SectionHead
         index="03"
         kicker="Impact"
@@ -176,32 +174,11 @@ export default function Impact() {
         highlight={['missions.']}
         sub="Results the suites, frameworks and pipelines sent back."
       />
-      <div className="panel relative overflow-hidden rounded-2xl px-5 md:px-8">
-        <div className="hidden grid-cols-[4rem_minmax(0,1fr)_20rem] gap-x-8 border-b border-line py-4 pl-10 lg:grid">
-          {['Packet', 'Result', 'Downlink'].map((h) => (
-            <span key={h} className="label">{h}</span>
-          ))}
-        </div>
-
-        <div className="relative">
-          {/* Downlink beam: a dim rail with a bright fill that follows the scroll. */}
-          <span aria-hidden className="absolute bottom-6 left-0 top-6 w-px bg-line" />
-          <motion.span
-            aria-hidden
-            className="absolute bottom-6 left-0 top-6 w-px origin-top bg-accent shadow-[0_0_10px_var(--accent)]"
-            style={fullBeam ? undefined : { scaleY: beam }}
-          />
-          <span aria-hidden className="absolute -left-[11px] top-0 flex h-6 w-6 items-center justify-center rounded-full border border-line bg-bg text-accent">
-            <Satellite size={12} strokeWidth={1.6} />
-          </span>
-
-          <ul ref={list}>
-            {impact.map((it, i) => (
-              <Packet key={it.code} it={it} i={i} total={impact.length} progress={beam} reduce={reduce} />
-            ))}
-          </ul>
-        </div>
-      </div>
+      <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+        {impact.map((it, i) => (
+          <Packet key={it.code} it={it} i={i} reduce={reduce} />
+        ))}
+      </ul>
     </section>
   )
 }

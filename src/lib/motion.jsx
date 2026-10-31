@@ -186,7 +186,7 @@ export function Counter({ to, suffix = '', className = '' }) {
 /** Numbered section heading with a line that draws in and a word-by-word title. */
 export function SectionHead({ index, kicker, title, highlight = [], sub, className = '' }) {
   return (
-    <div className={`mb-10 md:mb-14 ${className}`}>
+    <div className={`mb-8 md:mb-12 ${className}`}>
       <Reveal className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-mute">
         <span className="text-accent">{index}</span>
         <span>{kicker}</span>

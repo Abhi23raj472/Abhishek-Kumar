@@ -65,7 +65,7 @@ function Planet({ w }) {
 export default function Work() {
   const reduce = useReducedMotion()
   return (
-    <section id="work" className="shell py-24 md:py-36">
+    <section id="work" className="shell py-16 md:py-24">
       <SectionHead
         index="02"
         kicker="What I do"
@@ -74,24 +74,24 @@ export default function Work() {
         sub="The areas I own on a release, from building suites to closing out defects."
       />
 
-      <Stagger className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4" gap={0.12}>
+      <Stagger className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-14 lg:grid-cols-4" gap={0.12}>
         {doing.map((d, i) => {
           const w = worlds[i % worlds.length]
           return (
             <StaggerItem key={d.code} className="group flex flex-col items-center text-center" data-cursor>
               <motion.div
-                className="grid h-44 place-items-center"
+                className="grid h-28 place-items-center sm:h-44"
                 animate={reduce ? undefined : { y: [0, -8, 0] }}
                 transition={{ duration: 6 + i, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <div className="transition-transform duration-500 group-hover:scale-110">
+                <div className="scale-[0.62] transition-transform duration-500 group-hover:scale-[0.7] sm:scale-100 sm:group-hover:scale-110">
                   <Planet w={w} />
                 </div>
               </motion.div>
-              <p className="label mt-4">{d.code}</p>
-              <h3 className="mt-2 font-display text-2xl">{d.title}</h3>
-              <span aria-hidden className="my-4 h-6 w-px origin-top scale-y-50 bg-line transition-transform duration-500 group-hover:scale-y-100 group-hover:bg-accent" />
-              <p className="max-w-[17rem] text-sm leading-relaxed text-mute transition-colors group-hover:text-fg">{d.body}</p>
+              <p className="label mt-2 sm:mt-4">{d.code}</p>
+              <h3 className="mt-1.5 font-display text-xl sm:mt-2 sm:text-2xl">{d.title}</h3>
+              <span aria-hidden className="my-4 hidden h-6 w-px origin-top sm:block scale-y-50 bg-line transition-transform duration-500 group-hover:scale-y-100 group-hover:bg-accent" />
+              <p className="mt-2 max-w-[17rem] text-[13px] leading-relaxed sm:mt-0 sm:text-sm text-mute transition-colors group-hover:text-fg">{d.body}</p>
             </StaggerItem>
           )
         })}

@@ -46,7 +46,7 @@ function Porthole() {
     [38, 70, 3.3],
   ]
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[300px]">
+    <div className="relative mx-auto aspect-square w-full max-w-[200px] md:max-w-[300px]">
       <motion.svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full -rotate-90" aria-hidden>
         <motion.circle
           cx="50" cy="50" r="49"
@@ -92,9 +92,26 @@ function Porthole() {
   )
 }
 
+/** Headline numbers: under the radar on wide screens, after the text on phones. */
+function Stats({ className = '' }) {
+  return (
+    <dl className={`grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line ${className}`}>
+      {stats.map((s) => (
+        <div key={s.k} className="bg-bg/80 p-4">
+          <dd className="font-display text-4xl">
+            <Counter to={s.v} />
+            <span className="text-accent">{s.suffix}</span>
+          </dd>
+          <dt className="mt-1 text-xs leading-snug text-mute">{s.k}</dt>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
 export default function About() {
   return (
-    <section id="about" className="shell py-24 md:py-36">
+    <section id="about" className="shell py-16 md:py-24">
       <div className="grid items-start gap-14 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-16">
         <motion.div
           initial={{ opacity: 0, scale: 0.92 }}
@@ -104,6 +121,7 @@ export default function About() {
           className="md:sticky md:top-28"
         >
           <Porthole />
+          <Stats className="mt-10 hidden md:grid" />
         </motion.div>
 
         <div className="min-w-0">
@@ -145,17 +163,7 @@ export default function About() {
             ))}
           </div>
 
-          <dl className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-4">
-            {stats.map((s) => (
-              <div key={s.k} className="bg-bg/80 p-4">
-                <dd className="font-display text-4xl">
-                  <Counter to={s.v} />
-                  <span className="text-accent">{s.suffix}</span>
-                </dd>
-                <dt className="mt-1 text-xs leading-snug text-mute">{s.k}</dt>
-              </div>
-            ))}
-          </dl>
+          <Stats className="mt-10 grid md:hidden" />
         </div>
       </div>
     </section>
