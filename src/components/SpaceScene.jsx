@@ -191,13 +191,14 @@ void main(){
 `
 const STAR_FRAG = /* glsl */ `
 uniform float uLight;
+uniform vec3 uDayStar;
 varying vec3 vColor;
 varying float vAlpha;
 void main(){
   float d = length(gl_PointCoord - 0.5);
   float a = smoothstep(0.5, 0.0, d);
-  // In the light theme stars become slate specks on the grey daytime sky.
-  vec3 c = mix(vColor, vec3(0.36, 0.27, 0.18), uLight);
+  // In the light themes stars become dark specks (tinted per theme) on the daytime sky.
+  vec3 c = mix(vColor, uDayStar, uLight);
   gl_FragColor = vec4(c, a * a * vAlpha * (1.0 - uLight * 0.35));
 }
 `
@@ -298,7 +299,7 @@ export default function SpaceScene({ launched }) {
     const starMat = new THREE.ShaderMaterial({
       vertexShader: STAR_VERT,
       fragmentShader: STAR_FRAG,
-      uniforms: { uTime: { value: 0 }, uPixelRatio: { value: renderer.getPixelRatio() }, uLight: { value: 0 } },
+      uniforms: { uTime: { value: 0 }, uPixelRatio: { value: renderer.getPixelRatio() }, uLight: { value: 0 }, uDayStar: { value: new THREE.Color('#5c452e') } },
       transparent: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
@@ -485,25 +486,31 @@ export default function SpaceScene({ launched }) {
       renderer.render(scene, camera)
     }
 
-    // Dark: additive glow on a black sky. Light: a grey daytime sky, where
-    // additive light would vanish, so glows switch to normal blending.
+    // Every theme sets its sky colours as CSS variables (--scene-*, --neb-*
+    // in index.css). Dark themes: additive glow on a black sky. Light themes:
+    // a pale daytime sky, where additive light would vanish, so glows switch
+    // to normal blending.
     let lightTheme = false
     const applyTheme = () => {
-      const light = document.documentElement.dataset.theme === 'light'
+      const css = getComputedStyle(document.documentElement)
+      const v = (name, fallback) => css.getPropertyValue(name).trim() || fallback
+      const light = v('--scene-light', '0') === '1'
       lightTheme = light
       const blend = light ? THREE.NormalBlending : THREE.AdditiveBlending
-      renderer.setClearColor(light ? 0xefe8dc : 0x04060d, 1)
+      renderer.setClearColor(new THREE.Color(v('--scene-clear', light ? '#efe8dc' : '#04060d')), 1)
       starMat.uniforms.uLight.value = light ? 1 : 0
+      starMat.uniforms.uDayStar.value.set(v('--scene-daystar', '#5c452e'))
       starMat.blending = blend
-      for (const sp of nebulae) {
+      nebulae.forEach((sp, i) => {
         sp.material.blending = blend
         sp.material.opacity = sp.userData.opacity * (light ? 1.4 : 1)
-        sp.material.color.set(sp.userData.colors[light ? 1 : 0])
+        sp.material.color.set(v(`--neb-${i + 1}`, '#' + new THREE.Color(sp.userData.colors[light ? 1 : 0]).getHexString()))
         sp.material.needsUpdate = true
-      }
+      })
+      atmo.material.uniforms.uColor.value.set(v('--scene-atmo', '#4d8dff'))
       atmo.material.blending = blend
       meteorMat.blending = blend
-      meteorMat.color.set(light ? 0x5a4126 : 0xcfe1ff)
+      meteorMat.color.set(v('--scene-meteor', light ? '#5a4126' : '#cfe1ff'))
       for (const mat of [starMat, atmo.material, meteorMat]) mat.needsUpdate = true
       if (reduce) renderer.render(scene, camera)
     }

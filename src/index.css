@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
-/* Two themes, each with its own palette.
-   Dark, "Mission blue": a deep navy-black sky, cool starlight text,
-   electric blue as the accent and warm gold as the second colour.
-   Light, "Solar flare": warm daylight paper, deep-brown ink, burnt amber
-   and deep blue. Grey text stays at 4.8:1 or better in both.
-   Toggled by data-theme on <html>; the choice is remembered. */
+/* Seven themes, each with its own palette and its own colours for the
+   3D sky (--scene-* and --neb-*, read by SpaceScene). Grey text stays at
+   4.5:1 or better on every background.
+   Dark:  Mission blue (default), Aurora, Nebula, Supernova, Eclipse.
+   Light: Solar flare, Arctic.
+   Picked from the palette button in the top bar; the choice is remembered. */
 :root,
 :root[data-theme="dark"] {
   color-scheme: dark;
@@ -26,9 +26,146 @@
   --sky-top: #0b1d44;
   --sky: #04060d;
   --vignette: rgb(0 0 0 / 0.55);
-  /* the rocket in Experience: a warm flame in both themes */
+  /* the rocket in Experience: a warm flame in every theme */
   --flame: #f4c27a;
   --fin: #7fb2ff;
+  --scene-light: 0;
+  --scene-clear: #04060d;
+  --scene-atmo: #4d8dff;
+  --scene-meteor: #cfe1ff;
+  --scene-daystar: #5c452e;
+  --neb-1: #3b5bdb;
+  --neb-2: #b8862e;
+  --neb-3: #1c7ed6;
+  --neb-4: #4c4fd0;
+}
+
+:root[data-theme="aurora"] {
+  color-scheme: dark;
+  --bg: #020f10;
+  --surface: rgb(120 230 210 / 0.04);
+  --surface-2: rgb(120 230 210 / 0.08);
+  --fg: #e6f6f3;
+  --mute: #9dbab5;
+  --line: rgb(120 230 210 / 0.18);
+  --ink: #e6f6f3;
+  --on-ink: #020f10;
+  --accent: #5eead4;
+  --signal: #c4b5fd;
+  --panel: rgb(4 22 24 / 0.72);
+  --stage: rgb(4 22 24 / 0.45);
+  --star: #ffffff;
+  --halo: 0 1px 14px rgb(2 15 16 / 0.9), 0 0 2px rgb(2 15 16 / 0.6);
+  --sky-top: #06372f;
+  --sky: #020f10;
+  --vignette: rgb(0 0 0 / 0.55);
+  --flame: #c4b5fd;
+  --fin: #5eead4;
+  --scene-light: 0;
+  --scene-clear: #020f10;
+  --scene-atmo: #3ee8b5;
+  --scene-meteor: #d9fff6;
+  --scene-daystar: #5c452e;
+  --neb-1: #0fa37f;
+  --neb-2: #7c5cff;
+  --neb-3: #16c9a0;
+  --neb-4: #3a4fd0;
+}
+
+:root[data-theme="nebula"] {
+  color-scheme: dark;
+  --bg: #0a0614;
+  --surface: rgb(208 168 255 / 0.04);
+  --surface-2: rgb(208 168 255 / 0.08);
+  --fg: #f1eafe;
+  --mute: #b3a6cf;
+  --line: rgb(208 168 255 / 0.18);
+  --ink: #f1eafe;
+  --on-ink: #0a0614;
+  --accent: #d0a8ff;
+  --signal: #ff9ec7;
+  --panel: rgb(18 10 34 / 0.72);
+  --stage: rgb(18 10 34 / 0.45);
+  --star: #ffffff;
+  --halo: 0 1px 14px rgb(10 6 20 / 0.9), 0 0 2px rgb(10 6 20 / 0.6);
+  --sky-top: #2a0f4a;
+  --sky: #0a0614;
+  --vignette: rgb(0 0 0 / 0.55);
+  --flame: #ff9ec7;
+  --fin: #d0a8ff;
+  --scene-light: 0;
+  --scene-clear: #0a0614;
+  --scene-atmo: #b388ff;
+  --scene-meteor: #f5d0fe;
+  --scene-daystar: #5c452e;
+  --neb-1: #7c3aed;
+  --neb-2: #db2777;
+  --neb-3: #9333ea;
+  --neb-4: #5b21b6;
+}
+
+:root[data-theme="supernova"] {
+  color-scheme: dark;
+  --bg: #0d0604;
+  --surface: rgb(255 150 100 / 0.04);
+  --surface-2: rgb(255 150 100 / 0.08);
+  --fg: #fbeee6;
+  --mute: #c7a99a;
+  --line: rgb(255 150 100 / 0.18);
+  --ink: #fbeee6;
+  --on-ink: #0d0604;
+  --accent: #ff8a5b;
+  --signal: #ffd166;
+  --panel: rgb(26 10 6 / 0.72);
+  --stage: rgb(26 10 6 / 0.45);
+  --star: #ffffff;
+  --halo: 0 1px 14px rgb(13 6 4 / 0.9), 0 0 2px rgb(13 6 4 / 0.6);
+  --sky-top: #4a1606;
+  --sky: #0d0604;
+  --vignette: rgb(0 0 0 / 0.55);
+  --flame: #ffd166;
+  --fin: #ff8a5b;
+  --scene-light: 0;
+  --scene-clear: #0d0604;
+  --scene-atmo: #ff9a6b;
+  --scene-meteor: #ffe0c2;
+  --scene-daystar: #5c452e;
+  --neb-1: #e8590c;
+  --neb-2: #ffb703;
+  --neb-3: #d9480f;
+  --neb-4: #9c2a1a;
+}
+
+:root[data-theme="eclipse"] {
+  color-scheme: dark;
+  --bg: #000000;
+  --surface: rgb(255 255 255 / 0.04);
+  --surface-2: rgb(255 255 255 / 0.08);
+  --fg: #f4f4f5;
+  --mute: #a1a1aa;
+  --line: rgb(255 255 255 / 0.16);
+  --ink: #f4f4f5;
+  --on-ink: #000000;
+  --accent: #ffffff;
+  --signal: #e8c27a;
+  --panel: rgb(10 10 10 / 0.74);
+  --stage: rgb(10 10 10 / 0.45);
+  --star: #ffffff;
+  --halo: 0 1px 14px rgb(0 0 0 / 0.9), 0 0 2px rgb(0 0 0 / 0.6);
+  --sky-top: #1c1c1c;
+  --sky: #000000;
+  --vignette: rgb(0 0 0 / 0.6);
+  --flame: #e8c27a;
+  --fin: #ffffff;
+  --scene-light: 0;
+  --scene-clear: #000000;
+  --scene-atmo: #e5e5e5;
+  --scene-meteor: #ffffff;
+  --scene-daystar: #5c452e;
+  --neb-1: #3f3f46;
+  --neb-2: #a17d3c;
+  --neb-3: #52525b;
+  --neb-4: #27272a;
 }
 
 :root[data-theme="light"] {
@@ -52,6 +189,47 @@
   --vignette: rgb(215 195 165 / 0.4);
   --flame: #a9530a;
   --fin: #1d5f9e;
+  --scene-light: 1;
+  --scene-clear: #efe8dc;
+  --scene-atmo: #4d8dff;
+  --scene-meteor: #5a4126;
+  --scene-daystar: #5c452e;
+  --neb-1: #c8641c;
+  --neb-2: #1d5f9e;
+  --neb-3: #8a3d14;
+  --neb-4: #3b6fb0;
+}
+
+:root[data-theme="arctic"] {
+  color-scheme: light;
+  --bg: #eef4f8;
+  --surface: rgb(15 40 60 / 0.04);
+  --surface-2: rgb(15 40 60 / 0.07);
+  --fg: #0c1a26;
+  --mute: #4b5d6b;
+  --line: rgb(12 26 38 / 0.14);
+  --ink: #0c1a26;
+  --on-ink: #f5f9fc;
+  --accent: #0b6e99;
+  --signal: #b5307a;
+  --panel: rgb(255 255 255 / 0.75);
+  --stage: rgb(255 255 255 / 0.5);
+  --star: #0b6e99;
+  --halo: 0 1px 12px rgb(238 244 248 / 0.9), 0 0 2px rgb(238 244 248 / 0.7);
+  --sky-top: #ffffff;
+  --sky: #dfeaf1;
+  --vignette: rgb(160 190 210 / 0.35);
+  --flame: #b5307a;
+  --fin: #0b6e99;
+  --scene-light: 1;
+  --scene-clear: #e3edf3;
+  --scene-atmo: #3a86b4;
+  --scene-meteor: #2a4a60;
+  --scene-daystar: #2a4a60;
+  --neb-1: #0b6e99;
+  --neb-2: #b5307a;
+  --neb-3: #3a86b4;
+  --neb-4: #7aa7c7;
 }
 
 @theme inline {
@@ -150,8 +328,18 @@ body {
   .panel {
     border: 1px solid var(--line);
     background: var(--panel);
+    /* Cursor spotlight: App sets --mx/--my while the pointer is over a panel. */
+    background-image: radial-gradient(
+      420px circle at var(--mx, -9999px) var(--my, -9999px),
+      color-mix(in srgb, var(--accent) 14%, transparent),
+      transparent 65%
+    );
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    transition: border-color 0.3s ease;
+  }
+  .panel.is-lit {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
   }
   .label {
     font-family: var(--font-mono);
@@ -226,4 +414,18 @@ html.lenis.lenis-smooth {
   :is(a, button):hover .roll-in {
     transform: none;
   }
+}
+
+/* Theme switch: the new palette spreads out in a circle from the picker
+   (driven from Nav with the View Transitions API, where supported). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Reading progress along the top edge. */
+.scroll-progress {
+  background: linear-gradient(90deg, var(--accent), var(--signal));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 60%, transparent);
 }

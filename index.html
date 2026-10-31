@@ -62,13 +62,14 @@
     </script>
 
     <script>
-      // Apply the remembered theme before first paint. Dark is the default.
+      // Apply the remembered colour theme before first paint. Mission blue ("dark") is the default.
       (function () {
+        var bgs = { dark: '#04060d', aurora: '#020f10', nebula: '#0a0614', supernova: '#0d0604', eclipse: '#000000', light: '#f7f3ec', arctic: '#eef4f8' }
         var t
         try { t = localStorage.getItem('ak-portfolio-theme') } catch (e) {}
-        t = t === 'light' ? 'light' : 'dark'
+        if (!bgs[t]) t = 'dark'
         document.documentElement.dataset.theme = t
-        if (t === 'light') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f3ec')
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', bgs[t])
       })()
     </script>
   </head>
