@@ -19,10 +19,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # The site is plain HTML, CSS and JS: no build step, publish the repository as-is.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: dist
 
   deploy:
     needs: build
