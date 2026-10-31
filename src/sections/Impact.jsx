@@ -147,7 +147,7 @@ function Packet({ it, i, reduce }) {
       {m && (
         <p className="mt-5 flex items-baseline gap-2 sm:mt-7">
           <motion.span
-            className="text-gradient font-display text-[2.6rem] leading-none sm:text-6xl"
+            className="font-display text-[2.6rem] leading-none text-fg sm:text-6xl"
             initial={false}
             animate={arrived ? { opacity: 1, y: 0 } : { opacity: 0.25, y: 6 }}
             transition={{ duration: 0.6, ease }}

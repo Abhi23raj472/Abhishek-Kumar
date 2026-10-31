@@ -38,106 +38,106 @@
   --neb-2: #b8862e;
   --neb-3: #1c7ed6;
   --neb-4: #4c4fd0;
-  --neb-boost: 1.9;
+  --neb-boost: 1.3;
 }
 
 :root[data-theme="aurora"] {
   color-scheme: dark;
-  --bg: #031a1b;
-  --surface: rgb(120 230 210 / 0.04);
-  --surface-2: rgb(120 230 210 / 0.08);
-  --fg: #e6f6f3;
-  --mute: #9dbab5;
-  --line: rgb(120 230 210 / 0.18);
-  --ink: #e6f6f3;
-  --on-ink: #031a1b;
-  --accent: #5eead4;
-  --signal: #c4b5fd;
-  --panel: rgb(5 30 32 / 0.72);
-  --stage: rgb(5 30 32 / 0.45);
+  --bg: #061615;
+  --surface: rgb(124 199 180 / 0.04);
+  --surface-2: rgb(124 199 180 / 0.08);
+  --fg: #e7f1ee;
+  --mute: #9fb5af;
+  --line: rgb(124 199 180 / 0.16);
+  --ink: #e7f1ee;
+  --on-ink: #061615;
+  --accent: #7cc7b4;
+  --signal: #e3c48a;
+  --panel: rgb(8 28 26 / 0.72);
+  --stage: rgb(8 28 26 / 0.45);
   --star: #ffffff;
-  --halo: 0 1px 14px rgb(3 26 27 / 0.9), 0 0 2px rgb(3 26 27 / 0.6);
-  --sky-top: #0c5e4c;
-  --sky: #031a1b;
+  --halo: 0 1px 14px rgb(6 22 21 / 0.9), 0 0 2px rgb(6 22 21 / 0.6);
+  --sky-top: #0d3a33;
+  --sky: #061615;
   --vignette: rgb(0 0 0 / 0.55);
-  --flame: #c4b5fd;
-  --fin: #5eead4;
+  --flame: #e3c48a;
+  --fin: #7cc7b4;
   --scene-light: 0;
-  --scene-clear: #031a1b;
-  --scene-atmo: #3ee8b5;
-  --scene-meteor: #d9fff6;
+  --scene-clear: #061615;
+  --scene-atmo: #4aa7c4;
+  --scene-meteor: #e3f3ee;
   --scene-daystar: #5c452e;
-  --neb-1: #0fa37f;
-  --neb-2: #7c5cff;
-  --neb-3: #16c9a0;
-  --neb-4: #3a4fd0;
-  --neb-boost: 1.9;
+  --neb-1: #1f7a66;
+  --neb-2: #8a7340;
+  --neb-3: #2a8f78;
+  --neb-4: #2f4f6e;
+  --neb-boost: 1.25;
 }
 
 :root[data-theme="nebula"] {
   color-scheme: dark;
-  --bg: #100827;
-  --surface: rgb(208 168 255 / 0.04);
-  --surface-2: rgb(208 168 255 / 0.08);
-  --fg: #f1eafe;
-  --mute: #b3a6cf;
-  --line: rgb(208 168 255 / 0.18);
-  --ink: #f1eafe;
-  --on-ink: #100827;
-  --accent: #d0a8ff;
-  --signal: #ff9ec7;
-  --panel: rgb(24 12 52 / 0.72);
-  --stage: rgb(24 12 52 / 0.45);
+  --bg: #0f0b1a;
+  --surface: rgb(185 164 230 / 0.04);
+  --surface-2: rgb(185 164 230 / 0.08);
+  --fg: #eeeaf6;
+  --mute: #ada5c2;
+  --line: rgb(185 164 230 / 0.16);
+  --ink: #eeeaf6;
+  --on-ink: #0f0b1a;
+  --accent: #b9a4e6;
+  --signal: #e9b99a;
+  --panel: rgb(22 16 38 / 0.72);
+  --stage: rgb(22 16 38 / 0.45);
   --star: #ffffff;
-  --halo: 0 1px 14px rgb(16 8 39 / 0.9), 0 0 2px rgb(16 8 39 / 0.6);
-  --sky-top: #4a1a80;
-  --sky: #100827;
+  --halo: 0 1px 14px rgb(15 11 26 / 0.9), 0 0 2px rgb(15 11 26 / 0.6);
+  --sky-top: #2d1f4f;
+  --sky: #0f0b1a;
   --vignette: rgb(0 0 0 / 0.55);
-  --flame: #ff9ec7;
-  --fin: #d0a8ff;
+  --flame: #e9b99a;
+  --fin: #b9a4e6;
   --scene-light: 0;
-  --scene-clear: #100827;
-  --scene-atmo: #b388ff;
-  --scene-meteor: #f5d0fe;
+  --scene-clear: #0f0b1a;
+  --scene-atmo: #7a8cff;
+  --scene-meteor: #efe6ff;
   --scene-daystar: #5c452e;
-  --neb-1: #7c3aed;
-  --neb-2: #db2777;
-  --neb-3: #9333ea;
-  --neb-4: #5b21b6;
-  --neb-boost: 2.1;
+  --neb-1: #5b3fa0;
+  --neb-2: #9a5f4a;
+  --neb-3: #6d4bb0;
+  --neb-4: #3a2d6b;
+  --neb-boost: 1.25;
 }
 
 :root[data-theme="supernova"] {
   color-scheme: dark;
-  --bg: #180a06;
-  --surface: rgb(255 150 100 / 0.04);
-  --surface-2: rgb(255 150 100 / 0.08);
-  --fg: #fbeee6;
-  --mute: #c7a99a;
-  --line: rgb(255 150 100 / 0.18);
-  --ink: #fbeee6;
-  --on-ink: #180a06;
-  --accent: #ff8a5b;
-  --signal: #ffd166;
-  --panel: rgb(36 14 8 / 0.72);
-  --stage: rgb(36 14 8 / 0.45);
+  --bg: #140c09;
+  --surface: rgb(227 149 104 / 0.04);
+  --surface-2: rgb(227 149 104 / 0.08);
+  --fg: #f5ebe4;
+  --mute: #bfa89b;
+  --line: rgb(227 149 104 / 0.16);
+  --ink: #f5ebe4;
+  --on-ink: #140c09;
+  --accent: #e39568;
+  --signal: #e9d3a1;
+  --panel: rgb(30 17 12 / 0.72);
+  --stage: rgb(30 17 12 / 0.45);
   --star: #ffffff;
-  --halo: 0 1px 14px rgb(24 10 6 / 0.9), 0 0 2px rgb(24 10 6 / 0.6);
-  --sky-top: #7d260a;
-  --sky: #180a06;
+  --halo: 0 1px 14px rgb(20 12 9 / 0.9), 0 0 2px rgb(20 12 9 / 0.6);
+  --sky-top: #4f2010;
+  --sky: #140c09;
   --vignette: rgb(0 0 0 / 0.55);
-  --flame: #ffd166;
-  --fin: #ff8a5b;
+  --flame: #e9d3a1;
+  --fin: #e39568;
   --scene-light: 0;
-  --scene-clear: #180a06;
-  --scene-atmo: #ff9a6b;
-  --scene-meteor: #ffe0c2;
+  --scene-clear: #140c09;
+  --scene-atmo: #5b8fe8;
+  --scene-meteor: #fbe7d6;
   --scene-daystar: #5c452e;
-  --neb-1: #e8590c;
-  --neb-2: #ffb703;
-  --neb-3: #d9480f;
-  --neb-4: #9c2a1a;
-  --neb-boost: 1.9;
+  --neb-1: #a8481f;
+  --neb-2: #a48a4a;
+  --neb-3: #b5552a;
+  --neb-4: #6b2a18;
+  --neb-boost: 1.25;
 }
 
 :root[data-theme="eclipse"] {
@@ -170,7 +170,7 @@
   --neb-2: #a17d3c;
   --neb-3: #52525b;
   --neb-4: #27272a;
-  --neb-boost: 1.3;
+  --neb-boost: 1.1;
 }
 
 :root[data-theme="light"] {
@@ -335,18 +335,8 @@ body {
   .panel {
     border: 1px solid var(--line);
     background: var(--panel);
-    /* Cursor spotlight: App sets --mx/--my while the pointer is over a panel. */
-    background-image: radial-gradient(
-      420px circle at var(--mx, -9999px) var(--my, -9999px),
-      color-mix(in srgb, var(--accent) 14%, transparent),
-      transparent 65%
-    );
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    transition: border-color 0.3s ease;
-  }
-  .panel.is-lit {
-    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
   }
   .label {
     font-family: var(--font-mono);
@@ -433,30 +423,5 @@ html.lenis.lenis-smooth {
 
 /* Reading progress along the top edge. */
 .scroll-progress {
-  background: linear-gradient(90deg, var(--accent), var(--signal));
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 60%, transparent);
-}
-
-/* Colour that shifts from the accent to the second colour. */
-.text-gradient {
-  background-image: linear-gradient(100deg, var(--accent), var(--signal));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: none;
-}
-/* Primary call-to-action: an accent-to-signal pill with a soft glow. */
-.btn-glow {
-  background-image: linear-gradient(120deg, var(--accent), var(--signal));
-  color: var(--on-ink);
-  text-shadow: none;
-  box-shadow: 0 8px 30px -10px color-mix(in srgb, var(--accent) 70%, transparent);
-  transition: box-shadow 0.3s ease, filter 0.3s ease;
-}
-.btn-glow * {
-  text-shadow: none;
-}
-.btn-glow:hover {
-  filter: brightness(1.06);
-  box-shadow: 0 10px 38px -8px color-mix(in srgb, var(--signal) 75%, transparent);
+  background: var(--accent);
 }

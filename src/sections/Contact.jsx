@@ -65,7 +65,7 @@ export default function Contact() {
           />
           <div className="flex flex-wrap items-center gap-3 md:col-span-6 md:justify-end">
             <Magnetic>
-              <a href={`mailto:${profile.email}`} className="btn-glow group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium">
+              <a href={`mailto:${profile.email}`} className="group inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">
                 <Roll>Get in touch</Roll>
                 <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:rotate-45" />
               </a>

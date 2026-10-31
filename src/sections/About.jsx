@@ -98,9 +98,9 @@ function Stats({ className = '' }) {
     <dl className={`grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line ${className}`}>
       {stats.map((s) => (
         <div key={s.k} className="bg-bg/80 p-4">
-          <dd className="text-gradient w-fit font-display text-4xl">
+          <dd className="font-display text-4xl">
             <Counter to={s.v} />
-            <span>{s.suffix}</span>
+            <span className="text-accent">{s.suffix}</span>
           </dd>
           <dt className="mt-1 text-xs leading-snug text-mute">{s.k}</dt>
         </div>

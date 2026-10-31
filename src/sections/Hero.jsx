@@ -9,7 +9,7 @@ import {
 } from 'framer-motion'
 import { ArrowDown, ArrowUpRight, Download } from 'lucide-react'
 import { profile, roles, stats } from '../data'
-import { Magnetic, Roll, ease, blend } from '../lib/motion'
+import { Magnetic, Roll, ease } from '../lib/motion'
 
 const resume = `./${profile.resume}`
 const telemetry = [
@@ -21,14 +21,13 @@ const inOut = [0.65, 0, 0.35, 1]
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>#*+'
 
 /** Letters drift up out of a blur, one after another. */
-function Letters({ text, ready, intro, delay = 0, gradient = false }) {
+function Letters({ text, ready, intro, delay = 0 }) {
   return (
     <span aria-hidden className="inline-flex">
       {[...text].map((ch, i) => (
         <motion.span
           key={i}
           className="inline-block"
-          style={gradient ? { color: blend(i, text.length) } : undefined}
           initial={intro ? { opacity: 0, y: '0.4em', filter: 'blur(10px)' } : false}
           animate={ready ? { opacity: 1, y: '0em', filter: 'blur(0px)' } : undefined}
           transition={{ duration: 0.9, ease: inOut, delay: delay + i * 0.04 }}
@@ -149,7 +148,7 @@ export default function Hero({ ready, intro = true }) {
             <span className="sr-only">Abhishek Kumar, {profile.role}</span>
             <Letters text="Abhishek" ready={ready} intro={intro} delay={0.05} />{' '}
             <span className="italic text-accent">
-              <Letters text="Kumar" ready={ready} intro={intro} delay={0.25} gradient />
+              <Letters text="Kumar" ready={ready} intro={intro} delay={0.25} />
             </span>
           </h1>
           {ready && <Satellite reduce={reduce} />}
@@ -167,7 +166,7 @@ export default function Hero({ ready, intro = true }) {
 
         <motion.div {...show(0.7)} className="mt-9 flex flex-wrap items-center justify-center gap-3">
           <Magnetic>
-            <a href="#work" className="btn-glow group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium">
+            <a href="#work" className="group inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-on-ink">
               <Roll>Explore the mission</Roll>
               <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:rotate-45" />
             </a>
