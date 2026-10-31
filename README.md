@@ -1,44 +1,62 @@
-# Abhishek Kumar — Portfolio
+# Abhishek Kumar World
 
-Personal portfolio built with React, Vite, Tailwind CSS, Framer Motion, Lenis and three.js.
+An interactive 3D portfolio. Visitors drive a toy car around a sunny world, smash through the 3D name, knock over the certification crate tower and bowling pins, jump ramps, and open six zones: About, Experience, Skills, Certifications, Awards and Contact. A **Classic view** shows all the content as a normal readable page.
 
-The site is a flight from Earth orbit into deep space:
+Works on desktop (keyboard) and phones (joystick + Gas/Brake buttons), in portrait and landscape.
 
-- **Launch**: a short countdown (once per session), then the camera lifts off from Earth's limb into orbit.
-- **Sky**: a three.js scene behind the page with a twinkling starfield, faint nebulae, a procedurally shaded Earth (clouds, city lights, atmosphere glow), planets that drift past the edges and the odd meteor. Scrolling flies the camera forward.
-- **Hero**: the name fades up out of a blur with a satellite orbiting it; the focus line decodes from random glyphs, and the headline numbers sit under the buttons.
-- **About**: a porthole radar scope and a crew record that types itself out.
-- **What I do**: each area of work is a small rotating planet.
-- **Impact**: results arrive as downlink packets with live signal traces.
-- **Experience**: a rocket launch. A sticky altitude gauge beside the stages (liftoff, Stage 1, Orbit) has a rocket that climbs as you scroll and drops its booster on reaching orbit; each job card leads with its key wins, with the full flight log folded underneath. Phones get a slim altitude bar instead.
-- **Skills**: the latest additions first, a star catalogue of every skill by area with filters, and a radar of the core skills.
-- **Awards & Contact**: awards as mission-patch cards, certifications and a contact footer.
-- **Throughout**: Lenis smooth scrolling, a targeting-reticle cursor that snaps onto links, and rolling link labels.
+## Files
 
-There are two themes, each with its own palette, switched from the sun/moon button in the top bar and remembered for next time: a dark "Mission blue" theme (default: navy-black sky, electric blue and gold) and a light "Solar flare" theme (warm daylight paper, burnt amber and deep blue), where the sky turns pale and Earth stays in view.
-
-The three.js scene loads in its own chunk so the page renders straight away. With reduced motion turned on, the intro, flight, smooth scrolling and cursor are off and the sky holds a single still frame.
-
-## Run locally
-
-```bash
-npm ci
-npm run dev
+```
+abhishek-portfolio-world/
+├── index.html      Page structure, HUD, intro and classic view
+├── css/style.css   All styling (desktop, phone portrait, phone landscape)
+└── js/main.js      3D world, physics, car, zones, controls
 ```
 
-## Build
+No build step and no npm install. The page loads two libraries from a CDN:
+
+- Three.js r128 (3D rendering)
+- Cannon.js 0.6.2 (physics)
+
+## Run it locally
+
+Open the folder in VS Code and use the **Live Server** extension, or run:
 
 ```bash
-npm run build
-npm run preview
+cd abhishek-portfolio-world
+python3 -m http.server 8000
 ```
 
-## Edit content
+Then open http://localhost:8000.
 
-All text content lives in `src/data.js`. Each section is a component in `src/sections/`, the sky is `src/components/SpaceScene.jsx`, shared animation helpers are in `src/lib/motion.jsx`, and theme colours are CSS variables at the top of `src/index.css`.
-Replace `public/Abhishek_Kumar_Resume.pdf` to update the resume download.
+## Deploy on GitHub Pages
 
-## GitHub Pages
+1. Copy `index.html`, `css/` and `js/` into your repository (the root, or a folder such as `world/`).
+2. Commit and push to `main`.
+3. In the repository, go to **Settings → Pages**, choose **Deploy from a branch**, branch `main`, folder `/ (root)`.
+4. After a minute the site is live at `https://<username>.github.io/<repo>/` (add `world/` if you used a folder).
 
-The workflow in `.github/workflows/deploy.yml` builds and publishes every push to `main`. Vite's relative base and resume links support the `/Abhishek-Kumar/` path.
-Set **Settings → Pages → Source** to **GitHub Actions** so only this workflow publishes the site.
+Tip: before replacing your current site, create a backup branch first: `git checkout -b backup/before-3d-world && git push origin backup/before-3d-world`.
+
+## Edit the content
+
+Everything shown in the zones lives in the `ZONES` array at the top of `js/main.js`. Each zone has:
+
+- `name` and `color`: label and colour of the zone
+- `x`, `z`: position in the world
+- `icon`: the floating icon (`person`, `case`, `gear`, `gem`, `star`, `mail`)
+- `html`: the text shown in the info card and the classic view
+
+**Before publishing, fill in the placeholders in the Contact zone:** `[your email]`, `[your LinkedIn URL]` and `[résumé link]`.
+
+The certification crates use the `CRATES` array right below `ZONES`.
+
+## Controls
+
+| Desktop | Phone |
+| --- | --- |
+| W A S D or arrow keys: drive | Joystick: steer (push up to drive, pull down to reverse) |
+| Space: brake | Gas / Brake buttons |
+| R: flip the car back | Flip button |
+| Mouse wheel: zoom | Pinch: zoom |
+| Click the minimap: jump to a zone | Tap the minimap: jump to a zone |
