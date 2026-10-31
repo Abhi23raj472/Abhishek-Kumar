@@ -452,6 +452,7 @@
   var chassisBody = new CANNON.Body({ mass: 150 });
   chassisBody.addShape(new CANNON.Box(new CANNON.Vec3(1, 0.35, 1.9)), new CANNON.Vec3(0, 0.25, 0));
   chassisBody.angularDamping = 0.5;
+  chassisBody.allowSleep = false; // a sleeping chassis ignores engine force
   var vehicle = new CANNON.RaycastVehicle({ chassisBody: chassisBody, indexRightAxis: 0, indexUpAxis: 1, indexForwardAxis: 2 });
   var wopt = { radius: 0.48, directionLocal: new CANNON.Vec3(0, -1, 0), suspensionStiffness: 32, suspensionRestLength: 0.35, frictionSlip: 3.4, dampingRelaxation: 2.3, dampingCompression: 4.4, maxSuspensionForce: 100000, rollInfluence: 0.02, axleLocal: new CANNON.Vec3(-1, 0, 0), chassisConnectionPointLocal: new CANNON.Vec3(), maxSuspensionTravel: 0.3, customSlidingRotationalSpeed: -30, useCustomSlidingRotationalSpeed: true };
   [[-1, 1.3], [1, 1.3], [-1, -1.3], [1, -1.3]].forEach(function(p){ wopt.chassisConnectionPointLocal.set(p[0], 0, p[1]); vehicle.addWheel(wopt); });
@@ -460,6 +461,7 @@
     chassisBody.position.set(x, 1.4, z);
     chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), heading);
     chassisBody.velocity.set(0, 0, 0); chassisBody.angularVelocity.set(0, 0, 0);
+    chassisBody.wakeUp();
   }
   placeCar(0, 4, Math.PI);
 
