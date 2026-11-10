@@ -1,44 +1,38 @@
 # Abhishek Kumar — Portfolio
 
-Personal portfolio built with React, Vite, Tailwind CSS, Framer Motion, Lenis and three.js.
+Personal portfolio and resume site for Abhishek Kumar, automation tester and
+Quality Engineer (Tricentis Tosca). Live at
+https://abhi23raj472.github.io/Abhishek-Kumar/
 
-The site is a flight from Earth orbit into deep space:
+The site is a single static page: `index.html` holds the markup, styles and the
+small menu script. Vite builds it and GitHub Actions deploys it to GitHub Pages
+on every push to `main`.
 
-- **Launch**: a short countdown (once per session), then the camera lifts off from Earth's limb into orbit.
-- **Sky**: a three.js scene behind the page with a twinkling starfield, faint nebulae, a procedurally shaded Earth (clouds, city lights, atmosphere glow), planets that drift past the edges and the odd meteor. Scrolling flies the camera forward.
-- **Hero**: the name fades up out of a blur with a satellite orbiting it; the focus line decodes from random glyphs, and the headline numbers sit under the buttons.
-- **About**: a porthole radar scope and a crew record that types itself out.
-- **What I do**: each area of work is a small rotating planet.
-- **Impact**: results arrive as downlink packets with live signal traces.
-- **Experience**: a rocket launch. A sticky altitude gauge beside the stages (liftoff, Stage 1, Orbit) has a rocket that climbs as you scroll and drops its booster on reaching orbit; each job card leads with its key wins, with the full flight log folded underneath. Phones get a slim altitude bar instead.
-- **Skills**: the latest additions first, a star catalogue of every skill by area with filters, and a radar of the core skills.
-- **Awards & Contact**: awards as mission-patch cards, certifications and a contact footer.
-- **Throughout**: Lenis smooth scrolling, a targeting-reticle cursor that snaps onto links, and rolling link labels.
+## Sections
 
-There are two themes, each with its own palette, switched from the sun/moon button in the top bar and remembered for next time: a dark "Mission blue" theme (default: navy-black sky, electric blue and gold) and a light "Solar flare" theme (warm daylight paper, burnt amber and deep blue), where the sky turns pale and Earth stays in view.
+- **Intro**: name, one-line pitch and current role.
+- **Story**: about, what I own on a release, and a 2021–2026 timeline.
+- **Stack**: 38 tools grouped by area, with signal bars for proficiency.
+- **Work**: six headline results.
+- **Experience**: Optum Global Solutions and Expleo Group.
+- **Recognition**: four awards and twelve certifications.
+- **Contact**: email, LinkedIn and resume.
 
-The three.js scene loads in its own chunk so the page renders straight away. With reduced motion turned on, the intro, flight, smooth scrolling and cursor are off and the sky holds a single still frame.
-
-## Run locally
-
-```bash
-npm ci
-npm run dev
-```
-
-## Build
+## Run it locally
 
 ```bash
-npm run build
-npm run preview
+npm install
+npm run dev      # local preview
+npm run build    # production build in dist/
 ```
 
-## Edit content
+## Editing
 
-All text content lives in `src/data.js`. Each section is a component in `src/sections/`, the sky is `src/components/SpaceScene.jsx`, shared animation helpers are in `src/lib/motion.jsx`, and theme colours are CSS variables at the top of `src/index.css`.
-Replace `public/Abhishek_Kumar_Resume.pdf` to update the resume download.
+- Text and layout: `index.html`.
+- Photo: `public/portrait.jpg`.
+- Resume: `public/Abhishek_Kumar_Resume.pdf`.
+- Accent colour: the `--acc` value on the root element in `index.html`.
 
-## GitHub Pages
-
-The workflow in `.github/workflows/deploy.yml` builds and publishes every push to `main`. Vite's relative base and resume links support the `/Abhishek-Kumar/` path.
-Set **Settings → Pages → Source** to **GitHub Actions** so only this workflow publishes the site.
+Scroll-linked animations use CSS scroll-driven animations. Browsers without
+support, and visitors with reduced motion turned on, see the same page without
+the motion.
