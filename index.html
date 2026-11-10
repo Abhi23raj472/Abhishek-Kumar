@@ -89,8 +89,8 @@ a:focus-visible,button:focus-visible{outline:2px solid #FF4F1F;outline-offset:4p
 .chip{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:64px;padding:12px 16px;border:1px solid rgba(15,14,12,0.28);border-radius:6px}
 .chip b{font-weight:600;font-size:16px;line-height:1.2;display:block}
 .chip small{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#2A2622;line-height:1.35;display:block;margin-top:3px}
-.bars{display:inline-flex;align-items:flex-end;gap:2px;height:16px;flex-shrink:0}
-.bars i{display:block;width:3px;background:currentColor;opacity:0.22;border-radius:1px}
+.bars{display:inline-flex;align-items:center;gap:4px;flex-shrink:0}
+.bars i{display:block;width:9px;height:9px;border-radius:50%;background:currentColor;opacity:0.2;transition:opacity .15s}
 .bars i.on{opacity:1}
 .tl{display:grid;grid-template-columns:110px 28px 1fr;gap:0 20px}
 .mq{display:flex;width:max-content;animation:mq 46s linear infinite}
@@ -316,12 +316,12 @@ a:focus-visible,button:focus-visible{outline:2px solid #FF4F1F;outline-offset:4p
 </div></div>
 </div>
 <div class="sk-legend">
-<p class="lede" style="max-width: 40ch">Signal strength, not percentages. Four bars means I reach for it without thinking. One bar means I'm still learning it.</p>
+<p class="lede" style="max-width: 40ch">Four dots means I reach for it without thinking. One dot means I'm still learning it.</p>
 <ul aria-label="Proficiency legend" class="mono" style="margin: 22px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 12px 26px">
-<li style="display: inline-flex; align-items: center; gap: 10px"><span class="bars" aria-hidden="true"><i class="on" style="height: 7px"></i><i class="on" style="height: 10px"></i><i class="on" style="height: 13px"></i><i class="on" style="height: 16px"></i></span>Expert</li>
-<li style="display: inline-flex; align-items: center; gap: 10px"><span class="bars" aria-hidden="true"><i class="on" style="height: 7px"></i><i class="on" style="height: 10px"></i><i class="on" style="height: 13px"></i><i style="height: 16px"></i></span>Advanced</li>
-<li style="display: inline-flex; align-items: center; gap: 10px"><span class="bars" aria-hidden="true"><i class="on" style="height: 7px"></i><i class="on" style="height: 10px"></i><i style="height: 13px"></i><i style="height: 16px"></i></span>Proficient</li>
-<li style="display: inline-flex; align-items: center; gap: 10px"><span class="bars" aria-hidden="true"><i class="on" style="height: 7px"></i><i style="height: 10px"></i><i style="height: 13px"></i><i style="height: 16px"></i></span>Learning</li>
+<li style="display: inline-flex; align-items: center; gap: 10px"><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>Expert</li>
+<li style="display: inline-flex; align-items: center; gap: 10px"><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>Advanced</li>
+<li style="display: inline-flex; align-items: center; gap: 10px"><span class="bars" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i></span>Proficient</li>
+<li style="display: inline-flex; align-items: center; gap: 10px"><span class="bars" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></span>Learning</li>
 </ul>
 </div>
 </div>
@@ -330,10 +330,10 @@ a:focus-visible,button:focus-visible{outline:2px solid #FF4F1F;outline-offset:4p
 <section aria-labelledby="g-auto">
 <header class="sk-ghead" style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; padding-bottom: 14px; border-bottom: 1px solid rgba(15, 14, 12, 0.28); margin-bottom: 18px"><h3 id="g-auto" class="h3">Automation</h3><p class="mono" style="margin: 0; color: #2A2622">Suites built to be reused</p></header>
 <ul class="chips">
-<li class="chip"><div><b>Tricentis Tosca</b><small>Web and desktop suites</small></div><span class="bars" role="img" aria-label="Expert"><i class="on" style="height: 7px"></i><i class="on" style="height: 10px"></i><i class="on" style="height: 13px"></i><i class="on" style="height: 16px"></i></span></li>
+<li class="chip"><div><b>Tricentis Tosca</b><small>Web and desktop suites</small></div><span class="bars" role="img" aria-label="Expert"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></li>
 <li class="chip"><div><b>XScan</b><small>Reusable UI modules</small></div></li>
 <li class="chip"><div><b>TCD</b><small>Data-driven test design</small></div></li>
-<li class="chip"><div><b>Tosca DEX</b><small>Parallel execution</small></div><span class="bars" role="img" aria-label="Advanced"><i class="on" style="height: 7px"></i><i class="on" style="height: 10px"></i><i class="on" style="height: 13px"></i><i style="height: 16px"></i></span></li>
+<li class="chip"><div><b>Tosca DEX</b><small>Parallel execution</small></div><span class="bars" role="img" aria-label="Advanced"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></li>
 <li class="chip"><div><b>TQL</b><small>Bulk artifact maintenance</small></div></li>
 <li class="chip"><div><b>Recovery &amp; cleanup scenarios</b><small>Stable unattended runs</small></div></li>
 <li class="chip"><div><b>Reusable modules</b></div></li>
@@ -345,12 +345,12 @@ a:focus-visible,button:focus-visible{outline:2px solid #FF4F1F;outline-offset:4p
 <section aria-labelledby="g-api">
 <header class="sk-ghead" style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; padding-bottom: 14px; border-bottom: 1px solid rgba(15, 14, 12, 0.28); margin-bottom: 18px"><h3 id="g-api" class="h3">API &amp; data</h3><p class="mono" style="margin: 0; color: #2A2622">Payloads, codes, headers, auth</p></header>
 <ul class="chips">
-<li class="chip"><div><b>REST</b></div><span class="bars" role="img" aria-label="Advanced"><i class="on" style="height: 7px"></i><i class="on" style="height: 10px"></i><i class="on" style="height: 13px"></i><i style="height: 16px"></i></span></li>
-<li class="chip"><div><b>SOAP</b></div><span class="bars" role="img" aria-label="Advanced"><i class="on" style="height: 7px"></i><i class="on" style="height: 10px"></i><i class="on" style="height: 13px"></i><i style="height: 16px"></i></span></li>
+<li class="chip"><div><b>REST</b></div><span class="bars" role="img" aria-label="Advanced"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></li>
+<li class="chip"><div><b>SOAP</b></div><span class="bars" role="img" aria-label="Advanced"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></li>
 <li class="chip"><div><b>Postman</b></div></li>
 <li class="chip"><div><b>SoapUI</b></div></li>
 <li class="chip"><div><b>Tosca API</b><small>API Scan</small></div></li>
-<li class="chip"><div><b>MySQL</b></div><span class="bars" role="img" aria-label="Proficient"><i class="on" style="height: 7px"></i><i class="on" style="height: 10px"></i><i style="height: 13px"></i><i style="height: 16px"></i></span></li>
+<li class="chip"><div><b>MySQL</b></div><span class="bars" role="img" aria-label="Proficient"><i class="on"></i><i class="on"></i><i></i><i></i></span></li>
 <li class="chip"><div><b>Test data</b></div></li>
 </ul>
 </section>
@@ -372,12 +372,12 @@ a:focus-visible,button:focus-visible{outline:2px solid #FF4F1F;outline-offset:4p
 <section aria-labelledby="g-del">
 <header class="sk-ghead" style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; padding-bottom: 14px; border-bottom: 1px solid rgba(15, 14, 12, 0.28); margin-bottom: 18px"><h3 id="g-del" class="h3">Delivery &amp; tools</h3><p class="mono" style="margin: 0; color: #2A2622">How the work gets shipped</p></header>
 <ul class="chips">
-<li class="chip"><div><b>CI/CD for Tosca</b><small>Pipeline-triggered runs</small></div><span class="bars" role="img" aria-label="Learning"><i class="on" style="height: 7px"></i><i style="height: 10px"></i><i style="height: 13px"></i><i style="height: 16px"></i></span></li>
+<li class="chip"><div><b>CI/CD for Tosca</b><small>Pipeline-triggered runs</small></div><span class="bars" role="img" aria-label="Learning"><i class="on"></i><i></i><i></i><i></i></span></li>
 <li class="chip"><div><b>JIRA</b><small>Defect triage and tracking</small></div></li>
 <li class="chip"><div><b>Confluence</b></div></li>
 <li class="chip"><div><b>ALM</b></div></li>
 <li class="chip"><div><b>Rally</b></div></li>
-<li class="chip"><div><b>Scrum</b></div><span class="bars" role="img" aria-label="Advanced"><i class="on" style="height: 7px"></i><i class="on" style="height: 10px"></i><i class="on" style="height: 13px"></i><i style="height: 16px"></i></span></li>
+<li class="chip"><div><b>Scrum</b></div><span class="bars" role="img" aria-label="Advanced"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></li>
 <li class="chip"><div><b>Kanban</b></div></li>
 <li class="chip"><div><b>SDLC</b></div></li>
 <li class="chip"><div><b>STLC</b></div></li>
