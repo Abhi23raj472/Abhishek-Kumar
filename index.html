@@ -93,6 +93,7 @@ a:focus-visible,button:focus-visible{outline:2px solid #FF4F1F;outline-offset:4p
 .mq{display:flex;width:max-content;animation:mq 46s linear infinite}
 @keyframes mq{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 .mq.rev{animation-direction:reverse;animation-duration:58s}
+.mq:hover{animation-play-state:paused}
 .hero-3d{text-shadow:0.011em 0.011em 0 var(--acc,#FF4F1F),0.022em 0.022em 0 var(--acc,#FF4F1F),0.033em 0.033em 0 var(--acc,#FF4F1F),0.044em 0.044em 0 var(--acc,#FF4F1F)}
 .ph3d{perspective:900px}
 .ph3d>div{transform:rotateY(-16deg) rotateX(5deg) rotate(-2deg);box-shadow:14px 14px 0 var(--acc,#FF4F1F),28px 28px 0 #2D1454;transition:transform 0.6s cubic-bezier(0.22,1,0.36,1),box-shadow 0.6s cubic-bezier(0.22,1,0.36,1)}
@@ -169,10 +170,10 @@ a:focus-visible,button:focus-visible{outline:2px solid #FF4F1F;outline-offset:4p
   <body>
 <div style="--acc: #FF4F1F; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 17px; line-height: 1.6; background: #F3EEE4; color: #0F0E0C; min-height: 100vh; overflow-x: clip">
 
-<header style="background: #F3EEE4; border-bottom: 1px solid rgba(15, 14, 12, 0.16)">
+<header style="position: sticky; top: 0; z-index: 50; background: #F3EEE4; border-bottom: 1px solid rgba(15, 14, 12, 0.16)">
 <div class="wrap" style="height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px">
-<a href="#hero" aria-label="Back to top" class="display" style="font-size: 30px; min-height: 44px; display: inline-flex; align-items: center">A<em style="color: var(--acc, #FF4F1F); font-style: italic">.</em></a>
-<p class="mono" style="margin: 0; display: flex; align-items: center; gap: 10px"><span style="color: #B83006">00</span><span aria-hidden="true" style="width: 24px; height: 1px; background: currentColor"></span><span>Intro</span></p>
+<a href="#hero" aria-label="Abhishek Kumar, back to top" class="display" style="font-size: 30px; min-height: 44px; display: inline-flex; align-items: center">A<em style="color: var(--acc, #FF4F1F); font-style: italic">.</em></a>
+<p class="mono" style="margin: 0; display: flex; align-items: center; gap: 10px"><span id="cur-num" style="color: #B83006">00</span><span aria-hidden="true" style="width: 24px; height: 1px; background: currentColor"></span><span id="cur-name">Intro</span></p>
 <button type="button" class="mono" id="menu-toggle" aria-expanded="false" aria-controls="site-menu" style="min-height: 44px; display: inline-flex; align-items: center; gap: 12px; background: none; border: 0; color: inherit; cursor: pointer; padding: 0 4px">
 <span id="menu-label">Menu</span>
 <span aria-hidden="true" style="display: inline-flex; flex-direction: column; gap: 5px"><i style="display: block; width: 22px; height: 1.5px; background: currentColor"></i><i style="display: block; width: 22px; height: 1.5px; background: currentColor"></i></span>
@@ -494,6 +495,10 @@ a:focus-visible,button:focus-visible{outline:2px solid #FF4F1F;outline-offset:4p
 </div>
 </div>
 </section>
+</div>
+
+<div aria-hidden="true" style="background: #F3EEE4; height: clamp(64px, 8vw, 120px); border-top: 1px solid rgba(15, 14, 12, 0.16)"></div>
+<div class="on-ink" style="background: #2D1454; color: #F3EEE4">
 
 <section id="recognition" class="chapter" aria-labelledby="rec-title" style="padding-top: 0">
 <div class="wrap">
@@ -607,6 +612,68 @@ a:focus-visible,button:focus-visible{outline:2px solid #FF4F1F;outline-offset:4p
         btn.addEventListener('click', function () { set(menu.hidden) })
         menu.addEventListener('click', function (e) { if (e.target.closest('a')) set(false) })
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape') set(false) })
+      })();
+
+      // Header: show which numbered section is currently in view.
+      (function () {
+        var num = document.getElementById('cur-num')
+        var name = document.getElementById('cur-name')
+        if (!num || !name || !('IntersectionObserver' in window)) return
+        var sections = [
+          ['hero', '00', 'Intro'], ['about', '01', 'Story'], ['skills', '02', 'Stack'],
+          ['work', '03', 'Work'], ['experience', '04', 'Experience'],
+          ['recognition', '05', 'Recognition'], ['contact', '06', 'Contact']
+        ]
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return
+            for (var i = 0; i < sections.length; i++) {
+              if (sections[i][0] === entry.target.id) {
+                num.textContent = sections[i][1]
+                name.textContent = sections[i][2]
+              }
+            }
+          })
+        }, { rootMargin: '-45% 0px -50% 0px' })
+        sections.forEach(function (s) {
+          var el = document.getElementById(s[0])
+          if (el) io.observe(el)
+        })
+      })();
+
+      // Count up the headline results once, when their card scrolls into view.
+      (function () {
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        if (reduce || !('IntersectionObserver' in window)) return
+        var targets = Array.prototype.slice.call(document.querySelectorAll('#work article p.display'))
+        var items = []
+        targets.forEach(function (el) {
+          var m = /^(\d+)(.*)$/.exec(el.textContent.trim())
+          if (m) items.push({ el: el, final: el.textContent.trim(), value: parseInt(m[1], 10), suffix: m[2] })
+        })
+        if (!items.length) return
+        items.forEach(function (item) { item.el.textContent = '0' + item.suffix })
+        function run(item) {
+          var start = null, dur = 1200
+          function frame(ts) {
+            if (start === null) start = ts
+            var t = Math.min((ts - start) / dur, 1)
+            var eased = 1 - Math.pow(1 - t, 3)
+            item.el.textContent = Math.round(item.value * eased) + item.suffix
+            if (t < 1) requestAnimationFrame(frame)
+            else item.el.textContent = item.final
+          }
+          requestAnimationFrame(frame)
+        }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return
+            var item = items.filter(function (i) { return i.el === entry.target })[0]
+            if (item) run(item)
+            io.unobserve(entry.target)
+          })
+        }, { threshold: 0.6 })
+        items.forEach(function (item) { io.observe(item.el) })
       })()
     </script>
   </body>
