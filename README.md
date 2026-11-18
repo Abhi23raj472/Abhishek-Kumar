@@ -10,7 +10,8 @@ with 3D, interactive pieces in each section.
 
 - **Hero**: name, pitch and an isometric mini-city you can tilt and hover.
 - **Results**: a test report whose checks pass as you scroll to it.
-- **About**: a lanyard ID badge with the photo.
+- **About**: a retro TV with five channels (News, Story, Sports, Weather, Call-in), a
+  remote you can drag around and point at the screen, and a sound meter.
 - **Tools**: a drawer cabinet of tools in four groups.
 - **Work**: a timeline of Optum and Expleo; pick a role to open its card.
 - **Certifications**: a passport you open and page through, one certificate per page.
@@ -30,6 +31,7 @@ npm run build    # production build in dist/ (pre-rendered HTML)
 - `index.html`: page shell, search and link-preview tags.
 - `src/App.js`: the whole page as one Preact component (markup in an `htm`
   template, plus the interaction logic).
+- `src/TvAbout.js` and `src/tv.css`: the About section's retro TV.
 - `src/design.css`: the design styles and the responsive rules.
 - `src/site.css`: site-wide rules (smooth scrolling, anchor offsets).
 - `scripts/prerender.mjs`: renders the page to HTML at build time, so it shows
