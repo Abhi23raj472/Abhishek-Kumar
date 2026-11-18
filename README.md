@@ -57,17 +57,6 @@ Built by a tester, so it's checked like a product:
 - **Accessible basics**: real buttons and links, keyboard focus styles, alt text and ARIA labels. With reduced motion turned on, visitors see the same page without the animation.
 - **No broken links**: every in-page anchor, the resume, LinkedIn and email are checked before each release.
 
-## Run it locally
-
-Requires Node.js 22 (or 20.19+), as Vite 8 does.
-
-```bash
-npm install
-npm run dev       # local dev server
-npm run build     # production build in dist/ (pre-rendered)
-npm run preview   # serve the production build
-```
-
 ## Project structure
 
 ```
