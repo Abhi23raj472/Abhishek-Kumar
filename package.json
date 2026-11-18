@@ -1,14 +1,19 @@
 {
   "name": "abhishek-kumar-portfolio",
   "private": true,
-  "version": "3.0.0",
+  "version": "4.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.mjs",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "preact-render-to-string": "^6.8.3",
     "vite": "^8.3.1"
+  },
+  "dependencies": {
+    "htm": "^3.1.1",
+    "preact": "^11.2.0"
   }
 }

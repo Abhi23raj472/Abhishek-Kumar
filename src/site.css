@@ -1,0 +1,9 @@
+/* Site-wide rules that the design board did not need. */
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+/* land below the floating nav when jumping to a section */
+section[id] { scroll-margin-top: 92px; }
+#top { scroll-margin-top: 0; }
+img { max-width: 100%; }
+.skip { position: absolute; left: 12px; top: -80px; z-index: 100; background: #F5F0E5; color: #003153; padding: 10px 14px; border-radius: 10px; font-weight: 700; text-decoration: none; }
+.skip:focus { top: 12px; }
